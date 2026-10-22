@@ -1,0 +1,74 @@
+cff-version: 1.2.0
+title: "TurboHap: fast, compatible haplotype phasing and genotype imputation"
+message: "Please cite TurboHap and the original FindHap method when using this software."
+type: software
+version: 1.0.0
+date-released: 2026-10-22
+authors:
+  - family-names: Carr
+    given-names: Adrian R.
+    email: adrian.carr@greenneuron.ai
+    affiliation: Green Neuron AI (Green Neuron Ltd)
+repository-code: "https://github.com/adrian-greenneuron/TurboHap"
+license-url: "https://github.com/adrian-greenneuron/TurboHap/blob/v1.0.0/LICENSE"
+keywords:
+  - haplotype phasing
+  - genotype imputation
+  - livestock genomics
+  - C++
+  - OpenMP
+references:
+  - type: article
+    title: "Genomic evaluations with many more genotypes"
+    authors:
+      - family-names: VanRaden
+        given-names: Paul M.
+      - family-names: O'Connell
+        given-names: Jeffrey R.
+      - family-names: Wiggans
+        given-names: George R.
+      - family-names: Weigel
+        given-names: Kent A.
+    journal: Genetics Selection Evolution
+    volume: 43
+    start: 10
+    year: 2011
+    doi: "10.1186/1297-9686-43-10"
+  - type: article
+    title: "Genomic imputation and evaluation using high-density Holstein genotypes"
+    authors:
+      - family-names: VanRaden
+        given-names: Paul M.
+      - family-names: Null
+        given-names: D. J.
+      - family-names: Sargolzaei
+        given-names: M.
+      - family-names: Wiggans
+        given-names: George R.
+      - family-names: Tooker
+        given-names: M. E.
+      - family-names: Cole
+        given-names: J. B.
+      - family-names: Sonstegard
+        given-names: T. S.
+      - family-names: Connor
+        given-names: E. E.
+      - family-names: Winters
+        given-names: M.
+      - family-names: van Kaam
+        given-names: J. B. C. H. M.
+      - family-names: Valentini
+        given-names: A.
+      - family-names: Van Doormaal
+        given-names: B. J.
+      - family-names: Faust
+        given-names: M. A.
+      - family-names: Doak
+        given-names: G. A.
+    journal: Journal of Dairy Science
+    volume: 96
+    issue: 1
+    start: 668
+    end: 678
+    year: 2013
+    doi: "10.3168/jds.2012-5702"

@@ -1,0 +1,63 @@
+{
+  "reference": "Original FindHap v3, gfortran 13.3, Linux ARM64, one thread, LC_ALL=C",
+  "inputs": {
+    "chromosome.data": {
+      "bytes": 370082,
+      "sha256": "5cbbf70e3f8efc32b69670f7eb1266b368e5a6b50615617a89f97597518611e0"
+    },
+    "genotypes.txt": {
+      "bytes": 1281872,
+      "sha256": "0198c221153a887ee5c5c4bd7e951fb2f8ddaea5a7beada701b1477c611158be"
+    },
+    "pedigree.file": {
+      "bytes": 28600,
+      "sha256": "ad6e6222a2fcad664da37804015a08c518f8e9ff07b1cbd60a988ab5f4ccde5b"
+    },
+    "findhap.options": {
+      "bytes": 2092,
+      "sha256": "15c4233383d5783865cfd1d496c7f9157fcf0f2f9f1cc869e2fcb980bc813cf4"
+    }
+  },
+  "outputs": {
+    "allele.frequency": {
+      "bytes": 365141,
+      "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+    },
+    "cross.overs": {
+      "bytes": 572671,
+      "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+    },
+    "do_not_distrib": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "genotypes.filled": {
+      "bytes": 1635400,
+      "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+    },
+    "hap.Xseg": {
+      "bytes": 100,
+      "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+    },
+    "hap.filled": {
+      "bytes": 18314,
+      "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+    },
+    "hap.found": {
+      "bytes": 524699,
+      "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+    },
+    "hap.inherit": {
+      "bytes": 520674,
+      "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+    },
+    "hap.list": {
+      "bytes": 4471910,
+      "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+    },
+    "haplotypes.txt": {
+      "bytes": 3260400,
+      "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+    }
+  }
+}

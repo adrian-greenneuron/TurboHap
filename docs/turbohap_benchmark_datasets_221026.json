@@ -1,0 +1,895 @@
+{
+  "title": "TurboHap corrected synthetic benchmark input and truth identities",
+  "date": "2026-10-22",
+  "checksum_algorithm": "SHA-256",
+  "simulator": "USDA genosimV4",
+  "compiler": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "platform": "Ubuntu 24.04, Linux ARM64",
+  "simulator_sources": {
+    "kind.f90": {
+      "bytes": 519,
+      "sha256": "d4ffd25ec0d73e85688c1c221e985650031d04a4bec9e8407576b56fddd8407a"
+    },
+    "pedsim.f90": {
+      "bytes": 9450,
+      "sha256": "f0ff6f8bd08cadeab51ee2ad584175dcd8f65519b92be73795609916b17ab809"
+    },
+    "markersim.f90": {
+      "bytes": 18050,
+      "sha256": "03063d83f56ad6f2a4e4de7ddd693ff992fd9fbca6ce8a8bf4775de0517f8a51"
+    },
+    "genosim.f90": {
+      "bytes": 28209,
+      "sha256": "f74a1fe13215402c0e274991a5f31fcbf3523eef83571b32e08c75eb2f79259e"
+    },
+    "pedsim.options": {
+      "bytes": 1210,
+      "sha256": "093d81a5ff31a027a46262acf4373e4e7a86be9719c1b4e3f9326de314d4c6bc"
+    },
+    "markersim.options": {
+      "bytes": 1192,
+      "sha256": "e638b317ec66ccc8efbf7c585e762e42f812f0bb363701ae2d9815033da141a9"
+    },
+    "genosim.options": {
+      "bytes": 1476,
+      "sha256": "5e9c7905c82fa4d8727d1b8a45732195812d4ba93d388e6a3bcef81dad4ac4b5"
+    },
+    "chips.txt": {
+      "bytes": 203,
+      "sha256": "124430e7a40c4f93dca7c46a2529179c1915cfde5a006125bf57a2fa20bdb53a"
+    }
+  },
+  "datasets": [
+    {
+      "dataset": "10,000 \u00d7 1,000",
+      "genotyped_animals": 10000,
+      "pedigree_animals": 10004,
+      "map_loci": 1000,
+      "simulated_loci_including_qtl": 1100,
+      "chromosome_loci": [
+        31,
+        29,
+        24,
+        37,
+        34,
+        30,
+        44,
+        36,
+        27,
+        36,
+        35,
+        28,
+        37,
+        35,
+        31,
+        33,
+        24,
+        42,
+        35,
+        34,
+        34,
+        34,
+        35,
+        25,
+        37,
+        32,
+        39,
+        40,
+        32,
+        30
+      ],
+      "chip_counts": [
+        {
+          "chip": 1,
+          "loci": 1000,
+          "records": 8333
+        },
+        {
+          "chip": 2,
+          "loci": 333,
+          "records": 1667
+        }
+      ],
+      "findhap_options": {
+        "iters": 4,
+        "XChrom": 30,
+        "maxlen": 100,
+        "minlen": 50,
+        "steps": 3,
+        "maxhap": 50000,
+        "hapout": 1,
+        "genout": 1,
+        "damout": 1,
+        "listout": 1,
+        "errate": 0.004000000189989805
+      },
+      "priors_present": false,
+      "inputs": {
+        "chromosome.data": {
+          "bytes": 74082,
+          "sha256": "10d9f12de5f87926a8f54b66d7a366cb9a6011ab529d219ae6b8555b63ec2cd7"
+        },
+        "genotypes.txt": {
+          "bytes": 9208111,
+          "sha256": "531b653604494a732ba7b9d7f329ffe805763faa26119e511a4f6f8959c1590a"
+        },
+        "pedigree.file": {
+          "bytes": 510204,
+          "sha256": "d2c04aa0f3b0ed6a15f4b78305a295559ba79f85d6fed81b421af546178808ab"
+        },
+        "findhap.options": {
+          "bytes": 103,
+          "sha256": "4d8a90aac48af9bb819340125a8046bc4d1d62fb67a247b4f21b7fb3b209a21d"
+        }
+      },
+      "truth": {
+        "genotypes.true": {
+          "compressed": {
+            "bytes": 2933049,
+            "sha256": "e350c926f904ae7265264e97200f35171bc791750f3947ee0403a740b3482c51"
+          },
+          "uncompressed": {
+            "bytes": 10324128,
+            "sha256": "26eeaf5bca7bb76d0fbbaee95f958f51629fc3d4642144cf01adb95248f8b22f"
+          }
+        },
+        "haplotype.data": {
+          "compressed": {
+            "bytes": 5024421,
+            "sha256": "33398c9a04704eb4f9a5f6b0837dee191fba4dd3e815ec8196864098879aa87b"
+          },
+          "uncompressed": {
+            "bytes": 29611840,
+            "sha256": "6f3ef8990c6701729481fa433ae799d49a917322d53105b5b1949177d8258225"
+          }
+        }
+      },
+      "audit": {
+        "passed": true,
+        "phase_genotype_checks": 10004000,
+        "phase_genotype_disagreements": 0,
+        "inconsistent_parent_animals": 0,
+        "male_haploid_disagreements": 0,
+        "mask_counts": {
+          "off_chip": 1111889,
+          "missing_on_chip": 88944,
+          "observed_correct": 8797372,
+          "observed_discordant": 1795,
+          "untyped_ancestor": 4000
+        }
+      },
+      "parent_sex_changes": 1112
+    },
+    {
+      "dataset": "10,000 \u00d7 10,000",
+      "genotyped_animals": 10000,
+      "pedigree_animals": 10004,
+      "map_loci": 10000,
+      "simulated_loci_including_qtl": 10100,
+      "chromosome_loci": [
+        338,
+        347,
+        309,
+        345,
+        318,
+        352,
+        385,
+        316,
+        359,
+        337,
+        302,
+        326,
+        339,
+        339,
+        349,
+        304,
+        313,
+        348,
+        329,
+        338,
+        326,
+        326,
+        358,
+        323,
+        323,
+        314,
+        359,
+        333,
+        309,
+        336
+      ],
+      "chip_counts": [
+        {
+          "chip": 1,
+          "loci": 10000,
+          "records": 8333
+        },
+        {
+          "chip": 2,
+          "loci": 3333,
+          "records": 1667
+        }
+      ],
+      "findhap_options": {
+        "iters": 4,
+        "XChrom": 30,
+        "maxlen": 100,
+        "minlen": 50,
+        "steps": 3,
+        "maxhap": 50000,
+        "hapout": 1,
+        "genout": 1,
+        "damout": 1,
+        "listout": 1,
+        "errate": 0.004000000189989805
+      },
+      "priors_present": false,
+      "inputs": {
+        "chromosome.data": {
+          "bytes": 740082,
+          "sha256": "5b1f5a5bb055367c5dfcfa40f29441a4adce3b967ff359e236d7bf69e7eba9f3"
+        },
+        "genotypes.txt": {
+          "bytes": 89206111,
+          "sha256": "0019ab96400a8188e5bf5fa9106d073b8ed5bb62ee03ca5236fc19d8bd73b90b"
+        },
+        "pedigree.file": {
+          "bytes": 510204,
+          "sha256": "d2c04aa0f3b0ed6a15f4b78305a295559ba79f85d6fed81b421af546178808ab"
+        },
+        "findhap.options": {
+          "bytes": 103,
+          "sha256": "4d8a90aac48af9bb819340125a8046bc4d1d62fb67a247b4f21b7fb3b209a21d"
+        }
+      },
+      "truth": {
+        "genotypes.true": {
+          "compressed": {
+            "bytes": 28412439,
+            "sha256": "5d676d90c278bc4faa1f6b2ae13cdf0bbec025b14eea76948aa76b4f1dfb1b93"
+          },
+          "uncompressed": {
+            "bytes": 100360128,
+            "sha256": "8f75623aa03aa6346dc849f5d5a6f412fbdffad0de4f0ebb74fbd0f13f9d35bc"
+          }
+        },
+        "haplotype.data": {
+          "compressed": {
+            "bytes": 44063205,
+            "sha256": "e7250501a4113d13189b480a8a9100cab4300e540eaa00447740860ab2998c8f"
+          },
+          "uncompressed": {
+            "bytes": 209683840,
+            "sha256": "1547f3f1aabf9957a933455c61a921a4b6e78eaecca8f037c411b267f203c8df"
+          }
+        }
+      },
+      "audit": {
+        "passed": true,
+        "phase_genotype_checks": 100040000,
+        "phase_genotype_disagreements": 0,
+        "inconsistent_parent_animals": 0,
+        "male_haploid_disagreements": 0,
+        "mask_counts": {
+          "off_chip": 11113889,
+          "missing_on_chip": 887955,
+          "observed_correct": 87980303,
+          "observed_discordant": 17853,
+          "untyped_ancestor": 40000
+        }
+      },
+      "parent_sex_changes": 1112
+    },
+    {
+      "dataset": "10,000 \u00d7 100,000",
+      "genotyped_animals": 10000,
+      "pedigree_animals": 10004,
+      "map_loci": 100000,
+      "simulated_loci_including_qtl": 100100,
+      "chromosome_loci": [
+        3364,
+        3361,
+        3301,
+        3284,
+        3316,
+        3301,
+        3352,
+        3381,
+        3410,
+        3291,
+        3372,
+        3371,
+        3444,
+        3326,
+        3327,
+        3311,
+        3334,
+        3364,
+        3333,
+        3245,
+        3383,
+        3368,
+        3341,
+        3336,
+        3277,
+        3297,
+        3359,
+        3304,
+        3277,
+        3270
+      ],
+      "chip_counts": [
+        {
+          "chip": 1,
+          "loci": 100000,
+          "records": 8333
+        },
+        {
+          "chip": 2,
+          "loci": 33333,
+          "records": 1667
+        }
+      ],
+      "findhap_options": {
+        "iters": 4,
+        "XChrom": 30,
+        "maxlen": 100,
+        "minlen": 50,
+        "steps": 3,
+        "maxhap": 50000,
+        "hapout": 1,
+        "genout": 1,
+        "damout": 1,
+        "listout": 1,
+        "errate": 0.004000000189989805
+      },
+      "priors_present": false,
+      "inputs": {
+        "chromosome.data": {
+          "bytes": 7400082,
+          "sha256": "7758ec80b250d16ee85da07166ff36a8a942a88a4969269fb1602b33ce9268ce"
+        },
+        "genotypes.txt": {
+          "bytes": 889186111,
+          "sha256": "fda00545299fa44fae9ead47a093d87a4efa02f7916ef17d579e40815881727b"
+        },
+        "pedigree.file": {
+          "bytes": 510204,
+          "sha256": "d2c04aa0f3b0ed6a15f4b78305a295559ba79f85d6fed81b421af546178808ab"
+        },
+        "findhap.options": {
+          "bytes": 103,
+          "sha256": "4d8a90aac48af9bb819340125a8046bc4d1d62fb67a247b4f21b7fb3b209a21d"
+        }
+      },
+      "truth": {
+        "genotypes.true": {
+          "compressed": {
+            "bytes": 279525793,
+            "sha256": "d20dcc4c15f0804deda8d5cb0352b72c24531ec43b3b3fd291a69d6a9b3f0ede"
+          },
+          "uncompressed": {
+            "bytes": 1000720128,
+            "sha256": "615f28d81702bd05d10c1cd0c42921c760e2d2b365788f7c636d38881b5352e3"
+          }
+        },
+        "haplotype.data": {
+          "compressed": {
+            "bytes": 425287122,
+            "sha256": "568972b815da5ce37681368cb78182ad1b5f88f9baa2940d2ab06687a4a819f1"
+          },
+          "uncompressed": {
+            "bytes": 2010403840,
+            "sha256": "398664bc2ab9eb3278ce2ccf6d9009b1f87f2323746d2b4451fb76b16ff28f96"
+          }
+        }
+      },
+      "audit": {
+        "passed": true,
+        "phase_genotype_checks": 1000400000,
+        "phase_genotype_disagreements": 0,
+        "inconsistent_parent_animals": 0,
+        "male_haploid_disagreements": 0,
+        "mask_counts": {
+          "off_chip": 111133889,
+          "missing_on_chip": 8886863,
+          "observed_correct": 879801934,
+          "observed_discordant": 177314,
+          "untyped_ancestor": 400000
+        }
+      },
+      "parent_sex_changes": 1112
+    },
+    {
+      "dataset": "100,000 \u00d7 1,000",
+      "genotyped_animals": 100000,
+      "pedigree_animals": 100004,
+      "map_loci": 1000,
+      "simulated_loci_including_qtl": 1100,
+      "chromosome_loci": [
+        31,
+        29,
+        24,
+        37,
+        34,
+        30,
+        44,
+        36,
+        27,
+        36,
+        35,
+        28,
+        37,
+        35,
+        31,
+        33,
+        24,
+        42,
+        35,
+        34,
+        34,
+        34,
+        35,
+        25,
+        37,
+        32,
+        39,
+        40,
+        32,
+        30
+      ],
+      "chip_counts": [
+        {
+          "chip": 1,
+          "loci": 1000,
+          "records": 83333
+        },
+        {
+          "chip": 2,
+          "loci": 333,
+          "records": 16667
+        }
+      ],
+      "findhap_options": {
+        "iters": 4,
+        "XChrom": 30,
+        "maxlen": 100,
+        "minlen": 50,
+        "steps": 3,
+        "maxhap": 50000,
+        "hapout": 1,
+        "genout": 1,
+        "damout": 1,
+        "listout": 1,
+        "errate": 0.004000000189989805
+      },
+      "priors_present": false,
+      "inputs": {
+        "chromosome.data": {
+          "bytes": 74082,
+          "sha256": "10d9f12de5f87926a8f54b66d7a366cb9a6011ab529d219ae6b8555b63ec2cd7"
+        },
+        "genotypes.txt": {
+          "bytes": 92083111,
+          "sha256": "5cc08596f2d1716576a4c96bf8ad0e01ac1af7a92bebfae937d0024b37bb1b70"
+        },
+        "pedigree.file": {
+          "bytes": 5100204,
+          "sha256": "3b2b267562c4fd5a9e2d0629272f9d5a453a3772776e65b5172fb6c90c6e149a"
+        },
+        "findhap.options": {
+          "bytes": 103,
+          "sha256": "4d8a90aac48af9bb819340125a8046bc4d1d62fb67a247b4f21b7fb3b209a21d"
+        }
+      },
+      "truth": {
+        "genotypes.true": {
+          "compressed": {
+            "bytes": 29326192,
+            "sha256": "7ad5ed0c9e33b797f1352621f1632669615bf1c7170e837645fdab4661e4524e"
+          },
+          "uncompressed": {
+            "bytes": 103204128,
+            "sha256": "dea6e5e438c31085145af39216690952e1ae2687d8bdf3defd6fac8c9aa75a4a"
+          }
+        },
+        "haplotype.data": {
+          "compressed": {
+            "bytes": 49815433,
+            "sha256": "542ebf08e8055a9603a758844841bd10e6d82c76a6f57eec1ceaa211c4cbb363"
+          },
+          "uncompressed": {
+            "bytes": 296011840,
+            "sha256": "b741de78d37a5618e53f811ff21a2dccfcfae57e15835397622682e9b08c3977"
+          }
+        }
+      },
+      "audit": {
+        "passed": true,
+        "phase_genotype_checks": 100004000,
+        "phase_genotype_disagreements": 0,
+        "inconsistent_parent_animals": 0,
+        "male_haploid_disagreements": 0,
+        "mask_counts": {
+          "off_chip": 11116889,
+          "missing_on_chip": 888432,
+          "observed_correct": 87976803,
+          "observed_discordant": 17876,
+          "untyped_ancestor": 4000
+        }
+      },
+      "parent_sex_changes": 11112
+    },
+    {
+      "dataset": "100,000 \u00d7 10,000",
+      "genotyped_animals": 100000,
+      "pedigree_animals": 100004,
+      "map_loci": 10000,
+      "simulated_loci_including_qtl": 10100,
+      "chromosome_loci": [
+        338,
+        347,
+        309,
+        345,
+        318,
+        352,
+        385,
+        316,
+        359,
+        337,
+        302,
+        326,
+        339,
+        339,
+        349,
+        304,
+        313,
+        348,
+        329,
+        338,
+        326,
+        326,
+        358,
+        323,
+        323,
+        314,
+        359,
+        333,
+        309,
+        336
+      ],
+      "chip_counts": [
+        {
+          "chip": 1,
+          "loci": 10000,
+          "records": 83333
+        },
+        {
+          "chip": 2,
+          "loci": 3333,
+          "records": 16667
+        }
+      ],
+      "findhap_options": {
+        "iters": 4,
+        "XChrom": 30,
+        "maxlen": 100,
+        "minlen": 50,
+        "steps": 3,
+        "maxhap": 50000,
+        "hapout": 1,
+        "genout": 1,
+        "damout": 1,
+        "listout": 1,
+        "errate": 0.004000000189989805
+      },
+      "priors_present": false,
+      "inputs": {
+        "chromosome.data": {
+          "bytes": 740082,
+          "sha256": "5b1f5a5bb055367c5dfcfa40f29441a4adce3b967ff359e236d7bf69e7eba9f3"
+        },
+        "genotypes.txt": {
+          "bytes": 892081111,
+          "sha256": "46a44892f7351f1632de3a1ad93ae032b01d89dcd9850d01f168f798835439f8"
+        },
+        "pedigree.file": {
+          "bytes": 5100204,
+          "sha256": "3b2b267562c4fd5a9e2d0629272f9d5a453a3772776e65b5172fb6c90c6e149a"
+        },
+        "findhap.options": {
+          "bytes": 103,
+          "sha256": "4d8a90aac48af9bb819340125a8046bc4d1d62fb67a247b4f21b7fb3b209a21d"
+        }
+      },
+      "truth": {
+        "genotypes.true": {
+          "compressed": {
+            "bytes": 284055687,
+            "sha256": "b1cc8f5c3cb7ae4898f7a4aaaaa09a74ede4c2a4b8e0c9839419df1644ff8e85"
+          },
+          "uncompressed": {
+            "bytes": 1003240128,
+            "sha256": "fe1f505ef690d8ad7f13d475e7ea99f1ea4b500db0dac99abef855abd86b3f3a"
+          }
+        },
+        "haplotype.data": {
+          "compressed": {
+            "bytes": 440132233,
+            "sha256": "99b834bb193cac0a1044cb84795ebc5e0910505af19526cb93b1288d1f6f0d29"
+          },
+          "uncompressed": {
+            "bytes": 2096083840,
+            "sha256": "b552a86fe3d488399fcfc04efa758e30a0ef7f7d399befa53f57a88d2b705d53"
+          }
+        }
+      },
+      "audit": {
+        "passed": true,
+        "phase_genotype_checks": 1000040000,
+        "phase_genotype_disagreements": 0,
+        "inconsistent_parent_animals": 0,
+        "male_haploid_disagreements": 0,
+        "mask_counts": {
+          "off_chip": 111118889,
+          "missing_on_chip": 8887931,
+          "observed_correct": 879816016,
+          "observed_discordant": 177164,
+          "untyped_ancestor": 40000
+        }
+      },
+      "parent_sex_changes": 11112
+    },
+    {
+      "dataset": "100,000 \u00d7 100,000",
+      "genotyped_animals": 100000,
+      "pedigree_animals": 100004,
+      "map_loci": 100000,
+      "simulated_loci_including_qtl": 100100,
+      "chromosome_loci": [
+        3364,
+        3361,
+        3301,
+        3284,
+        3316,
+        3301,
+        3352,
+        3381,
+        3410,
+        3291,
+        3372,
+        3371,
+        3444,
+        3326,
+        3327,
+        3311,
+        3334,
+        3364,
+        3333,
+        3245,
+        3383,
+        3368,
+        3341,
+        3336,
+        3277,
+        3297,
+        3359,
+        3304,
+        3277,
+        3270
+      ],
+      "chip_counts": [
+        {
+          "chip": 1,
+          "loci": 100000,
+          "records": 83333
+        },
+        {
+          "chip": 2,
+          "loci": 33333,
+          "records": 16667
+        }
+      ],
+      "findhap_options": {
+        "iters": 4,
+        "XChrom": 30,
+        "maxlen": 100,
+        "minlen": 50,
+        "steps": 3,
+        "maxhap": 50000,
+        "hapout": 1,
+        "genout": 1,
+        "damout": 1,
+        "listout": 1,
+        "errate": 0.004000000189989805
+      },
+      "priors_present": false,
+      "inputs": {
+        "chromosome.data": {
+          "bytes": 7400082,
+          "sha256": "7758ec80b250d16ee85da07166ff36a8a942a88a4969269fb1602b33ce9268ce"
+        },
+        "genotypes.txt": {
+          "bytes": 8892061111,
+          "sha256": "2ac51b272da02ebb20b499f5b16cf87d917bfbfde789ed6a41b7ca671809187c"
+        },
+        "pedigree.file": {
+          "bytes": 5100204,
+          "sha256": "3b2b267562c4fd5a9e2d0629272f9d5a453a3772776e65b5172fb6c90c6e149a"
+        },
+        "findhap.options": {
+          "bytes": 103,
+          "sha256": "4d8a90aac48af9bb819340125a8046bc4d1d62fb67a247b4f21b7fb3b209a21d"
+        }
+      },
+      "truth": {
+        "genotypes.true": {
+          "compressed": {
+            "bytes": 2794140051,
+            "sha256": "390bfd412cc23425ea98e422f2858f91cb066316834fe52ee549150a7db39c13"
+          },
+          "uncompressed": {
+            "bytes": 10003600128,
+            "sha256": "27a8348569802c99d221162df222b3d26e6f9c0ef99b3a82dda5061104548fe8"
+          }
+        },
+        "haplotype.data": {
+          "compressed": {
+            "bytes": 4250957172,
+            "sha256": "37e089a485629733685882c5e328b94ffd61e4a7f2d37310a61497b4378e4e78"
+          },
+          "uncompressed": {
+            "bytes": 20096803840,
+            "sha256": "6f97d2ebb6fc677c5ba87462f43be2f8ea6c7a1ae14166d99677db4d278a542e"
+          }
+        }
+      },
+      "audit": {
+        "passed": true,
+        "phase_genotype_checks": 10000400000,
+        "phase_genotype_disagreements": 0,
+        "inconsistent_parent_animals": 0,
+        "male_haploid_disagreements": 0,
+        "mask_counts": {
+          "off_chip": 1111138889,
+          "missing_on_chip": 88885473,
+          "observed_correct": 8798202902,
+          "observed_discordant": 1772736,
+          "untyped_ancestor": 400000
+        }
+      },
+      "parent_sex_changes": 11112
+    },
+    {
+      "dataset": "1,000,000 \u00d7 10,000",
+      "genotyped_animals": 1000000,
+      "pedigree_animals": 1000004,
+      "map_loci": 10000,
+      "simulated_loci_including_qtl": 10100,
+      "chromosome_loci": [
+        338,
+        347,
+        309,
+        345,
+        318,
+        352,
+        385,
+        316,
+        359,
+        337,
+        302,
+        326,
+        339,
+        339,
+        349,
+        304,
+        313,
+        348,
+        329,
+        338,
+        326,
+        326,
+        358,
+        323,
+        323,
+        314,
+        359,
+        333,
+        309,
+        336
+      ],
+      "chip_counts": [
+        {
+          "chip": 1,
+          "loci": 10000,
+          "records": 833333
+        },
+        {
+          "chip": 2,
+          "loci": 3333,
+          "records": 166667
+        }
+      ],
+      "findhap_options": {
+        "iters": 4,
+        "XChrom": 30,
+        "maxlen": 100,
+        "minlen": 50,
+        "steps": 3,
+        "maxhap": 500000,
+        "hapout": 1,
+        "genout": 1,
+        "damout": 1,
+        "listout": 1,
+        "errate": 0.004000000189989805
+      },
+      "priors_present": false,
+      "inputs": {
+        "chromosome.data": {
+          "bytes": 740082,
+          "sha256": "5b1f5a5bb055367c5dfcfa40f29441a4adce3b967ff359e236d7bf69e7eba9f3"
+        },
+        "genotypes.txt": {
+          "bytes": 8920831111,
+          "sha256": "c6dd1edc9f7d7191b182b3666ba033684c88bce5270506fbf3b15ccf222fd03a"
+        },
+        "pedigree.file": {
+          "bytes": 51000204,
+          "sha256": "bf906de9482d10d65e5b8c9970bb013566af704419fccaa4ec96a0d6e1dacade"
+        },
+        "findhap.options": {
+          "bytes": 104,
+          "sha256": "cedc25601fcc170c901aae8a95bfa0ff418c3e2f63392acab4676996e7c8f3ae"
+        }
+      },
+      "truth": {
+        "genotypes.true": {
+          "compressed": {
+            "bytes": 2840502979,
+            "sha256": "cba4e2d23da0466274f83bef77ce9b7377e1b436f406d2ad7ac38743304782b0"
+          },
+          "uncompressed": {
+            "bytes": 10032040128,
+            "sha256": "de91bc37b3ca9ce4bae8fb20f0d6462c564b709c6a7b32ee96f4819e77d8dbac"
+          }
+        },
+        "haplotype.data": {
+          "compressed": {
+            "bytes": 4405687449,
+            "sha256": "fc8958cb3700db0c1dbf25e17f3bc2610eb2fc6214494cd79d8ff4234a9ca89e"
+          },
+          "uncompressed": {
+            "bytes": 20960083840,
+            "sha256": "edcf7921da74d1b2839488c6028388f28a4b160281bda96d60ffa0095c21eb78"
+          }
+        }
+      },
+      "audit": {
+        "passed": true,
+        "phase_genotype_checks": 10000040000,
+        "phase_genotype_disagreements": 0,
+        "inconsistent_parent_animals": 0,
+        "male_haploid_disagreements": 0,
+        "mask_counts": {
+          "off_chip": 1111168889,
+          "missing_on_chip": 88870327,
+          "observed_correct": 8798188428,
+          "observed_discordant": 1772356,
+          "untyped_ancestor": 40000
+        }
+      },
+      "parent_sex_changes": 111112
+    }
+  ],
+  "planned_archive": "Zenodo; not yet deposited",
+  "dataset_license": "CC-BY-4.0",
+  "corrections": [
+    "Disable floating-point contraction in markersim and genosim so reconstructed marker locations agree.",
+    "Set parent sex from its unique sire/dam role before genotype/truth simulation; reject dual-role parents."
+  ],
+  "simulator_build_flags": {
+    "pedsim": "gfortran kind.f90 pedsim.f90 -o pedsim",
+    "markersim": "gfortran kind.f90 markersim.f90 -o markersim -ffp-contract=off",
+    "genosim": "gfortran kind.f90 genosim.f90 -o genosim -O3 -ffp-contract=off"
+  }
+}

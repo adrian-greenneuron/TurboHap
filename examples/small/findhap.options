@@ -1,0 +1,33 @@
+  4      30     100      50      3    50000     1       1       1       1
+iters  Xchrom  maxlen  minlen  steps  maxhap  hapout  genout  damout  listout
+
+ .004  
+errate 
+
+! OPTION DEFINITIONS:
+!
+!                iters     =   maximum iterations for haplotype imputation (recommend 4)
+!                Xchrom    =   final chromosome number for X, or 0 if no X
+!                maxlen    =   maximum length of segments to check when haplotyping (see below)
+!                minlen    =   minimum length of segments to check when haplotyping (see below)
+!                steps     =   number of steps to get from maxlen to minlen (recommend 3)
+!                maxhap    =   maximum different haplotypes within any segment
+!                hapout    = 0 does not output full haplotypes for each animal
+!                          = 1 outputs haplotypes.txt for only genotyped and imputed animals
+!                          = 2 outputs haplotypes.txt for all animals
+!                genout    = 0 does not output genotypes.filled
+!                          = 1 outputs genotypes.filled for genotyped and imputed animals
+!                          = 2 outputs genotypes.filled with best call (only codes 0, 1, and 2)
+!                          = 5 outputs genotypes.filled with codes 3 and 4 set to 5
+!                damout    = 0 does not impute non-genotyped parents
+!                          = 1 outputs imputed genotypes of dams
+!                          = 2 outputs imputed genotypes of dams and sires
+!                listout   = 0 does not output hap.list or hap.found
+!                          = 1 outputs hap.list or hap.found for all steps
+!                          =-1 outputs hap.list or hap.found only for last step
+!                errate    =   fraction of miscalled genotypes allowed when matching (see below)
+!
+! Recommended values:
+! To combine 3K or 6K with 50K, use maxlen = 600, minlen = 75, errate = .004
+! To combine 3K with 50K with 700K, use maxlen = 2000, minlen = 200, errate = .002
+! To combine 700K with sequence, use maxlen = 100000, minlen = 2000, errate = .002

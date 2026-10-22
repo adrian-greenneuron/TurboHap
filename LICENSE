@@ -1,0 +1,231 @@
+TurboHap Academic Research Licence
+Version 1.0 — 20 October 2026
+
+Licensor: Green Neuron Ltd, trading as Green Neuron AI.
+Commercial licensing: adrian.carr@greenneuron.ai
+Author attribution: Copyright (c) 2026 Adrian Carr, Green Neuron AI.
+
+Original FindHap and genosim attribution
+--------------------------------------
+Written by Paul VanRaden, USDA Agricultural Research Service,
+Animal Improvement Programs Laboratory.
+
+As a work of the United States Government, the original code is in
+the public domain within the United States under 17 U.S.C. § 105.
+This licence does not restrict rights in that public-domain material
+or claim ownership of the FindHap algorithm.
+
+Purpose and scope
+-----------------
+TurboHap is available without a licence fee for non-commercial academic
+research and teaching. Commercial activities, including paid services
+provided by academic or government institutions, require a separate
+paid agreement with the Licensor.
+
+"Software" means TurboHap source code, executables, modifications and
+accompanying documentation, including both operating modes, to the extent
+the Licensor owns or is authorised to license the relevant rights.
+Separately licensed components and public-domain material retain their
+own terms and status. Naming the Licensor does not transfer copyright
+from any author or other rights holder.
+
+"You" means the individual or organisation exercising the permissions
+below. An individual acting for an organisation must have authority to
+accept these terms for it. Exercising these permissions signifies your
+acceptance of the conditions that accompany them.
+
+"Eligible Research User" means a person or organisation undertaking
+Non-Commercial Academic Use, including researchers, students and teachers
+at universities, non-profit or public research institutions, government
+laboratories, and independent researchers acting on their own behalf.
+
+"Non-Commercial Academic Use" means scientific research, scholarship,
+academic teaching or training intended to advance knowledge or education,
+including testing and improving the Software for those purposes. It
+excludes all Commercial Activities defined in section 3. A university,
+charity, government agency or non-profit organisation is eligible only
+for its qualifying activities, not automatically for all its work.
+
+Ordinary research grants, salaries, stipends, tuition and institutional
+overheads do not alone make research commercial. Internal allocation of
+computing costs and sharing direct costs within a genuine non-commercial
+research collaboration are permitted; purchasing an analytical service
+as a customer is not covered by that exception. Describing a service
+payment as a grant or collaboration does not change its nature.
+
+Industry funding alone does not determine eligibility. Research remains
+eligible only if it is independent non-commercial academic work and
+does not provide commissioned commercial deliverables or exclusive or
+preferential commercial exploitation rights to a sponsor. Funding
+acknowledgement and ordinary access to published findings do not alone
+make research commercial.
+
+Publication is not required to qualify. Confidentiality, privacy and
+ethical restrictions do not alone disqualify research. Publishing a
+commercial project's results does not make that project eligible, and
+possible later business benefits from academic findings do not alone
+make the original research commercial.
+
+1. Research permission and sharing
+----------------------------------
+The Licensor grants Eligible Research Users a worldwide, non-exclusive,
+royalty-free copyright licence to run, study, reproduce, compile and
+modify the Software for Non-Commercial Academic Use.
+
+You may redistribute source or compiled copies, including modified
+versions, without charging for the Software or access to it. Copies
+must carry this complete licence and the notices required by section 4.
+Recipients must receive the Software under these same use restrictions;
+you may not broaden permissions in the Licensor's material. These sharing
+rights include repository forks, academic archives and direct sharing
+between researchers. Recipients receive rights to the Licensor's material
+directly under this licence.
+
+2. Acknowledgement in publications
+----------------------------------
+Publications reporting work performed with the Software must acknowledge
+TurboHap and the original FindHap method. Use the references identified
+in CITATION.cff and docs/ACKNOWLEDGEMENTS.md for the version used, with a
+citation format appropriate to the publication. This requires scholarly
+credit, not co-authorship or endorsement. It does not require you to
+publish results that would otherwise remain private.
+
+3. Paid commercial permission
+-----------------------------
+Before undertaking any Commercial Activity with the Software or a modified
+version, you must obtain a separate written, paid commercial licence
+from Green Neuron Ltd. Contact adrian.carr@greenneuron.ai. Requesting a
+quote, downloading the Software or publishing results grants no such
+permission.
+
+"Commercial Activities" include:
+
+(a) Providing a customer with imputation, phasing, genetic or genomic
+    evaluation, analysis, consultancy, hosted access or another service
+    in exchange for payment or other consideration. Charges may be
+    bundled in a contract, subscription, membership, levy or wider
+    service. The specific academic funding and cost-sharing exceptions
+    above remain permitted.
+
+(b) Commercial production, routine business operations, commercial
+    breeding programmes and commercial decision support, including
+    internal operations where no result is sold separately.
+
+(c) Research, development, testing or evaluation conducted for a business
+    to develop, improve or assess its commercial products, services
+    or operations.
+
+(d) Contract or sponsored research delivering commissioned commercial
+    results or exclusive or preferential commercial exploitation rights
+    to a customer or sponsor, whether or not intellectual-property
+    ownership is formally transferred.
+
+(e) Selling the Software, charging for access to it, or incorporating
+    it into a commercial product or service.
+
+These requirements apply equally to commercial companies, universities,
+academic departments, charities, government bodies and their subsidiaries
+or service units. Cost recovery, non-profit status, reinvestment in
+research and subsequent publication do not exempt paid services.
+Outsourcing commercial work to an academic collaborator or public body
+does not exempt it either.
+
+An organisation may use the free permission for its qualifying research
+and a commercial licence for its other activities. Any use outside the
+permissions above needs a separate agreement; it is not silently permitted
+because it does not fit an example.
+
+4. Notices and ownership
+------------------------
+Keep copyright, attribution, licence and public-domain notices with
+copies and modifications. Identify changes, their authors and dates;
+do not present modified software as an official TurboHap release.
+
+You retain ownership of your contributions, subject to existing rights in
+the Software. This licence neither assigns contributions to the Licensor
+nor requires publication of private modifications. Commercial relicensing
+of contributed code requires appropriate rights from its owner.
+
+Names and logos may be used for truthful identification and required
+credit, but this licence grants no branding or endorsement rights.
+Rights not expressly granted remain reserved.
+
+5. Patent proceedings
+----------------------
+If you initiate patent-infringement proceedings alleging that the Software
+infringes a patent, including by counterclaim, your permissions under this
+licence end when that claim is filed. This applies to such proceedings
+against any party. The cure period in section 9 does not apply to this
+termination. No general waiver of patents covering independent research
+results or your own contributions is required by this licence.
+
+6. Independent development
+--------------------------
+The Licensor and other users may independently develop similar or
+functionally equivalent improvements. That fact alone does not transfer
+ownership of your contributions, permit copying protected material you
+have not licensed, or waive your rights in independent inventions.
+No contributor agreement is created merely by using the Software.
+
+7. Applicable law and independent rights
+----------------------------------------
+You must comply with laws applicable to your use and distribution.
+This licence does not remove statutory exceptions or permissions that
+you hold independently of it, and it does not change the terms of
+third-party components.
+
+8. Support and validation
+-------------------------
+This free licence includes no commitment to provide support, maintenance,
+updates or particular performance. You remain responsible for checking
+results and deciding whether the Software is appropriate for your work.
+
+9. Material breach
+-------------------
+The Licensor may terminate your permissions for a material breach not
+remedied within 30 days after written notice. This remedy period does
+not authorise Commercial Activities: those require agreement before
+they begin. Section 5 separately governs patent proceedings.
+
+After termination, stop exercising permissions granted here. Compliant
+recipients retain their own permissions. Ownership, independent rights,
+result ownership and the warranty and liability provisions continue
+to apply where relevant.
+
+10. Warranty and liability
+--------------------------
+To the extent applicable law permits, the Software is supplied "as is"
+and "as available", without express or implied warranties or conditions,
+including accuracy, satisfactory quality, merchantability, fitness for
+a particular purpose and non-infringement.
+
+To the extent applicable law permits, the Licensor accepts no liability
+for loss arising from use of, or inability to use, the Software, including
+lost data, profits, business opportunities or indirect or consequential
+loss, whatever the legal basis of the claim and even if the risk was known.
+
+Nothing excludes or limits liability that applicable law does not allow
+to be excluded or limited, including fraud or death or personal injury
+caused by negligence where such an exclusion is unlawful.
+
+11. Data and results
+--------------------
+Using the Software gives the Licensor no ownership of your input data,
+numerical results, scientific findings or publications. Outputs do not
+become subject to this licence merely because the Software generated them.
+Software code reproduced in an output retains its applicable terms.
+Rights of others in data or results remain unaffected.
+
+This provision does not authorise running the Software commercially
+without the paid permission required by section 3.
+
+12. Earlier grants and separate agreements
+------------------------------------------
+These terms cover material offered under this licence. They do not
+withdraw permissions already validly granted under an earlier licence.
+A later revision does not automatically change the terms attached to
+a copy you already received.
+
+A separate written agreement with the Licensor governs the uses it
+expressly authorises and prevails where its terms conflict with these.
+Commercial fees and contract terms must be agreed separately.

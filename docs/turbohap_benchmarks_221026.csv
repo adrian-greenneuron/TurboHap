@@ -1,0 +1,43 @@
+dataset,program,repeat,wall_seconds,peak_rss_kib,user_seconds,system_seconds,swaps,filesystem_inputs,filesystem_outputs,major_page_faults,output_check
+"10,000 × 1,000",Fortran baseline,1,10.73102258698782,316424,89.34,0.55,0,640,162808,2,pass; retained reference
+"10,000 × 1,000",TurboHap,1,1.0575327609549277,191416,6.71,0.19,0,0,162808,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 1,000",TurboHap LM,1,1.4842310080421157,188300,8.82,0.21,0,43632,182392,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 1,000",TurboHap LM,2,1.4864790510036983,188328,8.94,0.2,0,48992,182392,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 1,000",TurboHap,2,1.0567874639527872,191088,6.67,0.19,0,0,162808,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 1,000",Fortran baseline,2,10.308390206017066,316424,85.23,0.49,0,0,162808,0,pass; crossover record order exception
+"10,000 × 10,000",Fortran baseline,1,74.95623857801547,1255464,311.06,10.8,0,0,852760,0,pass; retained reference
+"10,000 × 10,000",TurboHap,1,2.6367229970055632,803012,17.1,0.61,0,0,852736,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 10,000",TurboHap LM,1,2.934375871962402,782468,17.77,0.73,0,475232,1046136,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 10,000",TurboHap LM,2,3.0477033010101877,782456,17.91,0.74,0,493288,1046136,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 10,000",TurboHap,2,2.6437977770110592,802288,17.29,0.6,0,0,852736,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 10,000",Fortran baseline,2,76.04546036897227,1255272,313.36,10.95,0,0,852760,0,pass; crossover record order exception
+"10,000 × 100,000",Fortran baseline,1,450.14248745999066,11162468,869.31,30.44,0,0,6949560,0,pass; retained reference
+"10,000 × 100,000",TurboHap,1,15.88001618598355,6618312,100.6,3.79,0,0,6949440,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 100,000",TurboHap LM,1,24.235839647008106,6197036,99.65,5.03,0,5152936,9140920,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 100,000",TurboHap LM,2,24.39823323005112,6197428,99.65,5.26,0,5171152,9140920,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 100,000",TurboHap,2,16.097896069986746,6618848,100.93,3.84,0,0,6949440,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"10,000 × 100,000",Fortran baseline,2,446.5260324389674,11162392,863.47,29.76,0,0,6949560,0,pass; crossover record order exception
+"100,000 × 1,000",Fortran baseline,1,871.5730552090099,395608,3900.59,98.76,0,0,1392376,0,pass; retained reference
+"100,000 × 1,000",TurboHap,1,15.191646444960497,346708,96.0,0.86,0,0,1392328,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 1,000",TurboHap LM,1,21.076393824012484,331116,164.23,0.97,0,754720,1588112,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 1,000",TurboHap LM,2,21.577355651999824,331092,165.57,1.07,0,752768,1588112,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 1,000",TurboHap,2,14.884207498980686,347932,95.14,0.81,0,0,1392328,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 1,000",Fortran baseline,2,876.2060168550233,395208,3942.01,100.34,0,0,1392376,0,pass; crossover record order exception
+"100,000 × 10,000",Fortran baseline,1,1187.165954166965,1693012,4715.95,143.08,0,0,7992392,0,pass; retained reference
+"100,000 × 10,000",TurboHap,1,23.815132358984556,1571748,172.28,2.74,0,0,7992264,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 10,000",TurboHap LM,1,32.17065481597092,1154200,219.71,4.04,0,7530896,9953528,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 10,000",TurboHap LM,2,32.121051718015224,1154180,219.12,4.19,0,7532480,9953528,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 10,000",TurboHap,2,23.668232772964984,1571752,170.66,2.82,0,0,7992264,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 10,000",Fortran baseline,2,1177.6232280239929,1693012,4693.86,142.18,0,0,7992400,0,pass; crossover record order exception
+"100,000 × 100,000",Fortran baseline,1,4596.082542138989,15713276,10557.2,256.51,0,856,68246536,3,pass; retained reference
+"100,000 × 100,000",TurboHap,1,153.39232535596238,13657852,1034.73,20.23,0,22824,68245600,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 100,000",TurboHap LM,1,237.03782480600057,8997996,1061.78,33.0,0,78462672,90053936,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 100,000",TurboHap LM,2,237.5878747010138,8997632,1057.53,36.54,0,78418192,90053936,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 100,000",TurboHap,2,154.70818030298688,13658364,1037.8,20.0,0,8336,68245600,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"100,000 × 100,000",Fortran baseline,2,4644.075171667966,15713388,10556.28,267.73,0,8336,68246528,0,pass; crossover record order exception
+"1,000,000 × 10,000",Fortran baseline,1,24715.296886948985,16899524,83156.95,2050.8,0,17006944,77872264,1,pass; retained reference
+"1,000,000 × 10,000",TurboHap,1,267.3517525950447,17272100,2023.5,28.26,0,101064,77871232,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"1,000,000 × 10,000",TurboHap LM,1,441.20230720896507,12664068,3332.12,35.45,0,77929960,97472216,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"1,000,000 × 10,000",TurboHap LM,2,442.01865564699983,12663996,3339.8,35.12,0,77921312,97472216,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"1,000,000 × 10,000",TurboHap,2,263.83681735704886,17272216,1999.56,26.96,0,101064,77871232,0,pass; Fortran crossover record order exception; C++ repeats and modes strict
+"1,000,000 × 10,000",Fortran baseline,2,24924.011008136964,16899324,82407.29,2149.66,0,101192,77872248,1,pass; crossover record order exception

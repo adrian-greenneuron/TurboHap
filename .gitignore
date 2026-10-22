@@ -1,0 +1,29 @@
+/build*/
+/run*/
+__pycache__/
+*.pyc
+*.o
+*.log
+.DS_Store
+.findhap-*
+# Input data belongs outside the source tree; only the bundled example is tracked.
+genotypes.txt
+pedigree.file
+chromosome.data
+!examples/small/genotypes.txt
+!examples/small/pedigree.file
+!examples/small/chromosome.data
+# Program outputs and optional priors.
+genotypes.filled
+haplotypes.txt
+allele.frequency
+cross.overs
+hap.list
+hap.found
+hap.inherit
+hap.filled
+hap.Xseg
+hap.listpriors
+hap.foundpriors
+do_not_distrib
+fort.*
