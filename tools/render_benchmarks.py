@@ -148,7 +148,7 @@ def plot_runtime_memory(datasets, labels, summaries, observations):
                 all_memory.extend(memories)
             ax.plot([p[0] for p in points], [p[1] for p in points],
                     color='#8b97a5', linewidth=1.8, zorder=1)
-            offset = (8, -18) if label in ('10k × 1k', '10k × 100k') else (8, 10)
+            offset = (8, -18) if label in ('10k × 1k', '10k × 100k', '100k × 100k') else (8, 10)
             ax.annotate(label, points[0], xytext=offset, textcoords='offset points',
                         fontsize=10, color='#303840')
         ax.set_xlim(min(all_times) / 1.55, max(all_times) * 2.5)
