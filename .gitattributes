@@ -1,5 +1,7 @@
 * text=auto eol=lf
 *.png binary
+docs/paper/*.pdf binary
+docs/paper/*.zip binary
 # Preserve the exact distributed bytes of fixed-width compatibility fixtures.
 examples/small/* -text -whitespace
 # Matplotlib SVG paths contain insignificant trailing spaces.

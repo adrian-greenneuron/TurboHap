@@ -29,6 +29,22 @@ different order. The crossover records themselves match exactly. See the
 The number selects the CPU thread count: `10` means ten threads. Omitting it
 uses the OpenMP default. The executable remains named `findhap` for compatibility.
 
+## Manuscript and supporting data
+
+Read the **[manuscript (PDF)](docs/paper/turbohap_manuscript_221026.pdf)**,
+dated 22 October 2026. This author manuscript has not been peer reviewed.
+
+- [Supplementary File 1 (PDF)](docs/paper/turbohap_supplementary_material_221026.pdf):
+  methods, individual benchmark observations and simulation recipe.
+- [Supplementary File 2 (ZIP)](docs/paper/turbohap_supplementary_archive_221026.zip?raw=true):
+  measurements, source/build manifests, output checks, reference Fortran code,
+  reproduction tools and figures.
+- [Seven synthetic datasets and simulation truth (Zenodo)](https://doi.org/10.5281/zenodo.23566926),
+  available under CC BY 4.0.
+
+The manuscript and figures are also available under CC BY 4.0. See the
+[paper download page](docs/paper/README.md) for file details and checksums.
+
 ## Performance
 
 On a simulated dataset of **1,000,000 animals × 10,000 loci**, the original
