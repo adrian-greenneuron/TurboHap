@@ -107,7 +107,7 @@ TurboHap prioritises speed with resident genotype storage and indexed haplotype
 search. TurboHap LM reduces resident storage using chromosome processing,
 packed data, bounded working buffers and temporary disk files. It retains the
 same output decisions and bytes, at the cost of more I/O and some additional
-computation. See the [measured trade-offs](turbohap_benchmarks_221026.md).
+computation. See the [measured trade-offs](turbohap_benchmarks_281026.md).
 
 Peak memory depends on pedigree size, marker counts, chromosome lengths,
 haplotype diversity, options and threads. TurboHap LM also uses temporary disk

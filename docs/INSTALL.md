@@ -11,14 +11,15 @@ Use CMake 3.16 or newer and a C++17 compiler with OpenMP and its runtime library
 | Platform | Toolchain | Status |
 | --- | --- | --- |
 | Ubuntu 24.04, ARM64 | GCC 13.3, CMake | Build, correctness and performance validated on DGX Spark. |
-| Other Linux, including x86-64 | GCC, CMake | Expected to work; not yet validated. |
+| Ubuntu 24.04, Intel and AMD x86-64 | GCC 13.3, CMake | Build and output checks passed; detailed benchmarks are ongoing. |
+| Other Linux systems | GCC, CMake | Require local validation. |
 | macOS, Apple Silicon or Intel | Homebrew GCC 13, CMake | Build route below is untested. |
 | Windows through WSL2 | Ubuntu, GCC, CMake | Build route below is untested. |
 | Native Windows | — | Not currently supported; the source uses POSIX file APIs. |
 
 ## Get the source
 
-Download the [version 1.0.0 source ZIP](https://github.com/adrian-greenneuron/TurboHap/archive/refs/tags/v1.0.0.zip),
+Download the [version 1.1.0 source ZIP](https://github.com/adrian-greenneuron/TurboHap/archive/refs/tags/v1.1.0.zip),
 then extract it. Open a terminal in the extracted directory containing
 `CMakeLists.txt`; run the build commands below from that directory.
 

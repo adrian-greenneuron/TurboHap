@@ -5,6 +5,10 @@
 #include <limits>
 #include <vector>
 
+#ifndef FINDHAP_POP_MINIMUM
+#define FINDHAP_POP_MINIMUM 0
+#endif
+
 // Population-pass-local lookup in the original order positions. Allele planes
 // reject only known opposite alleles. A range-minimum tree retains the earliest
 // minimum-frequency position, including every candidate skipped by the planes.
@@ -25,8 +29,13 @@ class OrderedCandidateLookup {
         int leaf = capacity_ + position - 1;
         const int hap = order_[position];
         minima_[leaf] = hap ? frequency_key(frequencies_[hap - 1], position) : UINT64_MAX;
-        for (leaf /= 2; leaf; leaf /= 2)
-            minima_[leaf] = std::min(minima_[leaf * 2], minima_[leaf * 2 + 1]);
+        for (leaf /= 2; leaf; leaf /= 2) {
+            const uint64_t value = std::min(minima_[leaf * 2], minima_[leaf * 2 + 1]);
+#if FINDHAP_POP_MINIMUM
+            if (minima_[leaf] == value) break;
+#endif
+            minima_[leaf] = value;
+        }
     }
 
     void set_signature(int position, uint64_t zero, uint64_t two) {

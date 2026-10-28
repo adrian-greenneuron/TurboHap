@@ -44,6 +44,11 @@ public:
         : phase_(phase), step_(step), iteration_(iteration), segment_(segment),
           chromosome_(chromosome), loci_(loci), before_(haplotypes ? *haplotypes : 0),
           haplotypes_(haplotypes), wall_(0), cpu_(0), active_(sink().file != nullptr) {
+#ifdef FINDHAP_LIGHT_PROFILE
+        // Coarse phases only: no per-segment timers or I/O-call interception.
+        // Build with the same optimisation/LTO flags as the timed executable.
+        active_ = active_ && segment == 0;
+#endif
         if (active_) {
             wall_ = seconds(CLOCK_MONOTONIC);
             cpu_ = seconds(CLOCK_THREAD_CPUTIME_ID);

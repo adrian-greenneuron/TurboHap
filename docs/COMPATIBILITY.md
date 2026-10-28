@@ -18,14 +18,22 @@ and comparing every byte, retaining duplicate records. No values are rounded,
 records dropped or genetic calls normalised. This is an ordering exception,
 not a strict byte-for-byte comparison of the unsorted crossover file.
 
-The two C++ modes are compared strictly, including crossover order. Release
-qualification also checked 17 example configurations per mode against the
+The two C++ modes are compared strictly, including crossover order. Original
+v1.0.0 qualification also checked 17 example configurations per mode against the
 Fortran reference, covering thread counts, priors, incremental animals, segment
 lengths, output selectors, fixed-width blank fields and capacities on both sides
 of 65,535 haplotypes. Those checks are broader than the bundled installation
 check: the included checker runs one original example in both modes at one and
 four threads (four runs), comparing every output against saved Fortran hashes.
 The complete qualification matrix is not included in this source release.
+
+For v1.1.0, all 28 timed runs across the seven synthetic datasets and both modes
+matched the retained C++ reference files exactly: 280 SHA-256 and byte-count
+checks, including raw crossover order. The [validation record](turbohap_validation_281026.json)
+contains the observed and expected hashes. Additional option/mode comparisons
+at one, four and ten threads passed against the qualified serial control.
+These checks supplement the original qualification; they do not claim that
+every possible input has been tested.
 
 Console progress and elapsed-time text are not result-file compatibility targets.
 The optimised default uses the OpenMP thread limit; use an explicit thread count

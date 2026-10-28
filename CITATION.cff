@@ -2,15 +2,15 @@ cff-version: 1.2.0
 title: "TurboHap: fast, compatible haplotype phasing and genotype imputation"
 message: "Please cite TurboHap and the original FindHap method when using this software."
 type: software
-version: 1.0.0
-date-released: 2026-10-22
+version: 1.1.0
+date-released: 2026-10-28
 authors:
   - family-names: Carr
     given-names: Adrian R.
     email: adrian.carr@greenneuron.ai
     affiliation: Green Neuron AI (Green Neuron Ltd)
 repository-code: "https://github.com/adrian-greenneuron/TurboHap"
-license-url: "https://github.com/adrian-greenneuron/TurboHap/blob/v1.0.0/LICENSE"
+license-url: "https://github.com/adrian-greenneuron/TurboHap/blob/v1.1.0/LICENSE"
 keywords:
   - haplotype phasing
   - genotype imputation

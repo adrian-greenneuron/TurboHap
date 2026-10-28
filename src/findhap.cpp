@@ -41,7 +41,23 @@ using ActiveGenotypeCache = ExternalGenotypeCache;
 using ActiveGenotypeCache = GenotypeCache;
 #endif
 #include "candidate_index.hpp"
+#ifndef FINDHAP_POP_SKIP_UNUSED
+#define FINDHAP_POP_SKIP_UNUSED 0
+#endif
+#ifndef FINDHAP_INDEX_MIN_LENGTH
+#define FINDHAP_INDEX_MIN_LENGTH 16
+#endif
+#ifndef FINDHAP_POP_INDEX_HAPS
+#define FINDHAP_POP_INDEX_HAPS 64
+#endif
+#ifndef FINDHAP_POP_INDEX_LENGTH
+#define FINDHAP_POP_INDEX_LENGTH FINDHAP_INDEX_MIN_LENGTH
+#endif
 #include "profiling.hpp"
+#include "pedigree_conflict.hpp"
+#if FINDHAP_PEDIGREE_MASK_BACKEND >= 0
+#include "pedigree_crossovers.hpp"
+#endif
 #include <omp.h>
 #ifdef __ARM_NEON
 #  include <arm_neon.h>
@@ -424,6 +440,16 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
                 }
             }
 
+#if FINDHAP_POP_FULL
+            if (candidate_index && candidate_index->full_count(signature, ii, conflicts))
+                goto population_counted;
+#endif
+#if FINDHAP_POP_COMPLETE
+            if (candidate_index && candidate_index->complete(signature, ii)) {
+                conflicts = __builtin_popcountll(candidate_index->conflicts(signature, ii));
+                goto population_counted;
+            }
+#endif
             // Phase 1: count conflicts in 16 signed-byte lanes with ARM NEON.
             // Explicit byte intrinsics avoid scalar C++ integer promotion.
             conflicts = 0;
@@ -474,6 +500,9 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
             }
 #endif
 
+#if FINDHAP_POP_COMPLETE || FINDHAP_POP_FULL
+        population_counted:
+#endif
             // Quick reject: most candidates fail here
             if constexpr (SWITCH_VAL == 1) {
                 if (conflicts > 0) goto label_50;
@@ -484,6 +513,12 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
             // collect missing loci in order and apply every original update.
             // Nonzero conflicts retain the position-dependent reference test.
             if (conflicts == 0) {
+#if FINDHAP_POP_FULL >= 2
+                int exact_count;
+                if (candidate_index && candidate_index->full_count(signature, ii, exact_count)) {
+                    miss = candidate_index->full_fill(signature, ii, fill_arr);
+                } else
+#endif
                 for (int l = 0; l < len; l++) {
                     if (hap_ptr[l] == 1 && segment[l] != 1) {
                         fill_arr[miss] = l;
@@ -1503,8 +1538,10 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 // Zero active hapfreq entries
                 #pragma omp parallel for num_threads(threads)
                 for (seg = 1; seg <= maxseg; seg++) {
-                    for (i = 1; i <= nhap_arr[seg - 1]; i++) {
-                        hapfreq_arr[IDX2(i, seg, maxhap)] = 0;
+                    // i is shared outside this worksharing loop. A local
+                    // counter prevents incomplete resets under concurrency.
+                    for (int hap = 1; hap <= nhap_arr[seg - 1]; hap++) {
+                        hapfreq_arr[IDX2(hap, seg, maxhap)] = 0;
                     }
                 }
             }
@@ -1580,6 +1617,9 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                     if (nn == 0) continue;
                     if (iter == iter1 && high[nn - 1] != 1) continue;
                     if (iter == 2 && high[nn - 1] == 0) continue;
+#if FINDHAP_POP_SKIP_UNUSED
+                    if (switch_val == 0)
+#endif
                     for (int s = 0; s < 16; s++) suggest[s] = 0;
                     for (pnt = 1; pnt <= 2; pnt++) {
                         l_pedx[pnt - 1] = ped[IDX2(pnt, nn, 2)];
@@ -1606,6 +1646,9 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                     patmat[base] = ' '; patmat[base + 1] = '0';
                                 }
                             }
+#if FINDHAP_POP_SKIP_UNUSED
+                            if (switch_val == 0)
+#endif
                             for (j = 1; j <= 2; j++) {
                                 suggest[(pnt - 1) * 8 + (j - 1) * 4] =
                                     keephap[KHIDX(j, l_pedx[pnt - 1], seg, maxped)];
@@ -1635,7 +1678,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 #else
                     int8_t* working_genotype = cache_expanded.segment(n - 1, seg - 1, segment_scratch.data());
 #endif
-                    if (!candidate_index && length >= 32 && nhap_arr[seg - 1] >= 64)
+                    if (!candidate_index && length >= FINDHAP_POP_INDEX_LENGTH && nhap_arr[seg - 1] >= FINDHAP_POP_INDEX_HAPS)
                         candidate_index = std::make_unique<CandidateIndex>(length,
                             haplist_arr.get() + (size_t)(seg - 1) * maxhap * maxlen,
                             maxlen, nhap_arr[seg - 1]);
@@ -1785,6 +1828,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 
             if (switch_val == 1) continue;
             FINDHAP_PHASE(pedigree_trace, "pedigree", step, iter);
+            FINDHAP_PHASE(pedigree_dams_trace, "pedigree_dams", step, iter);
             memset(suggest, 0, sizeof(suggest));
 
             // ===================================================================
@@ -1841,15 +1885,39 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 }
             }
 
-            // Reuse one team for the pedigree. All workers visit animals in the
-            // same order; the single stage finishes orientation and parent
-            // cursors before any worker starts the next animal.
+            FINDHAP_END(pedigree_dams_trace);
+            FINDHAP_PHASE(pedigree_main_trace, "pedigree_main", step, iter);
+            // Each chromosome owns disjoint segment/genotype/frequency state.
+            // Preserve animal order within it, including parent mutations and
+            // adjacent-segment orientation. The final pass retains the original
+            // animal-major traversal so crossover records need no reordering.
+            const bool chromosome_pass = FINDHAP_PEDIGREE_CHROMOSOMES &&
+                chromes - chrome1 + 1 >= threads &&
+                !(iter == iters && step == steps);
+            std::vector<int> parent_slots;
+            if (chromosome_pass) {
+                parent_slots.resize(2 * (size_t(maxped) + 1));
+                for (int animal = 1; animal <= maxped; ++animal) {
+                    // Snapshot both slots before incrementing either parent:
+                    // this also preserves the case where both IDs coincide.
+                    for (int parent = 1; parent <= 2; ++parent) {
+                        const int id = ped[IDX2(parent, animal, 2)];
+                        if (id > 0) parent_slots[2 * size_t(animal) + parent - 1] = pntloc[id];
+                    }
+                    for (int parent = 1; parent <= 2; ++parent) {
+                        const int id = ped[IDX2(parent, animal, 2)];
+                        if (id > 0) ++pntloc[id];
+                    }
+                }
+            }
+            const int pedigree_threads = FINDHAP_PEDIGREE_SERIAL_FINAL && iter == iters && step == steps ? 1 : threads;
             #pragma omp parallel private(i, pnt, j, grdpnt, pnthap, mismatch, match_arr, matches, pedx, found, k, l, locus, hold) \
-                reduction(+: ncross) num_threads(threads)
+                reduction(+: ncross) num_threads(pedigree_threads)
             {
-            for (i = 1; i <= maxped; i++) {
-                #pragma omp for
-                for (seg = 1; seg <= maxseg; seg++) {
+                // These operations sit inside millions of animal/segment
+                // visits. Outlining the lambdas hides loop-invariant state
+                // and proved substantially slower in the qualification study.
+                auto process_segment = [&](int seg, bool independent) __attribute__((always_inline)) {
                     if (iter == iters && step == steps) num_cross[seg - 1] = 0;
                     int l_match[2][2] = {{0,0},{0,0}};
                     int l_matches = 0;
@@ -1874,6 +1942,13 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                             continue;
                                         }
                                         if (l_pnthap[grdpnt - 1] > 0) {
+#if FINDHAP_PEDIGREE_EARLY_REJECT
+                                            if (pedigree_single_conflict(
+                                                    &haplist_arr[IDX3(1, l_found[j - 1], seg, maxlen, maxhap)],
+                                                    &haplist_arr[IDX3(1, l_pnthap[grdpnt - 1], seg, maxlen, maxhap)],
+                                                    len_arr[seg]))
+                                                l_match[j - 1][pnt - 1] = 4 + grdpnt;
+#else
                                             mismatch = 0;
                                             for (l = 1; l <= len_arr[seg]; l++) {
                                                 if (std::abs(haplist_arr[IDX3(l, l_found[j - 1], seg, maxlen, maxhap)] -
@@ -1881,6 +1956,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                                     mismatch++;
                                             }
                                             if (mismatch == 1) l_match[j - 1][pnt - 1] = 4 + grdpnt;
+#endif
                                         }
                                     }
                                     if (l_pnthap[0] == l_pnthap[1] && l_match[j - 1][pnt - 1] > 0)
@@ -1900,6 +1976,17 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                         l_pnthap[grdpnt - 1] = keephap[KHIDX(grdpnt, l_pedx[pnt - 1], seg, maxped)];
                                     }
                                     if (l_pnthap[0] == 0 || l_pnthap[1] == 0) continue;
+#if FINDHAP_PEDIGREE_MASK_BACKEND >= 0
+                                    const auto crossover_scan = findhap_pedigree::scan_crossovers<FINDHAP_PEDIGREE_MASK_BACKEND>(
+                                        &haplist_arr[IDX3(1, l_found[j - 1], seg, maxlen, maxhap)],
+                                        &haplist_arr[IDX3(1, l_pnthap[0], seg, maxlen, maxhap)],
+                                        &haplist_arr[IDX3(1, l_pnthap[1], seg, maxlen, maxhap)], len_arr[seg]);
+                                    for (int start = 0; start < 2; ++start) {
+                                        l_cross[start] = crossover_scan.count[start];
+                                        l_where[0][start] = crossover_scan.first[start];
+                                        l_where[1][start] = crossover_scan.last[start];
+                                    }
+#else
                                     for (grdpnt = 1; grdpnt <= 2; grdpnt++) {
                                         k = grdpnt;
                                         l_cross[grdpnt - 1] = 0;
@@ -1922,6 +2009,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                             }
                                         }
                                     }
+#endif
                                     // Output crossover list
                                     for (grdpnt = 1; grdpnt <= 2; grdpnt++) {
                                         if (l_cross[grdpnt - 1] == 1 && l_cross[2 - grdpnt] > 1) {
@@ -2064,7 +2152,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             for (j = 1; j <= 2; j++) {
                                 if ((l_match[j - 1][2 - pnt] > 0 && l_match[2 - j][2 - pnt] == 0) ||
                                     l_match[j - 1][2 - pnt] == 7) {
-                                    fromprog[IDX2(pntloc[l_pedx[pnt - 1]], seg, totprog) ] = l_found[2 - j];
+                                    fromprog[IDX2((independent ? parent_slots[2 * size_t(i) + ((sexv[i - 1] == 'M' && seg >= Xseg) ? 1 : pnt - 1)] : pntloc[l_pedx[pnt - 1]]), seg, totprog) ] = l_found[2 - j];
                                     if (keephap[KHIDX(1, l_pedx[pnt - 1], seg, maxped)] == 0 &&
                                         keephap[KHIDX(2, l_pedx[pnt - 1], seg, maxped)] != l_found[2 - j]) {
                                         size_t base = PMIDX(i, seg, maxped) + (pnt - 1) * 2;
@@ -2080,7 +2168,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             }
                             // Impute dam from son's X
                             if (sexv[i - 1] == 'M' && seg >= Xseg) {
-                                fromprog[IDX2(pntloc[l_pedx[1]], seg, totprog)] = l_found[0];
+                                fromprog[IDX2((independent ? parent_slots[2 * size_t(i) + 1] : pntloc[l_pedx[1]]), seg, totprog)] = l_found[0];
                                 if (keephap[KHIDX(1, l_pedx[1], seg, maxped)] == 0) {
                                     keephap[KHIDX(1, l_pedx[1], seg, maxped)] = l_found[0];
                                     size_t base = PMIDX(i, seg, maxped);
@@ -2107,28 +2195,9 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             }
                         }
                     }
-                } // end parallel seg loop
-
-                // The worksharing barrier completes all segment writes. The
-                // single-stage barrier publishes orientation/cursor updates
-                // and keeps crossover records in animal then segment order.
-                #pragma omp single
-                {
-                // Cross.overs output
-                if (iter == iters && step == steps) {
-                    for (seg = 1; seg <= maxseg; seg++) {
-                        for (k = 0; k < num_cross[seg - 1]; k++) {
-                            fprintf(fp27, "%s\n", &cross_buf[k * 80 + ((size_t)seg - 1) * 80 * 10]);
-                        }
-                    }
-                }
-
-                // Resolve ambiguous parental assignments across adjacent segments.
-                seg = 1;
-                for (chrome = chrome1; chrome <= chromes; chrome++) {
-                    segs = 1 + (locN[chrome - 1] - loc1[chrome - 1]) / maxlen;
-                    segfirst = 0;
-                    seglast = 0;
+                };
+                auto orient_chromosome = [&](int seg, int segs) __attribute__((always_inline)) {
+                    int segfirst = 0, seglast = 0, hapswap = 0;
                     for (j = seg; j <= seg + segs - 1; j++) {
                         size_t base = PMIDX(i, j, maxped);
                         if (patmat[base] == '?' && patmat[base + 1] == '?') {
@@ -2136,7 +2205,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             if (j == seglast + 1) seglast = j;
                         }
                     }
-                    if (segfirst == 0) { seg += segs; continue; }
+                    if (segfirst == 0) return;
                     // Neighbor segment consistency check
                     char l_newpatmat[2][3] = {"??", "??"};
                     for (pnt = 1; pnt <= 2; pnt++) {
@@ -2203,16 +2272,84 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             }
                         }
                     }
-                    seg += segs;
-                }
+                };
+                if (chromosome_pass) {
+                    // One scheduling operation per chromosome, not per animal.
+                    #pragma omp for schedule(dynamic, 1)
+                    for (int chromosome = chrome1; chromosome <= chromes; ++chromosome) {
+                        const int first = startseg[chromosome - 1];
+                        const int last = stopseg[chromosome - 1];
+                        for (i = 1; i <= maxped; ++i) {
+                            for (int segment = first; segment <= last; ++segment)
+                                process_segment(segment, true);
+                            orient_chromosome(first, last - first + 1);
+                        }
+                    }
+                } else {
+#if FINDHAP_PEDIGREE_COORDINATION >= 2
+                    // The same contiguous partition on every animal; no scheduling
+                    // call in the inner pedigree loop. Empty partitions still barrier.
+                    const int tid = omp_get_thread_num(), team = omp_get_num_threads();
+                    const int width = maxseg / team, extra = maxseg % team;
+                    const int first_segment = 1 + tid * width + std::min(tid, extra);
+                    const int past_segment = first_segment + width + (tid < extra);
+#endif
+                    for (i = 1; i <= maxped; i++) {
+#if FINDHAP_PEDIGREE_COORDINATION >= 2
+                        for (int seg = first_segment; seg < past_segment; seg++) {
+#else
+                        #pragma omp for
+                        for (seg = 1; seg <= maxseg; seg++) {
+#endif
+                            process_segment(seg, false);
+                        } // end parallel seg loop
+#if FINDHAP_PEDIGREE_COORDINATION >= 2
+                        #pragma omp barrier
+#endif
 
-                // Update parent locations
-                for (pnt = 1; pnt <= 2; pnt++) {
-                    if (ped[IDX2(pnt, i, 2)] > 0) pntloc[ped[IDX2(pnt, i, 2)]]++;
-                }
-                } // end single animal finalisation
-            } // end i (all animals in ped)
+                        // The worksharing barrier completes all segment writes. The
+                        // single-stage barrier publishes orientation/cursor updates
+                        // and keeps crossover records in animal then segment order.
+#if FINDHAP_PEDIGREE_COORDINATION >= 1
+                        #pragma omp master
+#else
+                        #pragma omp single
+#endif
+                        {
+                        // Cross.overs output
+                        if (iter == iters && step == steps) {
+                            for (seg = 1; seg <= maxseg; seg++) {
+                                for (k = 0; k < num_cross[seg - 1]; k++) {
+                                    fprintf(fp27, "%s\n", &cross_buf[k * 80 + ((size_t)seg - 1) * 80 * 10]);
+                                }
+                            }
+                        }
+
+                        // Resolve ambiguous parental assignments across adjacent segments.
+                        seg = 1;
+                        for (chrome = chrome1; chrome <= chromes; chrome++) {
+                            segs = 1 + (locN[chrome - 1] - loc1[chrome - 1]) / maxlen;
+                            orient_chromosome(seg, segs);
+                            seg += segs;
+                        }
+
+                        // Update parent locations
+                        for (pnt = 1; pnt <= 2; pnt++) {
+                            if (ped[IDX2(pnt, i, 2)] > 0) pntloc[ped[IDX2(pnt, i, 2)]]++;
+                        }
+                        } // end single animal finalisation
+#if FINDHAP_PEDIGREE_COORDINATION >= 1
+                        // master has no implicit barrier. Publish all orientation and
+                        // parent-cursor writes before processing the next animal.
+                        #pragma omp barrier
+#endif
+                    } // end i (all animals in ped)
+                } // end animal-major fallback
             } // end persistent pedigree team
+            // The legacy progeny stage observes this shared loop endpoint.
+            if (chromosome_pass) seg = maxseg + 1;
+            FINDHAP_END(pedigree_main_trace);
+            FINDHAP_PHASE(pedigree_progeny_trace, "pedigree_progeny", step, iter);
 
             // Process progeny by parent
             nhigh = 0;

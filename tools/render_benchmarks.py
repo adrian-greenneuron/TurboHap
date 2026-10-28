@@ -14,7 +14,7 @@ from matplotlib.ticker import FixedLocator, FuncFormatter, LogLocator, NullLocat
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = 'turbohap_benchmarks_221026'
+BASE = 'turbohap_benchmarks_281026'
 PROGRAMS = ('Fortran baseline', 'TurboHap', 'TurboHap LM')
 
 
@@ -59,15 +59,17 @@ def main():
     for d in datasets:
         f, t, lm = [summaries[d, p][1] for p in PROGRAMS]
         memory_table.append(f'| {d} | {f:.3f} GiB | {t:.3f} GiB | {100*(t/f-1):+.1f}% | **{lm:.3f} GiB** | **{100*(lm/f-1):+.1f}%** |')
-    tables = ['### Runtime', '', 'Speedup is relative to the original Fortran baseline.', '', *time_table, '',
+    tables = ['### Runtime', '', 'Speedup is relative to the retained Fortran baseline measured on 21–22 October 2026.', '', *time_table, '',
               '### Peak memory', '', 'Negative percentages mean less memory than Fortran.', '', *memory_table]
     readme = ROOT / 'README.md'
     before, remainder = readme.read_text().split('<!-- BENCHMARK_TABLES_START -->', 1)
     _, after = remainder.split('<!-- BENCHMARK_TABLES_END -->', 1)
     readme.write_text(before + '<!-- BENCHMARK_TABLES_START -->\n\n' + '\n'.join(tables)
                       + '\n\n<!-- BENCHMARK_TABLES_END -->' + after)
-    lines = ['# TurboHap benchmarks', '', '22 October 2026. Seven synthetic datasets; two measurements per program and dataset.', '',
-             'Values are medians of two runs for each program.', '', *tables]
+    lines = ['# TurboHap v1.1.0 benchmarks', '',
+             '28 October 2026. Seven synthetic datasets; two measurements per program and dataset.', '',
+             'TurboHap and TurboHap LM were measured on 28 October. The original Fortran observations are retained unchanged from 21–22 October. Ratios against Fortran use that historical baseline; they are not fresh matched Fortran comparisons.', '',
+             'Values are medians of two runs for each program. Runtime and RSS medians are calculated independently. Bold marks the lowest recorded runtime or RSS and its corresponding ratio, not statistical significance.', '', *tables]
     lines += ['', f'![Runtime and peak memory](assets/{BASE}.png)', '',
               f'[Download runtime and memory figure (SVG)](assets/{BASE}.svg)', '',
               f'![Speedup over Fortran](assets/{BASE}_speedup.png)', '',
@@ -78,15 +80,18 @@ def main():
               '- Hardware: NVIDIA DGX Spark; 20 logical CPU cores; Ubuntu 24.04 ARM64.',
               '- Ten OpenMP threads for every measured program. GCC/gfortran 13.3.0.',
               '- Original Fortran flags: `-O3 -fopenmp -fno-underscoring`.',
-              '- C++ release flags: `-O3 -march=native -funroll-loops -flto -std=gnu++17 -fopenmp`; GNU linking uses `-flto-partition=1to1`.',
+              '- C++ release flags: `-O3 -march=native -funroll-loops -flto -ffp-contract=off -std=gnu++17 -fopenmp`; GNU linking uses `-flto-partition=1to1`. No fast-math or profile-guided optimisation.',
               '- The seven datasets were generated with genosimV4; dimensions are genotyped animals × map loci. Each pedigree also contains four ungenotyped founders. Chip membership and pedigree structure affect work; see the [generation recipe and input checksums](turbohap_benchmark_datasets_221026.md).',
               '- Wall time covers the complete executable, including reading inputs, computation, writing results and temporary-file I/O. Output validation is outside the timer.',
               '- Peak memory is process peak resident set size from GNU `time`, converted from KiB to GiB. It is not total system memory, filesystem cache or disk usage.',
-              '- Each program was measured twice on 21–22 October 2026 using matching datasets, options and ten threads. Execution order per dataset was Fortran, TurboHap, LM, LM, TurboHap, Fortran. Tables show medians; the two C++ modes use one combined executable.',
-              '- Measurements use the release C++ source identified by file hashes in the metadata. The seven datasets passed marker-location, genotype/phase and parental-sex validation before timing.',
-              '- There were no warmup runs or forced cache eviction. The server also ran other work; competing load was not systematically measured or controlled. Two repeats do not establish narrow confidence intervals or universal speedup.',
+              '- The two v1.1.0 candidate runs per mode/dataset came from a previous-control/candidate/candidate/previous-control comparison. All 28 candidate observations are included. The earlier control observations are not substituted for the retained Fortran baseline.',
+              '- C++ threads were restricted to ten Cortex-X925 cores (logical CPU IDs 5–9 and 15–19). The historical Fortran runs had access to all 20 logical cores with ten threads. The environment sets `LC_ALL=C`, `OMP_NUM_THREADS=10` and `OMP_DYNAMIC=FALSE`.',
+              '- C++ elapsed times use GNU time (%e), excluding monitoring-wrapper overhead. Historical Fortran timings retain their original wall-clock measurement. These are different sessions, with different affinity and recorded timing precision.',
+              '- The C++ source files are byte-identical to the qualified engine; release packaging changes only the CMake project version. Source/build hashes and measured executable identities are included in the JSON metadata. The seven datasets passed marker-location, genotype/phase and parental-sex validation before timing.',
+              '- There were no warmup runs or forced cache eviction. The host was made available for the C++ qualification; the older Fortran baseline was measured on a shared server. Two technical repeats do not establish confidence intervals, statistical equivalence or universal speedup.',
               '- Every C++ output passes its saved reference check. All result bytes match; Fortran comparisons allow only complete crossover-record ordering to differ. C++ mode comparisons are strict, including crossover order.', '',
-              f'[All observations (CSV)]({BASE}.csv) · [Metadata and observations (JSON)]({BASE}.json) · [Compatibility](COMPATIBILITY.md)', '',
+              f'[All observations (CSV)]({BASE}.csv) · [Metadata and observations (JSON)]({BASE}.json) · [Raw output checks](turbohap_validation_281026.json) · [Compatibility](COMPATIBILITY.md)', '',
+              '[Historical v1.0.0 benchmarks](turbohap_benchmarks_221026.md). The manuscript and supplementary files continue to describe v1.0.0; they have not been revised for this software release.', '',
               '## Regenerate the tables and figures', '',
               'With Python 3, NumPy and Matplotlib installed, run `python3 tools/render_benchmarks.py` from the source directory. This reads the included aggregate JSON and does not access input genotypes or run either program.', '']
     (ROOT / 'docs' / f'{BASE}.md').write_text('\n'.join(lines))
@@ -102,7 +107,7 @@ def main():
                             else summaries[d, PROGRAMS[0]][0]/summaries[d, p][0]
                             for p in PROGRAMS[1:]] for d in datasets])
         fig, ax = plt.subplots(figsize=(7.5, 6))
-        kwargs = {'cmap': 'RdYlGn_r', 'norm': TwoSlopeNorm(vmin=-50, vcenter=0, vmax=5)} if memory else {'cmap':'YlOrRd', 'vmin':0, 'vmax':100}
+        kwargs = {'cmap': 'RdYlGn_r', 'norm': TwoSlopeNorm(vmin=-50, vcenter=0, vmax=5)} if memory else {'cmap':'YlOrRd', 'vmin':0, 'vmax':150}
         im = ax.imshow(values, aspect='auto', **kwargs)
         ax.set_xticks(range(2), PROGRAMS[1:]); ax.set_yticks(range(len(datasets)), short)
         ax.set_ylabel('Animals × loci')
@@ -161,7 +166,7 @@ def plot_runtime_memory(datasets, labels, summaries, observations):
                 return f'{value / 60:g} min'
             return f'{value / 3600:g} hr'
 
-        ax.xaxis.set_major_locator(FixedLocator([1, 2, 5, 10, 20, 60, 120, 300, 600, 1200, 3600, 7200, 18000, 36000]))
+        ax.xaxis.set_major_locator(FixedLocator([.5, 1, 2, 5, 10, 20, 60, 120, 300, 600, 1200, 3600, 7200, 18000, 36000]))
         ax.xaxis.set_major_formatter(FuncFormatter(time_tick))
         ax.xaxis.set_minor_locator(NullLocator())
         ax.yaxis.set_major_locator(LogLocator(base=10, subs=(1, 2, 5)))
@@ -174,10 +179,10 @@ def plot_runtime_memory(datasets, labels, summaries, observations):
                                   markersize=marker_sizes[p], markeredgecolor='white',
                                   markeredgewidth=.8, label=p) for p in PROGRAMS],
                   loc='upper left', frameon=False, ncols=3)
-        fig.suptitle('TurboHap: runtime and memory', fontsize=17, weight='bold')
+        fig.suptitle('TurboHap v1.1.0: runtime and memory', fontsize=17, weight='bold')
         ax.set_title('Seven simulated datasets · 10 CPU threads · two runs per program', fontsize=11)
         fig.supxlabel('Further left is faster. Lower means less memory. Labels: animals × loci.\n'
-                      'Logarithmic axes · points show medians; bars show the range of the two runs', fontsize=10)
+                      'Log axes · medians and observed ranges · Fortran: 21–22 Oct; C++: 28 Oct 2026', fontsize=10)
         save(fig, BASE)
 
 
