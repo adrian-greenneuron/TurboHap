@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 """Render release tables and figures from the included aggregate measurements."""
+from release_summary import render_summary
+
 import csv
 import json
 from pathlib import Path
@@ -45,6 +47,7 @@ def main():
                 median(r['wall_seconds'] for r in runs),
                 median(r['peak_rss_kib'] for r in runs) / 1048576)
     datasets.sort(key=lambda d: summaries[d, PROGRAMS[0]][0])
+    render_summary(data, summaries, datasets, ROOT)
 
     with (ROOT / 'docs' / f'{BASE}.csv').open('w', newline='') as handle:
         writer = csv.DictWriter(handle, fieldnames=list(dict.fromkeys(k for row in observations for k in row)), lineterminator='\n')
@@ -95,7 +98,8 @@ def main():
               f'[All observations (CSV)]({BASE}.csv) · [Metadata and observations (JSON)]({BASE}.json) · [Raw output checks](turbohap_validation_301026.json) · [Compatibility](COMPATIBILITY.md)', '',
               '[Historical v1.1.0 benchmarks](turbohap_benchmarks_281026.md) · [Historical v1.0.0 benchmarks](turbohap_benchmarks_221026.md). The manuscript and supplementary files continue to describe v1.0.0; they have not been revised for this software release.', '',
               '## Regenerate the tables and figures', '',
-              'With Python 3, NumPy and Matplotlib installed, run `python3 tools/render_benchmarks.py` from the source directory. This reads the included aggregate JSON and does not access input genotypes or run either program.', '']
+              'With Python 3 and the versions in `tools/requirements-reporting.txt` installed, run `python3 tools/render_benchmarks.py` from the source directory. This reads the included aggregate JSON and does not access input genotypes or run either program.', '',
+              'The same renderer updates the README headline, performance summary and release notes. See [release preparation](RELEASING.md) for complete-package checks and checksums.', '']
     (ROOT / 'docs' / f'{BASE}.md').write_text('\n'.join(lines))
 
     plt.rcParams.update({'font.family': 'DejaVu Sans', 'font.size': 11,
