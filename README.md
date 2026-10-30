@@ -5,7 +5,7 @@
 </p>
 
 **The FindHap algorithm, reimplemented in C++. Byte-for-byte compatible output.
-Up to 156× faster in DGX Spark benchmarks.**
+Up to 150.8× faster in DGX Spark benchmarks.**
 
 TurboHap is a drop-in replacement for FindHap v3 for haplotype phasing and
 genotype imputation. Keep your existing input files and options, and replace
