@@ -1,7 +1,7 @@
 # Using TurboHap
 
 ```text
-findhap [threads] [--low-memory]
+findhap [threads] [--low-memory] [--cpu-policy=auto|inherit|performance]
 ```
 
 The default is TurboHap. Add `--low-memory` to select TurboHap LM. Both modes
@@ -11,7 +11,40 @@ The flag may precede or follow the thread count. `findhap --help` prints usage.
 Use a positive one- or two-digit thread count, capped by the OpenMP maximum.
 Without it, the program uses the OpenMP default, which can be set with
 `OMP_NUM_THREADS`. The original two-character interpretation is retained:
-`100` means 10, and `010` means 1. Extra arguments after the count are ignored.
+`100` means 10, and `010` means 1. Extra unrecognised arguments after the count
+are ignored; recognised launcher flags are handled wherever they appear.
+
+## CPU placement
+
+Normal commands use `--cpu-policy=auto`; no extra flag is needed. On a native
+Linux DGX Spark build, this discovers the complete faster core group and uses it
+when the effective thread count fits. Workers can move within that group;
+TurboHap does not add thread binding on Spark. A larger request retains the
+available allocation rather than silently reducing the thread count.
+
+Existing CPU restrictions and explicit `OMP_PLACES`, `OMP_PROC_BIND` or
+`GOMP_CPU_AFFINITY` settings take precedence in automatic mode, including
+`OMP_PROC_BIND=FALSE`. Busy cores remain eligible: this policy does not reserve
+cores or manage other jobs.
+
+Native Milan, Cascade Lake and qualified Turin builds default to
+`OMP_PROC_BIND=close` and `OMP_PLACES=cores` when no explicit placement setting
+is supplied. The launcher re-executes before either engine starts so OpenMP
+initialises with those settings. The thread count and allowed CPU allocation
+are preserved. Other CPU profiles retain their existing placement policy.
+
+- `--cpu-policy=inherit` keeps the caller's placement without automatic selection
+  or binding.
+- `--cpu-policy=performance` explicitly requires a sufficient, reliably ranked
+  performance-core group within the allowed allocation. It errors if that cannot
+  be established or an explicit binding setting conflicts.
+- `--cpu-info` prints the discovered topology and proposed placement, then exits
+  without reading data or writing results. It is a dry-run, not a record of every
+  worker's execution.
+
+Both modes use the same policy. Rebuild on the intended CPU so the qualified
+native paths are selected. Automatic performance-core selection on Apple Silicon
+has not been implemented or validated.
 
 ## Input files
 
@@ -107,7 +140,7 @@ TurboHap prioritises speed with resident genotype storage and indexed haplotype
 search. TurboHap LM reduces resident storage using chromosome processing,
 packed data, bounded working buffers and temporary disk files. It retains the
 same output decisions and bytes, at the cost of more I/O and some additional
-computation. See the [measured trade-offs](turbohap_benchmarks_281026.md).
+computation. See the [measured trade-offs](turbohap_benchmarks_301026.md).
 
 Peak memory depends on pedigree size, marker counts, chromosome lengths,
 haplotype diversity, options and threads. TurboHap LM also uses temporary disk

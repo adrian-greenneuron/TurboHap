@@ -1,0 +1,1003 @@
+{
+  "source_commit": "fee1c3940042b89c4b6113019fc1e82ec9115348",
+  "control_binary_sha256": "a593384fe1b769c2a3aee9c883b015e1dee2c0ff3a33cd7a52db08bb3623a662",
+  "provenance": "Frozen accepted control; four OpenMP threads; bundled public example with explicit output, prior, mixed/partial1003-animal and existing-file fixtures. Both modes independently exact; no private data.",
+  "outputs": {
+    "outputs_000/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fort.26": {
+        "bytes": 2774,
+        "sha256": "4390855db4f15f44106841856abcd625451b94e170c8f72dd9dd1a9a21076df3"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      }
+    },
+    "outputs_000/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fort.26": {
+        "bytes": 2774,
+        "sha256": "4390855db4f15f44106841856abcd625451b94e170c8f72dd9dd1a9a21076df3"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      }
+    },
+    "outputs_001/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      }
+    },
+    "outputs_001/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      }
+    },
+    "outputs_010/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fort.26": {
+        "bytes": 2774,
+        "sha256": "4390855db4f15f44106841856abcd625451b94e170c8f72dd9dd1a9a21076df3"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "outputs_010/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fort.26": {
+        "bytes": 2774,
+        "sha256": "4390855db4f15f44106841856abcd625451b94e170c8f72dd9dd1a9a21076df3"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "outputs_011/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "outputs_011/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "outputs_100/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fort.26": {
+        "bytes": 2774,
+        "sha256": "4390855db4f15f44106841856abcd625451b94e170c8f72dd9dd1a9a21076df3"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      }
+    },
+    "outputs_100/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fort.26": {
+        "bytes": 2774,
+        "sha256": "4390855db4f15f44106841856abcd625451b94e170c8f72dd9dd1a9a21076df3"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      }
+    },
+    "outputs_101/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      }
+    },
+    "outputs_101/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      }
+    },
+    "outputs_110/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fort.26": {
+        "bytes": 2774,
+        "sha256": "4390855db4f15f44106841856abcd625451b94e170c8f72dd9dd1a9a21076df3"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "outputs_110/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "fort.26": {
+        "bytes": 2774,
+        "sha256": "4390855db4f15f44106841856abcd625451b94e170c8f72dd9dd1a9a21076df3"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "outputs_111/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "outputs_111/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "partial_mixed/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "2134c0448020d84001762d40d8b9871b88aff269fb66a6ca125435645643648c"
+      },
+      "haplotypes.txt": {
+        "bytes": 6661248,
+        "sha256": "3dba9afa69280bc98788c5476bb1c258849e19fb339a37b54767a981806fe86e"
+      },
+      "cross.overs": {
+        "bytes": 584505,
+        "sha256": "e1aeab726462b77e84ed88ee04e880fdbef37bdd1f494f3c42670207abd24601"
+      },
+      "do_not_distrib": {
+        "bytes": 18984,
+        "sha256": "6f839b35c7e41dce0c16918a5e9e04c7f716e07edfedac513f6e590b80ae2ed0"
+      },
+      "hap.found": {
+        "bytes": 1511888,
+        "sha256": "a16e927141a07fd8ae4b7ad3bf1f5f23073ab04fd9f314f286b06838f2195118"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "348bb501311d809a0ccf89b5ad4f0ff33c129c9b5689883db1d11492ae7c0d87"
+      },
+      "hap.list": {
+        "bytes": 4487566,
+        "sha256": "0181203a361f93a8f63ef5a4ad8ce1cdd78c28723fe1bcbb4311b2a2af024d79"
+      },
+      "hap.inherit": {
+        "bytes": 1063074,
+        "sha256": "ad2b896340f2221c411c6231150689882de262b63d5de00e03033bdffa2d1572"
+      },
+      "hap.filled": {
+        "bytes": 37298,
+        "sha256": "a0ed1571b3033f8e3052158601ce8ed57308bc873f596ee76519bb2144887b4f"
+      },
+      "genotypes.filled": {
+        "bytes": 3341248,
+        "sha256": "b5acb87c8a90023d2747dc1fa9e1fcbeecac3dbc79717c25d7a7a7d8e82fdea4"
+      }
+    },
+    "partial_mixed/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "2134c0448020d84001762d40d8b9871b88aff269fb66a6ca125435645643648c"
+      },
+      "haplotypes.txt": {
+        "bytes": 6661248,
+        "sha256": "3dba9afa69280bc98788c5476bb1c258849e19fb339a37b54767a981806fe86e"
+      },
+      "cross.overs": {
+        "bytes": 584505,
+        "sha256": "e1aeab726462b77e84ed88ee04e880fdbef37bdd1f494f3c42670207abd24601"
+      },
+      "do_not_distrib": {
+        "bytes": 18984,
+        "sha256": "6f839b35c7e41dce0c16918a5e9e04c7f716e07edfedac513f6e590b80ae2ed0"
+      },
+      "hap.found": {
+        "bytes": 1511888,
+        "sha256": "a16e927141a07fd8ae4b7ad3bf1f5f23073ab04fd9f314f286b06838f2195118"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "348bb501311d809a0ccf89b5ad4f0ff33c129c9b5689883db1d11492ae7c0d87"
+      },
+      "hap.list": {
+        "bytes": 4487566,
+        "sha256": "0181203a361f93a8f63ef5a4ad8ce1cdd78c28723fe1bcbb4311b2a2af024d79"
+      },
+      "hap.inherit": {
+        "bytes": 1063074,
+        "sha256": "ad2b896340f2221c411c6231150689882de262b63d5de00e03033bdffa2d1572"
+      },
+      "hap.filled": {
+        "bytes": 37298,
+        "sha256": "a0ed1571b3033f8e3052158601ce8ed57308bc873f596ee76519bb2144887b4f"
+      },
+      "genotypes.filled": {
+        "bytes": 3341248,
+        "sha256": "b5acb87c8a90023d2747dc1fa9e1fcbeecac3dbc79717c25d7a7a7d8e82fdea4"
+      }
+    },
+    "no_usable/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "80e1f16f2a5e04b01ae7f9013771a39df60b4d9e44d90f1808d7e4cd6f69a83a"
+      },
+      "haplotypes.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cross.overs": {
+        "bytes": 64,
+        "sha256": "b8e7093849f0a216965f65ece6c904f2e1a6b6e905e507756b225c26947eb5db"
+      },
+      "do_not_distrib": {
+        "bytes": 17976,
+        "sha256": "406b0bc24f31e7fa6521c048a74461b972ac5ddd43a60b53697ff5bd6561e7a7"
+      },
+      "hap.found": {
+        "bytes": 385945,
+        "sha256": "7f85c08146ecb60c704bad97f14a1fd55ecc39243e4271812a5cdec013a8f044"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "42c008d9432a769fa95cf1b6018e90a98fac6d02d63f92b573c0db0184e66c1d"
+      },
+      "hap.list": {
+        "bytes": 30745,
+        "sha256": "ea516553db4539297df1e6d03001b4a7bc7728c7ba644a6878394b10dddaaec6"
+      },
+      "hap.inherit": {
+        "bytes": 674,
+        "sha256": "3382ed5e0914f39f50cb19280f1c18b7a8c5b1acbd3443812941547a91096ea1"
+      },
+      "hap.filled": {
+        "bytes": 114,
+        "sha256": "452a210a04bd2f7882177c634ae83a941609f1ec8c162cada7b83ed836a6e6dc"
+      },
+      "genotypes.filled": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "no_usable/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "80e1f16f2a5e04b01ae7f9013771a39df60b4d9e44d90f1808d7e4cd6f69a83a"
+      },
+      "haplotypes.txt": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cross.overs": {
+        "bytes": 64,
+        "sha256": "b8e7093849f0a216965f65ece6c904f2e1a6b6e905e507756b225c26947eb5db"
+      },
+      "do_not_distrib": {
+        "bytes": 17976,
+        "sha256": "406b0bc24f31e7fa6521c048a74461b972ac5ddd43a60b53697ff5bd6561e7a7"
+      },
+      "hap.found": {
+        "bytes": 385945,
+        "sha256": "7f85c08146ecb60c704bad97f14a1fd55ecc39243e4271812a5cdec013a8f044"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "42c008d9432a769fa95cf1b6018e90a98fac6d02d63f92b573c0db0184e66c1d"
+      },
+      "hap.list": {
+        "bytes": 30745,
+        "sha256": "ea516553db4539297df1e6d03001b4a7bc7728c7ba644a6878394b10dddaaec6"
+      },
+      "hap.inherit": {
+        "bytes": 674,
+        "sha256": "3382ed5e0914f39f50cb19280f1c18b7a8c5b1acbd3443812941547a91096ea1"
+      },
+      "hap.filled": {
+        "bytes": 114,
+        "sha256": "452a210a04bd2f7882177c634ae83a941609f1ec8c162cada7b83ed836a6e6dc"
+      },
+      "genotypes.filled": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "existing/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 160000,
+        "sha256": "4365aeb954afdb4440cab9e6f08f96b03e53fa1937ed8b2980f9876fa975110a"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "existing/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "5bdf8797cd1d42b91e55c69372f57c763ad84283ea83dbf698c48e0214624887"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "b4c0f3e3c1ac17b26c593cba7bb6e494e5c8ebf07b039e4b6a2f7ace60e42aa3"
+      },
+      "cross.overs": {
+        "bytes": 572671,
+        "sha256": "0b7dda31bd29d9a5dcfa02917d40a3ab0fe3b04e7fc2fe9db98964a375652ffe"
+      },
+      "do_not_distrib": {
+        "bytes": 160000,
+        "sha256": "4365aeb954afdb4440cab9e6f08f96b03e53fa1937ed8b2980f9876fa975110a"
+      },
+      "hap.found": {
+        "bytes": 524699,
+        "sha256": "e5b32e27f33a245349a576d362d0875a96b47386e81fafc51d76060fa3c27259"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4471910,
+        "sha256": "ce0beb4ba465b2fa6fb115336a4ce23c0c8940954e40efe344a35c1f6ee62a89"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "78a3f496e09d48b2b6e60db68536dc9b73386362fba4d9f0e68ed1a1a6b21e57"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "29dee212b360f2de092977bb91fb5e7412a181a2e076db3b6bbf53e5fda59df2"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ae4c62fad72c7d62867dea33b9fd4b7e3d9929a68896c290b331df9d5d18efef"
+      }
+    },
+    "existing_empty/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "80e1f16f2a5e04b01ae7f9013771a39df60b4d9e44d90f1808d7e4cd6f69a83a"
+      },
+      "haplotypes.txt": {
+        "bytes": 160000,
+        "sha256": "4365aeb954afdb4440cab9e6f08f96b03e53fa1937ed8b2980f9876fa975110a"
+      },
+      "cross.overs": {
+        "bytes": 64,
+        "sha256": "b8e7093849f0a216965f65ece6c904f2e1a6b6e905e507756b225c26947eb5db"
+      },
+      "do_not_distrib": {
+        "bytes": 17976,
+        "sha256": "406b0bc24f31e7fa6521c048a74461b972ac5ddd43a60b53697ff5bd6561e7a7"
+      },
+      "hap.found": {
+        "bytes": 385945,
+        "sha256": "7f85c08146ecb60c704bad97f14a1fd55ecc39243e4271812a5cdec013a8f044"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "42c008d9432a769fa95cf1b6018e90a98fac6d02d63f92b573c0db0184e66c1d"
+      },
+      "hap.list": {
+        "bytes": 30745,
+        "sha256": "ea516553db4539297df1e6d03001b4a7bc7728c7ba644a6878394b10dddaaec6"
+      },
+      "hap.inherit": {
+        "bytes": 674,
+        "sha256": "3382ed5e0914f39f50cb19280f1c18b7a8c5b1acbd3443812941547a91096ea1"
+      },
+      "hap.filled": {
+        "bytes": 114,
+        "sha256": "452a210a04bd2f7882177c634ae83a941609f1ec8c162cada7b83ed836a6e6dc"
+      },
+      "genotypes.filled": {
+        "bytes": 160000,
+        "sha256": "4365aeb954afdb4440cab9e6f08f96b03e53fa1937ed8b2980f9876fa975110a"
+      }
+    },
+    "existing_empty/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "80e1f16f2a5e04b01ae7f9013771a39df60b4d9e44d90f1808d7e4cd6f69a83a"
+      },
+      "haplotypes.txt": {
+        "bytes": 160000,
+        "sha256": "4365aeb954afdb4440cab9e6f08f96b03e53fa1937ed8b2980f9876fa975110a"
+      },
+      "cross.overs": {
+        "bytes": 64,
+        "sha256": "b8e7093849f0a216965f65ece6c904f2e1a6b6e905e507756b225c26947eb5db"
+      },
+      "do_not_distrib": {
+        "bytes": 17976,
+        "sha256": "406b0bc24f31e7fa6521c048a74461b972ac5ddd43a60b53697ff5bd6561e7a7"
+      },
+      "hap.found": {
+        "bytes": 385945,
+        "sha256": "7f85c08146ecb60c704bad97f14a1fd55ecc39243e4271812a5cdec013a8f044"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "42c008d9432a769fa95cf1b6018e90a98fac6d02d63f92b573c0db0184e66c1d"
+      },
+      "hap.list": {
+        "bytes": 30745,
+        "sha256": "ea516553db4539297df1e6d03001b4a7bc7728c7ba644a6878394b10dddaaec6"
+      },
+      "hap.inherit": {
+        "bytes": 674,
+        "sha256": "3382ed5e0914f39f50cb19280f1c18b7a8c5b1acbd3443812941547a91096ea1"
+      },
+      "hap.filled": {
+        "bytes": 114,
+        "sha256": "452a210a04bd2f7882177c634ae83a941609f1ec8c162cada7b83ed836a6e6dc"
+      },
+      "genotypes.filled": {
+        "bytes": 160000,
+        "sha256": "4365aeb954afdb4440cab9e6f08f96b03e53fa1937ed8b2980f9876fa975110a"
+      }
+    },
+    "priors/standard": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "f1555e838e3938f0452577fbf5650738eab9cbe37a182136d49a3ba24f44d60f"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "df1a4e8d578493edd99115ad347c476c1986c2201fecd21d28266eb8d212956b"
+      },
+      "cross.overs": {
+        "bytes": 572915,
+        "sha256": "8bf26cf25092e4721362e181300f0427ebf9c800978aadcf6f072bea99b9bf04"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 475549,
+        "sha256": "ffc5abe51e2c8f5873e0b7362be103278adc15e53ebc245c6ea55d91fe7f6f05"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4492369,
+        "sha256": "a722cdcd05f81e586c0c2e2c50b63711ba45195220d3dfad5a6cb487b0c79540"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "7fb702d8f2e3c9cc785b3ff13933428a3dd4945f7bc60415238f372b0a33deef"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "1318f1a533f83ad06d1b91f8798c9c42e9d7b59864adbbfbc68739de668e1117"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ec5622b5f884b05592feb5c4bce4d285759e4bacb71c232bc86f96e3e41d08a7"
+      }
+    },
+    "priors/lm": {
+      "allele.frequency": {
+        "bytes": 365141,
+        "sha256": "f1555e838e3938f0452577fbf5650738eab9cbe37a182136d49a3ba24f44d60f"
+      },
+      "haplotypes.txt": {
+        "bytes": 3260400,
+        "sha256": "df1a4e8d578493edd99115ad347c476c1986c2201fecd21d28266eb8d212956b"
+      },
+      "cross.overs": {
+        "bytes": 572915,
+        "sha256": "8bf26cf25092e4721362e181300f0427ebf9c800978aadcf6f072bea99b9bf04"
+      },
+      "do_not_distrib": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "hap.found": {
+        "bytes": 475549,
+        "sha256": "ffc5abe51e2c8f5873e0b7362be103278adc15e53ebc245c6ea55d91fe7f6f05"
+      },
+      "hap.Xseg": {
+        "bytes": 100,
+        "sha256": "e2d0a2203c16e4618d997fb6b2a277eff7bf1c0fd7b98a6cca23843ed9914677"
+      },
+      "hap.list": {
+        "bytes": 4492369,
+        "sha256": "a722cdcd05f81e586c0c2e2c50b63711ba45195220d3dfad5a6cb487b0c79540"
+      },
+      "hap.inherit": {
+        "bytes": 520674,
+        "sha256": "7fb702d8f2e3c9cc785b3ff13933428a3dd4945f7bc60415238f372b0a33deef"
+      },
+      "hap.filled": {
+        "bytes": 18314,
+        "sha256": "1318f1a533f83ad06d1b91f8798c9c42e9d7b59864adbbfbc68739de668e1117"
+      },
+      "genotypes.filled": {
+        "bytes": 1635400,
+        "sha256": "ec5622b5f884b05592feb5c4bce4d285759e4bacb71c232bc86f96e3e41d08a7"
+      }
+    }
+  }
+}

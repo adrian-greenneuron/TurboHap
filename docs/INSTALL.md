@@ -19,7 +19,7 @@ Use CMake 3.16 or newer and a C++17 compiler with OpenMP and its runtime library
 
 ## Get the source
 
-Download the [version 1.1.0 source ZIP](https://github.com/adrian-greenneuron/TurboHap/archive/refs/tags/v1.1.0.zip),
+Download the [version 1.2.0 source ZIP](https://github.com/adrian-greenneuron/TurboHap/archive/refs/tags/v1.2.0.zip),
 then extract it. Open a terminal in the extracted directory containing
 `CMakeLists.txt`; run the build commands below from that directory.
 

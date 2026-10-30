@@ -59,6 +59,16 @@ class OrderedCandidateLookup {
     }
 
 public:
+    static size_t storage_bound(int width, int count) {
+        if (count < 0 || count > (1 << 20)) return SIZE_MAX;
+        size_t capacity = 64;
+        while (capacity < size_t(count)) capacity *= 2;
+        const size_t words = capacity / 64;
+        // Two allele planes, active mask, two slot arrays, minima, reverse map.
+        return (2 * size_t(width) * words + words + 4 * capacity) * sizeof(uint64_t) +
+               (capacity + 1) * sizeof(int);
+    }
+
     explicit OrderedCandidateLookup(int width) : width_(width) {}
 
     template<class Entries>

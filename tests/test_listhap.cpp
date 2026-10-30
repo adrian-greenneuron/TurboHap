@@ -107,7 +107,7 @@ static bool compare_trace(int length, int mode) {
     return true;
 }
 
-#ifdef FINDHAP_HIGH_MEMORY
+#if FINDHAP_USE_ORDERED
 static bool compare_repeated_trace(int length, int mode) {
     int maxlen = length, maxhap = 4096, seg = 1, maxseg = 1, nhap = 1200, ref_nhap = nhap;
     float errate = 0.004f;
@@ -228,14 +228,14 @@ int main() {
     for (int length : {33, 100, 257})
         for (int mode : {0, 1})
             if (!compare_trace(length, mode)) return 1;
-#ifdef FINDHAP_HIGH_MEMORY
+#if FINDHAP_USE_ORDERED
     for (int length : {33, 100})
         for (int mode : {0, 1})
             if (!compare_repeated_trace(length, mode)) return 1;
     // Cross bitmap/tree boundaries with frequency ties, shuffled order, an
     // inactive slot and zero/error-tolerant searches. Compare every side effect,
     // including minima belonging to rejected candidates and library growth.
-    for (int count : {63, 64, 65, 127, 128, 129, 255, 1023, 1024, 1025, 2047}) {
+    for (int count : {63, 64, 65, 127, 128, 129, 255, 1023, 1024, 1025, 2047, 8191, 8192, 8193}) {
         for (int length : {33, 100, 257}) {
             for (int mode : {0, 1}) {
                 for (float errate : {0.0f, 0.004f, 0.05f}) {
@@ -269,7 +269,7 @@ int main() {
     std::cout << "PASS: C++/Fortran listhap state matches in " << cases
               << " cases with/without indexing, both modes and lengths through 524288; "
               << "600 sequential indexed queries with growth, mutation and rebuilds"
-#ifdef FINDHAP_HIGH_MEMORY
+#if FINDHAP_USE_ORDERED
               << "; 1600 repeated queries with allele mutation and order changes"
 #endif
               << '\n';

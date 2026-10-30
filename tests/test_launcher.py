@@ -32,6 +32,7 @@ int run(int argc, char* argv[]) { return check("low-memory", 22, argc, argv); }
 ''')
         cls.binary = cls.root / 'findhap'
         subprocess.run([os.environ.get('CXX', 'c++'), '-std=c++17', '-O2',
+                        '-fopenmp',
                         str(ROOT/'src/launcher.cpp'), str(stub), '-o', str(cls.binary)],
                        check=True, capture_output=True)
 
@@ -39,12 +40,28 @@ int run(int argc, char* argv[]) { return check("low-memory", 22, argc, argv); }
         result = subprocess.run([str(self.binary), *args], cwd=self.root, capture_output=True, text=True)
         self.assertEqual(result.returncode, 21 if mode == 'standard' else 22)
         self.assertEqual(result.stdout.splitlines(), [mode, *forwarded])
-        self.assertEqual(result.stderr, '')
+        self.assertIn('TurboHap CPU policy=', result.stderr)
 
     def test_default_and_legacy_arguments(self):
-        for args in ([], ['10'], ['010'], ['100'], ['8', 'R', 'ignored'], ['0'], ['bad']):
+        for args in ([], ['10'], ['010'], ['100'], ['8', 'R', 'ignored']):
             with self.subTest(args=args):
                 self.check(args, 'standard', args)
+
+    def test_invalid_threads_and_policy_fail_before_engine(self):
+        for args in (['0'], ['bad'], ['10', '--cpu-policy=fast'], ['--cpu-policy'],
+                     ['10', '--cpu-policy=auto', '--cpu-policy=inherit']):
+            result = subprocess.run([str(self.binary), *args], cwd=self.root, capture_output=True, text=True)
+            self.assertEqual(result.returncode, 2)
+            self.assertEqual(result.stdout, '')
+            self.assertIn('TurboHap:', result.stderr)
+
+    def test_policy_positions_and_dry_run(self):
+        for args in (['--cpu-policy=inherit', '10'], ['10', '--cpu-policy=inherit']):
+            self.check(args, 'standard', ['10'])
+        result = subprocess.run([str(self.binary), '10', '--cpu-info'], cwd=self.root, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0)
+        self.assertIn('"dry_run":true', result.stdout)
+        self.assertEqual(result.stderr, '')
 
     def test_flag_positions_and_repetition(self):
         for args, forwarded in (

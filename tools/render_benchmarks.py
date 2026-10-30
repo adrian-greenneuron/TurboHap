@@ -14,7 +14,7 @@ from matplotlib.ticker import FixedLocator, FuncFormatter, LogLocator, NullLocat
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = 'turbohap_benchmarks_281026'
+BASE = 'turbohap_benchmarks_301026'
 PROGRAMS = ('Fortran baseline', 'TurboHap', 'TurboHap LM')
 
 
@@ -66,9 +66,9 @@ def main():
     _, after = remainder.split('<!-- BENCHMARK_TABLES_END -->', 1)
     readme.write_text(before + '<!-- BENCHMARK_TABLES_START -->\n\n' + '\n'.join(tables)
                       + '\n\n<!-- BENCHMARK_TABLES_END -->' + after)
-    lines = ['# TurboHap v1.1.0 benchmarks', '',
-             '28 October 2026. Seven synthetic datasets; two measurements per program and dataset.', '',
-             'TurboHap and TurboHap LM were measured on 28 October. The original Fortran observations are retained unchanged from 21–22 October. Ratios against Fortran use that historical baseline; they are not fresh matched Fortran comparisons.', '',
+    lines = ['# TurboHap v1.2.0 benchmarks', '',
+             '30 October 2026. Seven synthetic datasets; two measurements per program and dataset.', '',
+             'TurboHap and TurboHap LM were measured on 30 October. The original Fortran observations are retained unchanged from 21–22 October. Ratios against Fortran use that historical baseline; they are not fresh matched Fortran comparisons.', '',
              'Values are medians of two runs for each program. Runtime and RSS medians are calculated independently. Bold marks the lowest recorded runtime or RSS and its corresponding ratio, not statistical significance.', '', *tables]
     lines += ['', f'![Runtime and peak memory](assets/{BASE}.png)', '',
               f'[Download runtime and memory figure (SVG)](assets/{BASE}.svg)', '',
@@ -84,14 +84,14 @@ def main():
               '- The seven datasets were generated with genosimV4; dimensions are genotyped animals × map loci. Each pedigree also contains four ungenotyped founders. Chip membership and pedigree structure affect work; see the [generation recipe and input checksums](turbohap_benchmark_datasets_221026.md).',
               '- Wall time covers the complete executable, including reading inputs, computation, writing results and temporary-file I/O. Output validation is outside the timer.',
               '- Peak memory is process peak resident set size from GNU `time`, converted from KiB to GiB. It is not total system memory, filesystem cache or disk usage.',
-              '- The two v1.1.0 candidate runs per mode/dataset came from a previous-control/candidate/candidate/previous-control comparison. All 28 candidate observations are included. The earlier control observations are not substituted for the retained Fortran baseline.',
-              '- C++ threads were restricted to ten Cortex-X925 cores (logical CPU IDs 5–9 and 15–19). The historical Fortran runs had access to all 20 logical cores with ten threads. The environment sets `LC_ALL=C`, `OMP_NUM_THREADS=10` and `OMP_DYNAMIC=FALSE`.',
+              '- Each dataset used standard-1, LM-1, LM-2, standard-2 order. All 28 new observations are included; Fortran was not rerun.',
+              '- Both C++ modes use the default automatic CPU policy: the full 20-core container allocation is available, and the launcher selects the ten Cortex-X925 cores (logical IDs 5–9 and 15–19). No taskset or additional worker binding is used. The historical Fortran runs had access to all 20 cores with ten threads. Both C++ modes use `LC_ALL=C`, `OMP_NUM_THREADS=10` and `OMP_DYNAMIC=FALSE`; explicit placement variables are unset.',
               '- C++ elapsed times use GNU time (%e), excluding monitoring-wrapper overhead. Historical Fortran timings retain their original wall-clock measurement. These are different sessions, with different affinity and recorded timing precision.',
-              '- The C++ source files are byte-identical to the qualified engine; release packaging changes only the CMake project version. Source/build hashes and measured executable identities are included in the JSON metadata. The seven datasets passed marker-location, genotype/phase and parental-sex validation before timing.',
-              '- There were no warmup runs or forced cache eviction. The host was made available for the C++ qualification; the older Fortran baseline was measured on a shared server. Two technical repeats do not establish confidence intervals, statistical equivalence or universal speedup.',
+              '- A clean release layout, with CMake project version 1.2.0, was frozen and built before measurement. All 19 packaged tests passed. Source and measured executable hashes are included in the JSON metadata. Every benchmark input matches its published SHA-256 and byte count, including the million-animal benchmark options.',
+              '- Inputs were explicitly warmed and residency checked before each timed C++ run. There were no inference warmup runs or forced cache eviction. Outputs were fresh; post-exit checked file/directory fsync and hashing occurred outside the timer. The C++ host was quiet, while the older Fortran baseline was measured on a shared server. Two technical repeats do not establish confidence intervals, statistical equivalence or universal speedup.',
               '- Every C++ output passes its saved reference check. All result bytes match; Fortran comparisons allow only complete crossover-record ordering to differ. C++ mode comparisons are strict, including crossover order.', '',
-              f'[All observations (CSV)]({BASE}.csv) · [Metadata and observations (JSON)]({BASE}.json) · [Raw output checks](turbohap_validation_281026.json) · [Compatibility](COMPATIBILITY.md)', '',
-              '[Historical v1.0.0 benchmarks](turbohap_benchmarks_221026.md). The manuscript and supplementary files continue to describe v1.0.0; they have not been revised for this software release.', '',
+              f'[All observations (CSV)]({BASE}.csv) · [Metadata and observations (JSON)]({BASE}.json) · [Raw output checks](turbohap_validation_301026.json) · [Compatibility](COMPATIBILITY.md)', '',
+              '[Historical v1.1.0 benchmarks](turbohap_benchmarks_281026.md) · [Historical v1.0.0 benchmarks](turbohap_benchmarks_221026.md). The manuscript and supplementary files continue to describe v1.0.0; they have not been revised for this software release.', '',
               '## Regenerate the tables and figures', '',
               'With Python 3, NumPy and Matplotlib installed, run `python3 tools/render_benchmarks.py` from the source directory. This reads the included aggregate JSON and does not access input genotypes or run either program.', '']
     (ROOT / 'docs' / f'{BASE}.md').write_text('\n'.join(lines))
@@ -107,7 +107,7 @@ def main():
                             else summaries[d, PROGRAMS[0]][0]/summaries[d, p][0]
                             for p in PROGRAMS[1:]] for d in datasets])
         fig, ax = plt.subplots(figsize=(7.5, 6))
-        kwargs = {'cmap': 'RdYlGn_r', 'norm': TwoSlopeNorm(vmin=-50, vcenter=0, vmax=5)} if memory else {'cmap':'YlOrRd', 'vmin':0, 'vmax':150}
+        kwargs = {'cmap': 'RdYlGn_r', 'norm': TwoSlopeNorm(vmin=-50, vcenter=0, vmax=5)} if memory else {'cmap':'YlOrRd', 'vmin':0, 'vmax':175}
         im = ax.imshow(values, aspect='auto', **kwargs)
         ax.set_xticks(range(2), PROGRAMS[1:]); ax.set_yticks(range(len(datasets)), short)
         ax.set_ylabel('Animals × loci')
@@ -179,10 +179,10 @@ def plot_runtime_memory(datasets, labels, summaries, observations):
                                   markersize=marker_sizes[p], markeredgecolor='white',
                                   markeredgewidth=.8, label=p) for p in PROGRAMS],
                   loc='upper left', frameon=False, ncols=3)
-        fig.suptitle('TurboHap v1.1.0: runtime and memory', fontsize=17, weight='bold')
+        fig.suptitle('TurboHap v1.2.0: runtime and memory', fontsize=17, weight='bold')
         ax.set_title('Seven simulated datasets · 10 CPU threads · two runs per program', fontsize=11)
         fig.supxlabel('Further left is faster. Lower means less memory. Labels: animals × loci.\n'
-                      'Log axes · medians and observed ranges · Fortran: 21–22 Oct; C++: 28 Oct 2026', fontsize=10)
+                      'Log axes · medians and observed ranges · Fortran: 21–22 Oct; C++: 30 Oct 2026', fontsize=10)
         save(fig, BASE)
 
 

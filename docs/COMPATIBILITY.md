@@ -35,6 +35,12 @@ at one, four and ten threads passed against the qualified serial control.
 These checks supplement the original qualification; they do not claim that
 every possible input has been tested.
 
+For v1.2.0, all 28 fresh Spark benchmark runs also passed **280 strict raw
+SHA-256 and byte-count checks**, including crossover order. See the
+[v1.2.0 validation record](turbohap_validation_301026.json). The release layout
+passed all 19 packaged tests before timing, including output-error handling
+and CPU-policy checks. The historical Fortran observations remain unchanged.
+
 Console progress and elapsed-time text are not result-file compatibility targets.
 The optimised default uses the OpenMP thread limit; use an explicit thread count
 when comparing programs. Results on other compilers, operating systems or inputs

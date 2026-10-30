@@ -31,6 +31,7 @@
 #include <exception>
 #endif
 #include "options_reader.hpp"
+#include "thread_request.hpp"
 #include "genotype_workspace.hpp"
 #include "genotype_cache.hpp"
 #ifdef FINDHAP_LOW_MEMORY_PLUS
@@ -54,7 +55,18 @@ using ActiveGenotypeCache = GenotypeCache;
 #define FINDHAP_POP_INDEX_LENGTH FINDHAP_INDEX_MIN_LENGTH
 #endif
 #include "profiling.hpp"
+#include "library_profile.hpp"
+#include "integer_output.hpp"
+#include "library_output.hpp"
+#include "output_streams.hpp"
+#ifndef FINDHAP_INHERIT_RECORD_OUTPUT
+#define FINDHAP_INHERIT_RECORD_OUTPUT 0
+#endif
+#ifndef FINDHAP_OUTPUT_BATCH_WRITE
+#define FINDHAP_OUTPUT_BATCH_WRITE 0
+#endif
 #include "pedigree_conflict.hpp"
+#include "pedigree_rematch.hpp"
 #if FINDHAP_PEDIGREE_MASK_BACKEND >= 0
 #include "pedigree_crossovers.hpp"
 #endif
@@ -140,6 +152,9 @@ static void close_outputs() {
     for (auto& output : output_files) {
         FILE* file = output.first;
         long position = ftell(file);
+        // A prior short/failed write can leave the error indicator set even
+        // when a later flush succeeds. Do not report such a file as complete.
+        if (ferror(file)) input_error("cannot write output file");
         if (fflush(file) != 0 || position < 0) input_error("cannot flush output file");
         if (position > 0) {
             std::error_code error;
@@ -228,12 +243,20 @@ static int fast_read_genoline(FILE* fp, int& idnum, int& chipn, int& loc,
 static void fast_write_haplist_line(FILE* fp, float hap_pct, double tot_pct,
     int hap_num, int chrom, int istep, int iseg, int istart, int seglen,
     const int8_t* hapdata, int nhapdata) {
+    FINDHAP_LIBRARY_SAMPLE(format_sample, 3);
+#if FINDHAP_LIBRARY_FORMAT
+    turbohap_output::haplist_header<(FINDHAP_LIBRARY_FORMAT >= 2)>(haplist_buf_io, hap_pct, tot_pct, hap_num, chrom,
+                                   istep, iseg, istart, seglen);
+#else
     snprintf(haplist_buf_io, 59, "%10.5f%10.5f%10d%3d%3d%7d%8d%6d ",
              hap_pct, tot_pct, hap_num, chrom, istep, iseg, istart, seglen);
+#endif
     for (int l = 0; l < nhapdata; l++) {
         haplist_buf_io[58 + l] = static_cast<char>(hapdata[l] + '0');
     }
     haplist_buf_io[58 + nhapdata] = '\n';
+    FINDHAP_LIBRARY_SAMPLE_END(format_sample);
+    FINDHAP_LIBRARY_SAMPLE(submit_sample, 4);
     fwrite(haplist_buf_io, 1, 58 + nhapdata + 1, fp);
 }
 
@@ -242,6 +265,7 @@ template<typename HaplotypeId>
 static void fast_write_hapfound_line(FILE* fp, int id, int pnt_val, int istep,
     int nsegs, const HaplotypeId* keephap_arr, int pnt_idx, int anml_idx,
     int maxanml, int maxseg_dim) {
+    FINDHAP_LIBRARY_SAMPLE(format_sample, 0);
     // One separator plus up to ten decimal digits per segment, and the header.
     size_t required = 25 + (size_t)11 * nsegs;
     if (required > hapfound_buf_capacity) {
@@ -267,6 +291,8 @@ static void fast_write_hapfound_line(FILE* fp, int id, int pnt_val, int istep,
         }
     }
     hapfound_buf_io[pos++] = '\n';
+    FINDHAP_LIBRARY_SAMPLE_END(format_sample);
+    FINDHAP_LIBRARY_SAMPLE(submit_sample, 1);
     fwrite(hapfound_buf_io, 1, pos, fp);
 }
 
@@ -389,8 +415,8 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
         }
 
         minfreq = 99999999;
-#ifdef FINDHAP_HIGH_MEMORY
-        OrderedCandidateLookup* ordered = nullptr;
+#if FINDHAP_USE_ORDERED
+        ActiveOrderedLookup* ordered = nullptr;
         if (candidate_index && j > sugnum &&
             (SWITCH_VAL == 1 || (errate * check >= 0 && errate * check < 1)) &&
             __builtin_popcountll(signature.zero | signature.two) >= 4) {
@@ -400,7 +426,7 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
 #endif
         // Search list in frequency order
         for (int i = starti; i <= stopi; i++) {
-#ifdef FINDHAP_HIGH_MEMORY
+#if FINDHAP_USE_ORDERED
             int previous_minhap = 0;
             if (ordered) {
                 i = ordered->next(i, stopi, signature.zero, signature.two);
@@ -416,7 +442,7 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
 
             const int freq_idx = freq_base + (ii - 1);
             if (
-#ifdef FINDHAP_HIGH_MEMORY
+#if FINDHAP_USE_ORDERED
                 !ordered &&
 #endif
                 hapfreq_arr[freq_idx] < minfreq) {
@@ -545,7 +571,7 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
 
             // No checkable loci
             if (check - miss == 0 && check > 0) continue;
-#ifdef FINDHAP_HIGH_MEMORY
+#if FINDHAP_USE_ORDERED
             // Skipped candidates still determine the legacy frequency minimum.
             // Query before incrementing the accepted haplotype's frequency.
             if constexpr (SWITCH_VAL == 1)
@@ -593,7 +619,7 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
             } else {
                 minhap = i;
             }
-#ifdef FINDHAP_HIGH_MEMORY
+#if FINDHAP_USE_ORDERED
             if (candidate_index) {
                 if constexpr (SWITCH_VAL == 1) {
                     if (j > sugnum) candidate_index->changed_positions(i, previous_minhap);
@@ -819,6 +845,11 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         {5,5,5,5,5,5}
     };
     memcpy(gencode, gc_init, sizeof(gencode));
+#if FINDHAP_OUTPUT_STREAMS
+    alignas(64) uint8_t output_gencode[64] = {};
+    for (int a = 0; a < 6; ++a)
+        for (int b = 0; b < 6; ++b) output_gencode[6*a+b] = static_cast<uint8_t>(gencode[a][b]);
+#endif
 
     // match codes header lines for hap.inherit
     fprintf(fp28, " Codes  1 and  2 indicate  progeny hap matches 1st or 2nd parent hap\n");
@@ -834,16 +865,14 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     fprintf(fp28, "  progeny chro pnt haplotype_inheritance_codes\n");
 
     // Default number of threads
-    nthr = omp_get_max_threads();
-    threads = nthr;
-
-    // Set number of threads from command line
-    if (argc > 1) {
-        try { threads = findhap::thread_argument(argv[1]); }
-        catch (const std::exception& error) { input_error(error.what()); }
-        printf("\n");
-        threads = std::min(nthr, threads);
-    }
+    // Resolve once in the launcher before changing affinity. Standalone
+    // engines retain the original OpenMP/argument semantics.
+    try {
+        const auto request = findhap::engine_thread_request(argc, argv);
+        nthr = request.openmp_limit;
+        threads = request.effective;
+    } catch (const std::exception& error) { input_error(error.what()); }
+    if (argc > 1) printf("\n");
 
     printf(" Maximum number of processors set to    %d\n", threads);
     printf(" Or set threads by command line argument: findhap 8\n");
@@ -1368,6 +1397,13 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         iter1 = 1;
         if (exist15) iter1 = iters;
 
+#if FINDHAP_PEDIGREE_REMATCH == 2
+        pedigree_rematch::Plan rematch_plan;
+        if (step > 1 && !exist15)
+            rematch_plan = pedigree_rematch::make_plan(startloc.get(), len_arr.get(), maxseg,
+                                                      prevstartloc.get(), prevlen.get(), prevsegs);
+#endif
+
         // ---- Pre-expand genotypes ----
         FINDHAP_PHASE(expansion_trace, "expansion", step);
         memset(called.get(), 0, maxped * sizeof(int));
@@ -1835,6 +1871,48 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             // Pedigree matching and inheritance correction
             // ===================================================================
 
+            // Destination segments own disjoint mutable library state. Keep
+            // the original animal order within each segment; do not parallelise
+            // families or generations sharing a parent or haplotype library.
+#if FINDHAP_PEDIGREE_REMATCH == 2
+            if (step > 1 && !exist15 && rematch_plan.disjoint) {
+                std::vector<int> rematch_animals;
+                for (int animal = 1; animal <= nped; ++animal)
+                    if (listeqn[animal] == 0) rematch_animals.push_back(animal);
+                if (!rematch_animals.empty()) {
+                    #pragma omp parallel num_threads(threads)
+                    {
+                        int local_suggest[16] = {};
+                        std::vector<int8_t> reconstructed;
+                        #pragma omp for schedule(dynamic, 1)
+                        for (int current = 1; current <= maxseg; ++current) {
+                            const int length = len_arr[current];
+                            reconstructed.resize(length);
+                            for (int animal : rematch_animals) {
+                                const int known = pedigree_rematch::reconstruct(
+                                    reconstructed.data(), length, animal, maxped,
+                                    rematch_plan.segments[current - 1], prevkeephap.get(),
+                                    prevhaplist.get(), prevhap_offsets.data(), prevmaxlen, missing);
+                                if (known == 0) continue;
+                                int local_found[2] = {};
+                                listhap<0>(reconstructed.data(), haplist_arr.get(), hapfreq_arr.get(),
+                                           order_arr.get(), local_suggest, length, maxlen,
+                                           nhap_arr.get(), maxhap, current, maxseg, local_found, errate);
+                                if (local_found[0] != local_found[1]) {
+                                    keephap[KHIDX(1, animal, current, maxped)] = local_found[0];
+                                    keephap[KHIDX(2, animal, current, maxped)] = local_found[1];
+                                }
+                            }
+                        }
+                    }
+                    // Preserve the legacy shared loop endpoint as well as the
+                    // result state; later pedigree code observes this variable.
+                    seg = prevsegs + 1;
+                }
+                i = nped + 1;
+            } else
+#endif
+            {
             // Use previous haplotypes of imputed dams
             for (i = 1; i <= nped; i++) {
                 if (step > 1 && listeqn[i] == 0 && !exist15) {
@@ -1883,6 +1961,8 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                         }
                     }
                 }
+            }
+
             }
 
             FINDHAP_END(pedigree_dams_trace);
@@ -2503,6 +2583,11 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             std::exception_ptr output_cache_error;
 #endif
 
+#if FINDHAP_BUFFER_INHERIT
+            std::vector<char> inherit_payload(2 * size_t(maxseg) +
+                                             (FINDHAP_INHERIT_RECORD_OUTPUT ? 64 : 1));
+#endif
+
             // Reuse one team and its reduction arrays across all output batches.
             #pragma omp parallel private(ii, i, imputed, haps, seg, pnt, loc, locus, correct, corr2, \
                 usable, chrome, n, idnum, chipn, l, m, k) \
@@ -2510,6 +2595,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 num_threads(threads)
             {
                 for (int chunk_start = 1; chunk_start <= nped;) {
+                    FINDHAP_PHASE(reconstruction_trace, "output_reconstruction", step, 0, 0, chunk_start);
 #ifdef FINDHAP_LOW_MEMORY_PLUS
                     // Prepare immutable raw bytes before workers format this
                     // output batch. Disk reads can be sorted independently of
@@ -2587,6 +2673,14 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                         if (usable == 1) {
                             int l_pnthap[2];
                             for (seg = 1; seg <= maxseg; seg++) {
+#if FINDHAP_OUTPUT_STREAMS
+                                const auto first = keephap[KHIDX(1, i, seg, maxped)];
+                                const auto second = keephap[KHIDX(2, i, seg, maxped)];
+                                const int8_t* a = first > 0 ? &haplist_arr[IDX3(1, first, seg, maxlen, maxhap)] : nullptr;
+                                const int8_t* b = second > 0 ? &haplist_arr[IDX3(1, second, seg, maxlen, maxhap)] : nullptr;
+                                turbohap_output::reconstruct(a, b, thread_genotype.get() + size_t(tid)*loci + startloc[seg]-1,
+                                    len_arr[seg], gencode, output_gencode, sexv[i-1]=='M' && seg>=Xseg);
+#else
                                 for (loc = 1; loc <= len_arr[seg]; loc++) {
                                     locus = startloc[seg] + loc - 1;
                                     for (pnt = 1; pnt <= 2; pnt++) {
@@ -2603,6 +2697,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                             thread_genotype[tid * loci + locus - 1] = 5;
                                     }
                                 }
+#endif
                             }
                         }
 
@@ -2673,6 +2768,17 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             snprintf(hap_record, 32, "%10d%10d%10d ", animkey[i], 1, loci);
                             m = 0;
                             for (seg = 1; seg <= maxseg; seg++) {
+#if FINDHAP_OUTPUT_STREAMS
+                                if (listeqn[i] > 0) {
+                                    const auto first = keephap[KHIDX(1, i, seg, maxped)];
+                                    const auto second = keephap[KHIDX(2, i, seg, maxped)];
+                                    const int8_t* a = first > 0 ? &haplist_arr[IDX3(1, first, seg, maxlen, maxhap)] : nullptr;
+                                    const int8_t* b = second > 0 ? &haplist_arr[IDX3(1, second, seg, maxlen, maxhap)] : nullptr;
+                                    turbohap_output::encode_haplotypes(a, b, hap_record + 31 + m, len_arr[seg]);
+                                    m += 2 * len_arr[seg];
+                                    continue;
+                                }
+#endif
                                 for (l = 1; l <= len_arr[seg]; l++) {
                                     for (k = 1; k <= 2; k++) {
                                         int8_t hap_value;
@@ -2700,11 +2806,13 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             }
                         }
                     } // end parallel for
+                    FINDHAP_END(reconstruction_trace);
 
                     // One worker writes the completed batch in ID order. Both
                     // worksharing barriers protect the buffer before it is reused.
                     #pragma omp single
                     {
+                        FINDHAP_PHASE(submission_trace, "output_submission", step, 0, 0, chunk_start);
                         for (int chunk_idx = 0; chunk_idx < chunk_count; chunk_idx++) {
                             i = i_chunk[chunk_idx];
                             imputed = imputed_chunk[chunk_idx];
@@ -2736,12 +2844,36 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             for (chrome = chrome1; chrome <= chromes; chrome++) {
                                 for (pnt = 1; pnt <= 2; pnt++) {
                                     if (usable == 1) {
+#if FINDHAP_INHERIT_RECORD_OUTPUT && FINDHAP_BUFFER_INHERIT
+                                        char* inherit_end = inherit_payload.data();
+                                        inherit_end = turbohap_output::append_integer(inherit_end, animkey[i], 10);
+                                        inherit_end = turbohap_output::append_integer(inherit_end, chrome, 4);
+                                        inherit_end = turbohap_output::append_integer(inherit_end, pnt, 2);
+                                        *inherit_end++ = ' ';
+                                        *inherit_end++ = ' ';
+#else
                                         fprintf(fp28, "%10d%4d%2d  ", animkey[i], chrome, pnt);
+#endif
+#if FINDHAP_BUFFER_INHERIT
+#if FINDHAP_INHERIT_RECORD_OUTPUT
+                                        size_t inherit_bytes = static_cast<size_t>(inherit_end - inherit_payload.data());
+#else
+                                        size_t inherit_bytes = 0;
+#endif
+                                        for (seg = startseg[chrome - 1]; seg <= stopseg[chrome - 1]; seg++) {
+                                            size_t base = PMIDX(i, seg, maxped) + (pnt - 1) * 2;
+                                            inherit_payload[inherit_bytes++] = patmat[base];
+                                            inherit_payload[inherit_bytes++] = patmat[base + 1];
+                                        }
+                                        inherit_payload[inherit_bytes++] = '\n';
+                                        fwrite(inherit_payload.data(), 1, inherit_bytes, fp28);
+#else
                                         for (seg = startseg[chrome - 1]; seg <= stopseg[chrome - 1]; seg++) {
                                             size_t base = PMIDX(i, seg, maxped) + (pnt - 1) * 2;
                                             fprintf(fp28, "%c%c", patmat[base], patmat[base + 1]);
                                         }
                                         fprintf(fp28, "\n");
+#endif
                                     }
                                 }
                             }
@@ -2758,15 +2890,41 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                 if (genout > 0) {
                                     char* geno_ptr = &chunk_buffer_geno[chunk_idx * geno_record_bytes];
                                     geno_ptr[geno_record_bytes - 1] = '\n';
+#if !FINDHAP_OUTPUT_BATCH_WRITE
                                     fwrite(geno_ptr, 1, geno_record_bytes, fp31);
+#endif
                                 }
                             }
                             if (hapout == 1 && usable == 1) {
                                 char* hap_ptr = &chunk_buffer_hap[chunk_idx * hap_record_bytes];
                                 hap_ptr[hap_record_bytes - 1] = '\n';
+#if !FINDHAP_OUTPUT_BATCH_WRITE
                                 fwrite(hap_ptr, 1, hap_record_bytes, fp29);
+#endif
                             }
                         }
+#if FINDHAP_OUTPUT_BATCH_WRITE
+                        // The records are already contiguous. Coalesce only
+                        // consecutive usable runs; never write an unfilled row.
+                        for (int first = 0; first < chunk_count;) {
+                            while (first < chunk_count && usable_chunk[first] != 1) ++first;
+                            int last = first;
+                            while (last < chunk_count && usable_chunk[last] == 1) ++last;
+                            if (last > first) {
+                                if (genout > 0) {
+                                    const size_t bytes = size_t(last-first) * geno_record_bytes;
+                                    if (fwrite(chunk_buffer_geno.get()+size_t(first)*geno_record_bytes, 1, bytes, fp31) != bytes)
+                                        input_error("cannot write genotype output batch");
+                                }
+                                if (hapout == 1) {
+                                    const size_t bytes = size_t(last-first) * hap_record_bytes;
+                                    if (fwrite(chunk_buffer_hap.get()+size_t(first)*hap_record_bytes, 1, bytes, fp29) != bytes)
+                                        input_error("cannot write haplotype output batch");
+                                }
+                            }
+                            first = last;
+                        }
+#endif
                     } // end single writer
                     if (chunk_end == nped) break;
                     chunk_start = chunk_end + 1;
@@ -2796,12 +2954,17 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         }
 
         // Write hap.found
+        FINDHAP_PHASE(library_output_trace, "library_output", step);
+        FINDHAP_LIBRARY_CALIBRATE();
+        FINDHAP_LIBRARY_ENABLE(true);
+        FINDHAP_PHASE(library_found_trace, "library_found", step);
         for (i = 1; i <= nped; i++) {
             if (listeqn[i] > 0) {
                 for (pnt = 1; pnt <= 2; pnt++) {
                     if (listout == 1 || (listout == -1 && step == steps))
                         fast_write_hapfound_line(fp26, animkey[i], pnt, step,
                             maxseg, keephap.get(), pnt, i, maxped, maxseg);
+                    FINDHAP_LIBRARY_SAMPLE(count_sample, 2);
                     for (seg = 1; seg <= maxseg; seg++) {
                         if (keephap[KHIDX(pnt, i, seg, maxped)] > 0)
                             hapfreq_arr[IDX2(keephap[KHIDX(pnt, i, seg, maxped)], seg, maxhap)]++;
@@ -2810,6 +2973,8 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             }
         }
 
+        FINDHAP_END(library_found_trace);
+        FINDHAP_PHASE(library_list_trace, "library_list", step);
         n25 = 0;
         for (seg = 1; seg <= maxseg; seg++) {
             totfreq = 0.0;
@@ -2845,6 +3010,8 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             }
             nhap_arr[seg - 1] = n;
         }
+        FINDHAP_END(library_list_trace);
+        FINDHAP_LIBRARY_ENABLE(false);
 
         // End of step
         if (step < steps && listout != 0) {
@@ -2852,6 +3019,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             fprintf(fp26, "%10d%2d%3d%6d\n", 0, 0, step + 1, 0);
         }
     } // end step loop
+    FINDHAP_LIBRARY_SAVE();
 
     // -------------------------------------------------------- Genotype frequency
     printf("\n");
@@ -2934,12 +3102,13 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 1.0f * missall[locus - 1] / std::max(n31, 1));
     }
     printf("\n");
-    printf(" Program findhap completed normally\n");
-
     // Close files
     fclose(fp10); fclose(fp13); fclose(fp14);
     if (fp15) fclose(fp15); if (fp16) fclose(fp16);
+    FINDHAP_PHASE(close_trace, "output_close");
     close_outputs();
+    FINDHAP_END(close_trace);
+    printf(" Program findhap completed normally\n");
 
     // Clean up I/O buffers
     delete[] read_buf;

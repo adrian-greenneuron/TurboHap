@@ -5,16 +5,36 @@
 #include <cstdint>
 #include <vector>
 #include "platform_policy.hpp"
+#include "neon_bits.hpp"
+#ifndef FINDHAP_LM_ORDERED_BYTES
+#define FINDHAP_LM_ORDERED_BYTES 0
+#endif
+#if defined(FINDHAP_HIGH_MEMORY) || (defined(FINDHAP_LOW_MEMORY) && FINDHAP_LM_ORDERED_BYTES > 0)
+#define FINDHAP_USE_ORDERED 1
+#else
+#define FINDHAP_USE_ORDERED 0
+#endif
 #if FINDHAP_POP_ENCODE && defined(__AVX2__)
 #include <immintrin.h>
 #endif
-#ifdef FINDHAP_HIGH_MEMORY
+#if FINDHAP_USE_ORDERED
 #include <memory>
 #include "high_memory_index.hpp"
+#if defined(FINDHAP_LOW_MEMORY)
+#include "lm_ordered_index.hpp"
+#endif
 #endif
 
 #ifdef FINDHAP_ENGINE_NAMESPACE
 namespace FINDHAP_ENGINE_NAMESPACE {
+#endif
+
+#if FINDHAP_USE_ORDERED
+#ifdef FINDHAP_LOW_MEMORY
+using ActiveOrderedLookup = LowMemoryCandidateLookup;
+#else
+using ActiveOrderedLookup = OrderedCandidateLookup;
+#endif
 #endif
 
 // An exact rejection filter keyed by haplotype ID. Opposite known alleles at
@@ -61,8 +81,8 @@ private:
 #else
     std::vector<Signature> entries_;
 #endif
-#ifdef FINDHAP_HIGH_MEMORY
-    std::unique_ptr<OrderedCandidateLookup> ordered_;
+#if FINDHAP_USE_ORDERED
+    std::unique_ptr<ActiveOrderedLookup> ordered_;
     bool ordered_disabled_ = false;
 #endif
 
@@ -94,6 +114,19 @@ public:
     Signature encode(const int8_t* alleles) const {
         Signature result;
         int k = 0;
+#if FINDHAP_POP_ENCODE == 4 && defined(__ARM_NEON)
+        if (contiguous_) {
+            for (; k+16<=width_; k+=16) {
+                const auto values = vld1q_s8(alleles+k);
+                result.zero |= uint64_t(findhap_neon::lane_mask(vceqq_s8(values,vdupq_n_s8(0)))) << k;
+                result.two |= uint64_t(findhap_neon::lane_mask(vceqq_s8(values,vdupq_n_s8(2)))) << k;
+#if FINDHAP_POP_COMPLETE
+                result.invalid |= uint64_t(findhap_neon::lane_mask(vorrq_u8(
+                    vcltq_s8(values,vdupq_n_s8(0)),vcgtq_s8(values,vdupq_n_s8(2))))) << k;
+#endif
+            }
+        }
+#endif
 #if FINDHAP_POP_ENCODE == 3 && defined(__AVX512VBMI__) && defined(__AVX512BW__)
         if (length_ <= 128) {
             const uint64_t first_mask = length_ >= 64 ? UINT64_MAX : (uint64_t(1)<<length_)-1;
@@ -233,6 +266,10 @@ public:
 #endif
 
     void refresh(int haplotype, const int8_t* alleles) {
+#if FINDHAP_USE_ORDERED && defined(FINDHAP_LOW_MEMORY)
+        const uint64_t old_zero = size_t(haplotype) <= entries_.size() ? entries_[haplotype-1].zero : 0;
+        const uint64_t old_two = size_t(haplotype) <= entries_.size() ? entries_[haplotype-1].two : 0;
+#endif
         if ((size_t)haplotype > entries_.size()) entries_.resize(haplotype);
 #if FINDHAP_POP_FULL && FINDHAP_POP_COMPACT
         const auto signature=encode(alleles);
@@ -252,10 +289,14 @@ public:
 #else
         entries_[haplotype - 1] = encode(alleles);
 #endif
-#ifdef FINDHAP_HIGH_MEMORY
+#if FINDHAP_USE_ORDERED
         if (ordered_) {
+#ifdef FINDHAP_LOW_MEMORY
+            ordered_->refresh(haplotype, old_zero, old_two);
+#else
             const auto value = entries_[haplotype - 1];
             ordered_->refresh(haplotype, value.zero, value.two);
+#endif
         }
 #endif
     }
@@ -276,14 +317,21 @@ public:
         return entries_[haplotype - 1];
 #endif
     }
-#ifdef FINDHAP_HIGH_MEMORY
-    OrderedCandidateLookup* ordered(const int* order, const int* frequencies, int count,
+#if FINDHAP_USE_ORDERED
+    ActiveOrderedLookup* ordered(const int* order, const int* frequencies, int count,
                                     bool track_frequencies = true) {
         // Small libraries fit the compact signature scan well; amortise the
         // larger ordered bitmap and frequency tree only over longer searches.
         if (count < 1024) return nullptr;
         if (ordered_disabled_) return nullptr;
-        if (!ordered_) ordered_ = std::make_unique<OrderedCandidateLookup>(width_);
+#if defined(FINDHAP_LOW_MEMORY) && FINDHAP_LM_ORDERED_BYTES > 0
+        if (ActiveOrderedLookup::storage_bound(width_, count) > FINDHAP_LM_ORDERED_BYTES) {
+            ordered_disabled_ = true;
+            ordered_.reset();
+            return nullptr;
+        }
+#endif
+        if (!ordered_) ordered_ = std::make_unique<ActiveOrderedLookup>(width_);
         if (!ordered_->prepare(order, frequencies, count, entries_, track_frequencies)) {
             ordered_disabled_ = true;
             ordered_.reset();

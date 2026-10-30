@@ -5,7 +5,7 @@
 </p>
 
 **The FindHap algorithm, reimplemented in C++. Byte-for-byte compatible output.
-Up to 128× faster in DGX Spark benchmarks.**
+Up to 156× faster in DGX Spark benchmarks.**
 
 TurboHap is a drop-in replacement for FindHap v3 for haplotype phasing and
 genotype imputation. Keep your existing input files and options, and replace
@@ -19,7 +19,7 @@ except that multithreaded Fortran may write records in `cross.overs` in a
 different order. The crossover records themselves match exactly. See the
 [compatibility details](docs/COMPATIBILITY.md).
 
-**Version 1.1.0.** One executable provides two modes:
+**Version 1.2.0.** One executable provides two modes:
 
 | Mode | Command | Purpose |
 | --- | --- | --- |
@@ -42,7 +42,7 @@ dated 22 October 2026. This author manuscript has not been peer reviewed.
 - [Seven synthetic datasets and simulation truth (Zenodo)](https://doi.org/10.5281/zenodo.23566926),
   available under CC BY 4.0.
 
-The manuscript describes v1.0.0; the v1.1.0 software benchmarks below are newer.
+The manuscript describes v1.0.0; the v1.2.0 software benchmarks below are newer.
 The manuscript and figures are also available under CC BY 4.0. See the
 [paper download page](docs/paper/README.md) for file details and checksums.
 
@@ -50,24 +50,24 @@ The manuscript and figures are also available under CC BY 4.0. See the
 
 On a simulated dataset of **1,000,000 animals × 10,000 loci**, the original
 Fortran baseline took **6 hours 53 minutes 40 seconds**.
-TurboHap v1.1.0 finished in **3 minutes 40 seconds**: **112.6× faster**, with
-**2.4% more peak memory**. TurboHap LM finished in **6 minutes 33 seconds**:
-**63.1× faster**, with **25.1% less peak memory**.
+TurboHap v1.2.0 finished in **3 minutes 6 seconds**: **133.1× faster**, with
+**2.4% more peak memory**. TurboHap LM finished in **3 minutes 44 seconds**:
+**110.8× faster**, with **25.1% less peak memory**.
 
 All benchmarks used **ten CPU threads** on the same NVIDIA DGX Spark.
 The GPU was not used. The Fortran measurements are retained from 21–22 October;
-TurboHap and LM were measured on 28 October. Speedups therefore compare with a
+TurboHap and LM were measured on 30 October. Speedups therefore compare with a
 historical baseline. Values are medians of two complete runs per program,
 including input, computation, buffered output and temporary-file I/O.
 The older baseline was measured on a shared server. Performance depends on the
 dataset, options, storage, hardware and competing load.
 
-Version 1.1.0 also improves performance on **AMD and Intel x86 computers**.
+Version 1.2.0 also improves performance on **AMD and Intel x86 computers**.
 Detailed benchmarks are ongoing.
 
-![Runtime and peak memory on seven synthetic datasets](docs/assets/turbohap_benchmarks_281026.png)
+![Runtime and peak memory on seven synthetic datasets](docs/assets/turbohap_benchmarks_301026.png)
 
-See [all results and methodology](docs/turbohap_benchmarks_281026.md), including
+See [all results and methodology](docs/turbohap_benchmarks_301026.md), including
 individual measurements, runtime, peak resident memory and output checks.
 
 <!-- BENCHMARK_TABLES_START -->
@@ -78,13 +78,13 @@ Speedup is relative to the retained Fortran baseline measured on 21–22 October
 
 | Animals × loci | Fortran baseline | TurboHap | Speedup | TurboHap LM | Speedup |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 10,000 × 1,000 | 10.52s | **0.66s** | **15.9×** | 1.10s | 9.6× |
-| 10,000 × 10,000 | 1m 16s | **2.17s** | **34.9×** | 2.46s | 30.8× |
-| 10,000 × 100,000 | 7m 28s | **14.89s** | **30.1×** | 23.71s | 18.9× |
-| 100,000 × 1,000 | 14m 34s | **6.80s** | **128.4×** | 17.09s | 51.1× |
-| 100,000 × 10,000 | 19m 42s | **19.96s** | **59.2×** | 27.55s | 42.9× |
-| 100,000 × 100,000 | 1h 17m 00s | **2m 21s** | **32.8×** | 3m 45s | 20.6× |
-| 1,000,000 × 10,000 | 6h 53m 40s | **3m 40s** | **112.6×** | 6m 33s | 63.1× |
+| 10,000 × 1,000 | 10.52s | **0.52s** | **20.2×** | 0.55s | 19.3× |
+| 10,000 × 10,000 | 1m 16s | **1.71s** | **44.0×** | 1.98s | 38.1× |
+| 10,000 × 100,000 | 7m 28s | **11.91s** | **37.7×** | 20.46s | 21.9× |
+| 100,000 × 1,000 | 14m 34s | **5.59s** | **156.3×** | 5.96s | 146.5× |
+| 100,000 × 10,000 | 19m 42s | **16.41s** | **72.1×** | 19.09s | 61.9× |
+| 100,000 × 100,000 | 1h 17m 00s | **1m 53s** | **40.9×** | 3m 14s | 23.9× |
+| 1,000,000 × 10,000 | 6h 53m 40s | **3m 06s** | **133.1×** | 3m 44s | 110.8× |
 
 ### Peak memory
 
@@ -92,13 +92,13 @@ Negative percentages mean less memory than Fortran.
 
 | Animals × loci | Fortran baseline | TurboHap | Memory change | TurboHap LM | Memory change |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 10,000 × 1,000 | 0.302 GiB | 0.182 GiB | -39.6% | **0.180 GiB** | **-40.3%** |
-| 10,000 × 10,000 | 1.197 GiB | 0.766 GiB | -36.0% | **0.746 GiB** | **-37.7%** |
-| 10,000 × 100,000 | 10.645 GiB | 6.312 GiB | -40.7% | **5.911 GiB** | **-44.5%** |
-| 100,000 × 1,000 | 0.377 GiB | 0.332 GiB | -12.0% | **0.316 GiB** | **-16.2%** |
-| 100,000 × 10,000 | 1.615 GiB | 1.504 GiB | -6.8% | **1.102 GiB** | **-31.8%** |
+| 10,000 × 1,000 | 0.302 GiB | 0.183 GiB | -39.4% | **0.181 GiB** | **-40.0%** |
+| 10,000 × 10,000 | 1.197 GiB | 0.766 GiB | -36.0% | **0.747 GiB** | **-37.6%** |
+| 10,000 × 100,000 | 10.645 GiB | 6.312 GiB | -40.7% | **5.910 GiB** | **-44.5%** |
+| 100,000 × 1,000 | 0.377 GiB | 0.333 GiB | -11.7% | **0.320 GiB** | **-15.2%** |
+| 100,000 × 10,000 | 1.615 GiB | 1.505 GiB | -6.8% | **1.111 GiB** | **-31.2%** |
 | 100,000 × 100,000 | 14.985 GiB | 13.026 GiB | -13.1% | **8.582 GiB** | **-42.7%** |
-| 1,000,000 × 10,000 | 16.117 GiB | 16.496 GiB | +2.4% | **12.078 GiB** | **-25.1%** |
+| 1,000,000 × 10,000 | 16.117 GiB | 16.496 GiB | +2.4% | **12.079 GiB** | **-25.1%** |
 
 <!-- BENCHMARK_TABLES_END -->
 
@@ -123,6 +123,9 @@ Run from a directory containing `findhap.options`, `pedigree.file`,
 ```
 
 The build is tuned to the local CPU. Build on the machine that will run it.
+On DGX Spark, the default CPU policy automatically selects the faster cores
+when the requested thread count fits. Explicit CPU and OpenMP placement settings
+take precedence; see [CPU placement](docs/USAGE.md#cpu-placement).
 Linux ARM64 and Intel/AMD x86-64 builds with GCC 13.3 have passed output checks.
 Other Linux systems, macOS and Windows through WSL2 require local validation.
 Native Windows is not supported. A GPU, CUDA and a Fortran compiler are unnecessary.

@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.2.0 — 30 October 2026
+
+- Faster matching, bounded LM lookup and output formatting, with native CPU
+  selection for the qualified paths. Input formats, options and commands remain
+  compatible with existing workflows.
+- Automatic performance-core selection on DGX Spark when the requested thread
+  count fits, with no added worker binding. Explicit affinity and OpenMP settings
+  take precedence; `--cpu-policy=inherit` retains the caller's placement.
+- Automatic core binding on native Milan, Cascade Lake and qualified Turin
+  builds, with explicit OpenMP settings preserved. Detailed x86 benchmarks are
+  ongoing.
+- More efficient pedigree rematching on Spark and checked output finalisation:
+  write, flush and close failures now cause an error rather than a success message.
+- Fresh seven-dataset Spark benchmarks: two repeats per mode, all 28 runs and
+  280 strict raw output checks pass. Standard is faster and LM uses less peak
+  resident memory in every measured dataset. See the
+  [results and methodology](docs/turbohap_benchmarks_301026.md).
+- The original Fortran benchmark observations and bundled v1.0.0 manuscript and
+  supplementary material are retained unchanged.
+
 ## 1.1.0 — 28 October 2026
 
 - Faster population matching and pedigree processing in standard and LM modes.

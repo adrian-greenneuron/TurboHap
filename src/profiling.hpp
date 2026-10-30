@@ -9,6 +9,7 @@
 #include <sys/resource.h>
 #include <time.h>
 #include <omp.h>
+#include <sched.h>
 
 namespace findhap_profile {
 inline double seconds(clockid_t clock) {
@@ -66,11 +67,11 @@ public:
         std::lock_guard<std::mutex> lock(writer.mutex);
         std::fprintf(writer.file,
             "{\"phase\":\"%s\",\"step\":%d,\"iteration\":%d,\"segment\":%d,"
-            "\"chromosome\":%d,\"loci\":%d,\"thread\":%d,"
+            "\"chromosome\":%d,\"loci\":%d,\"thread\":%d,\"logical_cpu\":%d,"
             "\"start_monotonic_seconds\":%.9f,\"end_monotonic_seconds\":%.9f,"
             "\"wall_seconds\":%.9f,\"owner_thread_cpu_seconds\":%.9f,"
             "\"haplotypes_before\":%d,\"haplotypes_after\":%d,\"process_peak_rss_so_far_kib\":%ld}\n",
-            phase_, step_, iteration_, segment_, chromosome_, loci_, omp_get_thread_num(),
+            phase_, step_, iteration_, segment_, chromosome_, loci_, omp_get_thread_num(), sched_getcpu(),
             wall_, end, end - wall_, cpu, before_, haplotypes_ ? *haplotypes_ : 0, usage.ru_maxrss);
         std::fflush(writer.file);
         active_ = false;

@@ -1,0 +1,830 @@
+{
+  "title": "TurboHap v1.2.0 synthetic benchmarks",
+  "date": "2026-10-30",
+  "hardware": "NVIDIA DGX Spark, 20 logical CPU cores",
+  "platform": "Ubuntu 24.04, Linux ARM64",
+  "compiler": "GCC and gfortran 13.3.0",
+  "threads": 10,
+  "repeats": 2,
+  "fortran_flags": "-O3 -fopenmp -fno-underscoring",
+  "cpp_flags": "-O3 -march=native -funroll-loops -flto -ffp-contract=off -std=gnu++17 -fopenmp",
+  "cpp_link_flags": "-flto-partition=1to1",
+  "release_tag": "v1.2.0",
+  "method": "Original Fortran baseline retained unchanged from 21\u201322 October; fresh v1.2.0 measurements on 30 October 2026. Complete executable includes input, computation, buffered output and LM temporary I/O. Compilation, container startup, input warming, post-exit fsync and hashing excluded.",
+  "selection": "All 28 planned observations: seven published corrected synthetic datasets, two technical repeats per mode and dataset. No excluded, substituted or reused C++ timings.",
+  "measurement_dates": {
+    "Fortran baseline": "21\u201322 October 2026",
+    "TurboHap": "30 October 2026",
+    "TurboHap LM": "30 October 2026"
+  },
+  "cpu_affinity": {
+    "Fortran baseline": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "TurboHap": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      15,
+      16,
+      17,
+      18,
+      19
+    ],
+    "TurboHap LM": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  "concurrent_load": {
+    "Fortran baseline": "The server was shared with other work; competing load was not systematically recorded or controlled.",
+    "TurboHap": "Host made available for qualification; no competing benchmark was intentionally run.",
+    "TurboHap LM": "Host made available for qualification; no competing benchmark was intentionally run."
+  },
+  "environment": {
+    "OMP_DYNAMIC": "FALSE",
+    "LC_ALL": "C",
+    "OMP_NUM_THREADS": "10"
+  },
+  "storage": "Internal NVMe; LM temporary-file activity included in executable time.",
+  "timing_sources": {
+    "Fortran baseline": "Existing wall_seconds measurement from v1.0.0 benchmark record.",
+    "TurboHap": "GNU time elapsed seconds (%e); excludes measurement-wrapper overhead.",
+    "TurboHap LM": "GNU time elapsed seconds (%e); excludes measurement-wrapper overhead."
+  },
+  "measurement_order": "Per dataset: standard-1, LM-1, LM-2, standard-2. Datasets in ascending animal count, then locus count. Fresh output directories, warm checked inputs before each run; no forced cache eviction or untimed inference warmups.",
+  "historical_baseline_metadata": "turbohap_benchmarks_221026.json",
+  "fortran_source_sha256": {
+    "findhap.f90": {
+      "bytes": 74778,
+      "sha256": "5605a1313b6ab281f2b5c5880e5d5a49e93051e22b8c9a4f7f202d12e63ba596"
+    },
+    "nhash.f90": {
+      "bytes": 1067,
+      "sha256": "518e49420f67974580b7616218582a014761f576258fe7223b34c87e03fe27db"
+    },
+    "quicksort.f90": {
+      "bytes": 610,
+      "sha256": "531ed25a8b8a3b7e59637ae7738e36fe55e548eca3f99c2f6ee876aa0dd2febe"
+    },
+    "makefile": {
+      "bytes": 147,
+      "sha256": "039fa743f1d716646190f9e61fbd35b079132d839778d3325798f8470c527bed"
+    }
+  },
+  "release_source_sha256": {
+    "CMakeLists.txt": {
+      "bytes": 5403,
+      "sha256": "8495a65a49a88983d320cdab7e8a6e1e568b11aabd1af0cc63ea54c8461260c3"
+    },
+    "src/bounded_genotype_workspace.hpp": {
+      "bytes": 10777,
+      "sha256": "e8c39f498a173e229b8a923eacab661988bf5d74a95c4e7f69835762ec72648a"
+    },
+    "src/candidate_index.hpp": {
+      "bytes": 15066,
+      "sha256": "48980f0e2064ae8106faa63950742f75122a5ac05950d7837f5deb7f6a9a12d7"
+    },
+    "src/conflict_scan.hpp": {
+      "bytes": 3351,
+      "sha256": "133a84f444cae47d8baad810c54a8d636a5c28ec7d2244281285092d3e02be2b"
+    },
+    "src/cpu_policy.hpp": {
+      "bytes": 12087,
+      "sha256": "55ed0b041eda13e65d86d37d4b3650e3253fe5f16d3ef46453574df5e2dd56b6"
+    },
+    "src/external_genotype_cache.hpp": {
+      "bytes": 7870,
+      "sha256": "65b493923ce54942d20f7935118a4925bbb75d5cd5967970e18838b94c6bc15d"
+    },
+    "src/findhap.cpp": {
+      "bytes": 160065,
+      "sha256": "13c7d60fbdad8cfbe73a29b1661199682b797291c9bc95239957657af0b3b69e"
+    },
+    "src/genotype_cache.hpp": {
+      "bytes": 3245,
+      "sha256": "8508827403b79d1caea8b5b4e8eb45b7030f8ecb278053562d89cffc857f5480"
+    },
+    "src/genotype_workspace.hpp": {
+      "bytes": 17136,
+      "sha256": "8a47b6f296f4a8da61fbc7012851b0884b313d1941b6f42097d6d01f3e42f34f"
+    },
+    "src/high_memory_index.hpp": {
+      "bytes": 8212,
+      "sha256": "2de008eb7e790398645a360decbc8820a2d911020eb1ff9de759740e247a4ba0"
+    },
+    "src/integer_output.hpp": {
+      "bytes": 1852,
+      "sha256": "a1048229825c755eeed21a7f4d84b2dfc5b53102faac8c85d4e23e12d780e583"
+    },
+    "src/launcher.cpp": {
+      "bytes": 3873,
+      "sha256": "c20d01e55d84481311a1c2cd8757a5fef4a439c677311443ce925b813fca8c77"
+    },
+    "src/library_output.hpp": {
+      "bytes": 2440,
+      "sha256": "dbd5bb2f036a9d8d4830400c1356ddfa2bc425661de998675edae740866a5b38"
+    },
+    "src/library_profile.hpp": {
+      "bytes": 2815,
+      "sha256": "7c4671face799e4f54e725df3bef4166dc1896d6bc4cef37f0872063c12b37ef"
+    },
+    "src/lm_ordered_index.hpp": {
+      "bytes": 9578,
+      "sha256": "97fb7d0b84cbbedb63c99a7366523518fbe3a2e690141cfc30bdd037aa59b552"
+    },
+    "src/low_memory_plus_storage.hpp": {
+      "bytes": 4225,
+      "sha256": "771a27f8bddc7314eb08e9d5072fc7a316f286a1c629d6aef6ae576e8950c6f7"
+    },
+    "src/neon_bits.hpp": {
+      "bytes": 430,
+      "sha256": "72b15ec92308ca6d32bb2bdfd7cd0712cfa360376568c0f921fba20db109a864"
+    },
+    "src/options_reader.hpp": {
+      "bytes": 5871,
+      "sha256": "af7a738b3f6377ec8ccba195bdf9eeda7cec01253758c38d1933bd98401a84fb"
+    },
+    "src/output_streams.hpp": {
+      "bytes": 5550,
+      "sha256": "61d04975ba8dec7cb06246f89c15705c3d48ce2912ceb46bca8f401f05f23cb9"
+    },
+    "src/pedigree_conflict.hpp": {
+      "bytes": 695,
+      "sha256": "8bd0abfeb94520d36e07afbac5503cea7e7fcdbbbe7788d19a4950c508ed1f8b"
+    },
+    "src/pedigree_crossovers.hpp": {
+      "bytes": 2361,
+      "sha256": "12a23b64278199ac4c0c0be0e39be8ae7bb093f4f32cb18fb70694b929857b1b"
+    },
+    "src/pedigree_rematch.hpp": {
+      "bytes": 3569,
+      "sha256": "593b4d9931d1f68a1e43a919de21ae14eedb5d370b1a5b27fdadcc3ad92f4ecc"
+    },
+    "src/platform_policy.hpp": {
+      "bytes": 5725,
+      "sha256": "7230f0702387d8cafcc47089a2e06e7d3e0caea2b4b39b10a08914bd2e33beae"
+    },
+    "src/profiling.hpp": {
+      "bytes": 3206,
+      "sha256": "18ed66dc50ab0b834a6d3a08100c5d7d8a7d77216529df4e29cf146bf549775c"
+    },
+    "src/thread_request.hpp": {
+      "bytes": 763,
+      "sha256": "d914bfd39036c4e2c91100fcc745f29a459305520a6c9a587732555dce63175e"
+    }
+  },
+  "source_identity_note": "Public release layout was frozen before building and measuring. Source files and CMake match the measured snapshot; CMake project version is 1.2.0.",
+  "measured_binary_sha256": {
+    "Fortran baseline": "8b48d375dcf3bf718ee770c8ec362265a9095696b34feb784aa4bc7164afc7c1",
+    "TurboHap": "ae41bcf5747d4c189dd758b7fd0eba35df02a354ae39f72f653a1d6590ec6d2d",
+    "TurboHap LM": "ae41bcf5747d4c189dd758b7fd0eba35df02a354ae39f72f653a1d6590ec6d2d"
+  },
+  "observations": [
+    {
+      "dataset": "10,000 \u00d7 1,000",
+      "program": "Fortran baseline",
+      "repeat": 1,
+      "wall_seconds": 10.73102258698782,
+      "peak_rss_kib": 316424,
+      "user_seconds": 89.34,
+      "system_seconds": 0.55,
+      "swaps": 0,
+      "filesystem_inputs": 640,
+      "filesystem_outputs": 162808,
+      "major_page_faults": 2,
+      "output_check": "pass; retained reference"
+    },
+    {
+      "dataset": "10,000 \u00d7 1,000",
+      "program": "Fortran baseline",
+      "repeat": 2,
+      "wall_seconds": 10.308390206017066,
+      "peak_rss_kib": 316424,
+      "user_seconds": 85.23,
+      "system_seconds": 0.49,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 162808,
+      "major_page_faults": 0,
+      "output_check": "pass; crossover record order exception"
+    },
+    {
+      "dataset": "10,000 \u00d7 10,000",
+      "program": "Fortran baseline",
+      "repeat": 1,
+      "wall_seconds": 74.95623857801547,
+      "peak_rss_kib": 1255464,
+      "user_seconds": 311.06,
+      "system_seconds": 10.8,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 852760,
+      "major_page_faults": 0,
+      "output_check": "pass; retained reference"
+    },
+    {
+      "dataset": "10,000 \u00d7 10,000",
+      "program": "Fortran baseline",
+      "repeat": 2,
+      "wall_seconds": 76.04546036897227,
+      "peak_rss_kib": 1255272,
+      "user_seconds": 313.36,
+      "system_seconds": 10.95,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 852760,
+      "major_page_faults": 0,
+      "output_check": "pass; crossover record order exception"
+    },
+    {
+      "dataset": "10,000 \u00d7 100,000",
+      "program": "Fortran baseline",
+      "repeat": 1,
+      "wall_seconds": 450.14248745999066,
+      "peak_rss_kib": 11162468,
+      "user_seconds": 869.31,
+      "system_seconds": 30.44,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 6949560,
+      "major_page_faults": 0,
+      "output_check": "pass; retained reference"
+    },
+    {
+      "dataset": "10,000 \u00d7 100,000",
+      "program": "Fortran baseline",
+      "repeat": 2,
+      "wall_seconds": 446.5260324389674,
+      "peak_rss_kib": 11162392,
+      "user_seconds": 863.47,
+      "system_seconds": 29.76,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 6949560,
+      "major_page_faults": 0,
+      "output_check": "pass; crossover record order exception"
+    },
+    {
+      "dataset": "100,000 \u00d7 1,000",
+      "program": "Fortran baseline",
+      "repeat": 1,
+      "wall_seconds": 871.5730552090099,
+      "peak_rss_kib": 395608,
+      "user_seconds": 3900.59,
+      "system_seconds": 98.76,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 1392376,
+      "major_page_faults": 0,
+      "output_check": "pass; retained reference"
+    },
+    {
+      "dataset": "100,000 \u00d7 1,000",
+      "program": "Fortran baseline",
+      "repeat": 2,
+      "wall_seconds": 876.2060168550233,
+      "peak_rss_kib": 395208,
+      "user_seconds": 3942.01,
+      "system_seconds": 100.34,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 1392376,
+      "major_page_faults": 0,
+      "output_check": "pass; crossover record order exception"
+    },
+    {
+      "dataset": "100,000 \u00d7 10,000",
+      "program": "Fortran baseline",
+      "repeat": 1,
+      "wall_seconds": 1187.165954166965,
+      "peak_rss_kib": 1693012,
+      "user_seconds": 4715.95,
+      "system_seconds": 143.08,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 7992392,
+      "major_page_faults": 0,
+      "output_check": "pass; retained reference"
+    },
+    {
+      "dataset": "100,000 \u00d7 10,000",
+      "program": "Fortran baseline",
+      "repeat": 2,
+      "wall_seconds": 1177.6232280239929,
+      "peak_rss_kib": 1693012,
+      "user_seconds": 4693.86,
+      "system_seconds": 142.18,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 7992400,
+      "major_page_faults": 0,
+      "output_check": "pass; crossover record order exception"
+    },
+    {
+      "dataset": "100,000 \u00d7 100,000",
+      "program": "Fortran baseline",
+      "repeat": 1,
+      "wall_seconds": 4596.082542138989,
+      "peak_rss_kib": 15713276,
+      "user_seconds": 10557.2,
+      "system_seconds": 256.51,
+      "swaps": 0,
+      "filesystem_inputs": 856,
+      "filesystem_outputs": 68246536,
+      "major_page_faults": 3,
+      "output_check": "pass; retained reference"
+    },
+    {
+      "dataset": "100,000 \u00d7 100,000",
+      "program": "Fortran baseline",
+      "repeat": 2,
+      "wall_seconds": 4644.075171667966,
+      "peak_rss_kib": 15713388,
+      "user_seconds": 10556.28,
+      "system_seconds": 267.73,
+      "swaps": 0,
+      "filesystem_inputs": 8336,
+      "filesystem_outputs": 68246528,
+      "major_page_faults": 0,
+      "output_check": "pass; crossover record order exception"
+    },
+    {
+      "dataset": "1,000,000 \u00d7 10,000",
+      "program": "Fortran baseline",
+      "repeat": 1,
+      "wall_seconds": 24715.296886948985,
+      "peak_rss_kib": 16899524,
+      "user_seconds": 83156.95,
+      "system_seconds": 2050.8,
+      "swaps": 0,
+      "filesystem_inputs": 17006944,
+      "filesystem_outputs": 77872264,
+      "major_page_faults": 1,
+      "output_check": "pass; retained reference"
+    },
+    {
+      "dataset": "1,000,000 \u00d7 10,000",
+      "program": "Fortran baseline",
+      "repeat": 2,
+      "wall_seconds": 24924.011008136964,
+      "peak_rss_kib": 16899324,
+      "user_seconds": 82407.29,
+      "system_seconds": 2149.66,
+      "swaps": 0,
+      "filesystem_inputs": 101192,
+      "filesystem_outputs": 77872248,
+      "major_page_faults": 1,
+      "output_check": "pass; crossover record order exception"
+    },
+    {
+      "dataset": "10,000 \u00d7 1,000",
+      "program": "TurboHap",
+      "repeat": 1,
+      "wall_seconds": 0.52,
+      "peak_rss_kib": 191808,
+      "user_seconds": 3.0,
+      "system_seconds": 0.12,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 162784,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 1,000",
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "wall_seconds": 0.54,
+      "peak_rss_kib": 189552,
+      "user_seconds": 3.0,
+      "system_seconds": 0.17,
+      "swaps": 0,
+      "filesystem_inputs": 48968,
+      "filesystem_outputs": 182368,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 1,000",
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "wall_seconds": 0.55,
+      "peak_rss_kib": 189996,
+      "user_seconds": 2.99,
+      "system_seconds": 0.17,
+      "swaps": 0,
+      "filesystem_inputs": 48976,
+      "filesystem_outputs": 182368,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 1,000",
+      "program": "TurboHap",
+      "repeat": 2,
+      "wall_seconds": 0.52,
+      "peak_rss_kib": 191540,
+      "user_seconds": 2.98,
+      "system_seconds": 0.13,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 162784,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 10,000",
+      "program": "TurboHap",
+      "repeat": 1,
+      "wall_seconds": 1.71,
+      "peak_rss_kib": 803472,
+      "user_seconds": 11.47,
+      "system_seconds": 0.48,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 852704,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 10,000",
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "wall_seconds": 1.98,
+      "peak_rss_kib": 783296,
+      "user_seconds": 11.77,
+      "system_seconds": 0.65,
+      "swaps": 0,
+      "filesystem_inputs": 467432,
+      "filesystem_outputs": 1046104,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 10,000",
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "wall_seconds": 1.98,
+      "peak_rss_kib": 783016,
+      "user_seconds": 11.73,
+      "system_seconds": 0.66,
+      "swaps": 0,
+      "filesystem_inputs": 467720,
+      "filesystem_outputs": 1046104,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 10,000",
+      "program": "TurboHap",
+      "repeat": 2,
+      "wall_seconds": 1.72,
+      "peak_rss_kib": 803240,
+      "user_seconds": 11.41,
+      "system_seconds": 0.5,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 852704,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 100,000",
+      "program": "TurboHap",
+      "repeat": 1,
+      "wall_seconds": 11.82,
+      "peak_rss_kib": 6618980,
+      "user_seconds": 76.76,
+      "system_seconds": 3.86,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 6949360,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 100,000",
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "wall_seconds": 20.55,
+      "peak_rss_kib": 6196544,
+      "user_seconds": 78.88,
+      "system_seconds": 5.57,
+      "swaps": 0,
+      "filesystem_inputs": 5150008,
+      "filesystem_outputs": 9140840,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 100,000",
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "wall_seconds": 20.38,
+      "peak_rss_kib": 6196796,
+      "user_seconds": 78.73,
+      "system_seconds": 5.74,
+      "swaps": 0,
+      "filesystem_inputs": 5143704,
+      "filesystem_outputs": 9140840,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "10,000 \u00d7 100,000",
+      "program": "TurboHap",
+      "repeat": 2,
+      "wall_seconds": 11.99,
+      "peak_rss_kib": 6619028,
+      "user_seconds": 77.83,
+      "system_seconds": 3.96,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 6949360,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 1,000",
+      "program": "TurboHap",
+      "repeat": 1,
+      "wall_seconds": 5.58,
+      "peak_rss_kib": 349728,
+      "user_seconds": 39.36,
+      "system_seconds": 0.5,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 1392304,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 1,000",
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "wall_seconds": 5.97,
+      "peak_rss_kib": 335312,
+      "user_seconds": 40.1,
+      "system_seconds": 0.64,
+      "swaps": 0,
+      "filesystem_inputs": 751704,
+      "filesystem_outputs": 1588088,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 1,000",
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "wall_seconds": 5.96,
+      "peak_rss_kib": 335436,
+      "user_seconds": 40.09,
+      "system_seconds": 0.65,
+      "swaps": 0,
+      "filesystem_inputs": 753640,
+      "filesystem_outputs": 1588088,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 1,000",
+      "program": "TurboHap",
+      "repeat": 2,
+      "wall_seconds": 5.6,
+      "peak_rss_kib": 348448,
+      "user_seconds": 39.63,
+      "system_seconds": 0.48,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 1392304,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 10,000",
+      "program": "TurboHap",
+      "repeat": 1,
+      "wall_seconds": 16.71,
+      "peak_rss_kib": 1577792,
+      "user_seconds": 121.5,
+      "system_seconds": 2.35,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 7992232,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 10,000",
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "wall_seconds": 19.11,
+      "peak_rss_kib": 1165176,
+      "user_seconds": 123.39,
+      "system_seconds": 3.41,
+      "swaps": 0,
+      "filesystem_inputs": 7529104,
+      "filesystem_outputs": 9953496,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 10,000",
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "wall_seconds": 19.07,
+      "peak_rss_kib": 1165248,
+      "user_seconds": 123.37,
+      "system_seconds": 3.53,
+      "swaps": 0,
+      "filesystem_inputs": 7543536,
+      "filesystem_outputs": 9953496,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 10,000",
+      "program": "TurboHap",
+      "repeat": 2,
+      "wall_seconds": 16.1,
+      "peak_rss_kib": 1577520,
+      "user_seconds": 120.59,
+      "system_seconds": 2.32,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 7992232,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 100,000",
+      "program": "TurboHap",
+      "repeat": 1,
+      "wall_seconds": 112.87,
+      "peak_rss_kib": 13658564,
+      "user_seconds": 815.45,
+      "system_seconds": 18.09,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 68245520,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 100,000",
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "wall_seconds": 193.49,
+      "peak_rss_kib": 8998620,
+      "user_seconds": 824.97,
+      "system_seconds": 32.24,
+      "swaps": 0,
+      "filesystem_inputs": 78454000,
+      "filesystem_outputs": 90053856,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 100,000",
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "wall_seconds": 193.55,
+      "peak_rss_kib": 8998364,
+      "user_seconds": 827.31,
+      "system_seconds": 33.47,
+      "swaps": 0,
+      "filesystem_inputs": 78407728,
+      "filesystem_outputs": 90053856,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "100,000 \u00d7 100,000",
+      "program": "TurboHap",
+      "repeat": 2,
+      "wall_seconds": 112.97,
+      "peak_rss_kib": 13659032,
+      "user_seconds": 810.85,
+      "system_seconds": 18.96,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 68245520,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "1,000,000 \u00d7 10,000",
+      "program": "TurboHap",
+      "repeat": 1,
+      "wall_seconds": 186.45,
+      "peak_rss_kib": 17296780,
+      "user_seconds": 1481.02,
+      "system_seconds": 21.26,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 77871200,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "1,000,000 \u00d7 10,000",
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "wall_seconds": 223.97,
+      "peak_rss_kib": 12665940,
+      "user_seconds": 1556.31,
+      "system_seconds": 30.49,
+      "swaps": 0,
+      "filesystem_inputs": 77863624,
+      "filesystem_outputs": 97472184,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "1,000,000 \u00d7 10,000",
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "wall_seconds": 224.19,
+      "peak_rss_kib": 12665844,
+      "user_seconds": 1561.55,
+      "system_seconds": 30.52,
+      "swaps": 0,
+      "filesystem_inputs": 77854848,
+      "filesystem_outputs": 97472184,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    },
+    {
+      "dataset": "1,000,000 \u00d7 10,000",
+      "program": "TurboHap",
+      "repeat": 2,
+      "wall_seconds": 186.44,
+      "peak_rss_kib": 17297156,
+      "user_seconds": 1478.99,
+      "system_seconds": 21.3,
+      "swaps": 0,
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 77871200,
+      "major_page_faults": 0,
+      "output_check": "pass; strict raw SHA256 and byte count"
+    }
+  ],
+  "release_build_validation": {
+    "compiler": "GCC 13.3.0",
+    "cmake_project_version": "1.2.0",
+    "binary_sha256": "ae41bcf5747d4c189dd758b7fd0eba35df02a354ae39f72f653a1d6590ec6d2d",
+    "built_in_public_layout_before_measurement": true,
+    "ctest_passed": 19,
+    "strict_raw_output_checks": 280
+  },
+  "cpu_placement": {
+    "Fortran baseline": "Historical unbound ten-thread runs with all 20 CPU cores eligible.",
+    "TurboHap": "All 20 CPU cores available to container; default auto policy selects the ten X925 cores. No taskset or additional OpenMP binding.",
+    "TurboHap LM": "Same automatic selection and unbound worker policy as standard."
+  },
+  "environment_image": "sha256:ad8eb4f5c5d08841d6723bc3563af0c3632c2e87c5a4d296117ca50be718beeb",
+  "environment_packages": [
+    "g++-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+    "Copyright (C) 2023 Free Software Foundation, Inc.",
+    "This is free software; see the source for copying conditions.  There is NO",
+    "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+    "",
+    "binutils\t2.42-4ubuntu2.10",
+    "cmake\t3.28.3-1build7",
+    "g++-13\t13.3.0-6ubuntu2~24.04.1",
+    "gcc-13\t13.3.0-6ubuntu2~24.04.1",
+    "libc6:arm64\t2.39-0ubuntu8.9",
+    "libgomp1:arm64\t14.2.0-4ubuntu2~24.04.1",
+    "libstdc++6:arm64\t14.2.0-4ubuntu2~24.04.1"
+  ]
+}
