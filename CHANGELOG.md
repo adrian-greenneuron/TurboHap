@@ -17,8 +17,12 @@
   280 strict raw output checks pass. Standard is faster and LM uses less peak
   resident memory in every measured dataset. See the
   [results and methodology](docs/turbohap_benchmarks_301026.md).
-- The original Fortran benchmark observations and bundled v1.0.0 manuscript and
-  supplementary material are retained unchanged.
+- Refreshed GNU Fortran 13.3 baseline: one expanded-flag run per dataset, ten
+  threads, no taskset or added binding. The second replicate is deferred; all
+  28 TurboHap observations are unchanged. Sample sizes are explicit in the
+  tables and figures.
+- Historical Fortran records and the bundled v1.0.0 manuscript and supplementary
+  material remain unchanged.
 
 ## 1.1.0 — 28 October 2026
 

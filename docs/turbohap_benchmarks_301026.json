@@ -5,15 +5,19 @@
   "platform": "Ubuntu 24.04, Linux ARM64",
   "compiler": "GCC and gfortran 13.3.0",
   "threads": 10,
-  "repeats": 2,
-  "fortran_flags": "-O3 -fopenmp -fno-underscoring",
+  "repeats": {
+    "Fortran baseline": 1,
+    "TurboHap": 2,
+    "TurboHap LM": 2
+  },
+  "fortran_flags": "-O3 -march=native -funroll-loops -flto -flto-partition=1to1 -fopenmp -ffp-contract=off -fno-underscoring",
   "cpp_flags": "-O3 -march=native -funroll-loops -flto -ffp-contract=off -std=gnu++17 -fopenmp",
   "cpp_link_flags": "-flto-partition=1to1",
   "release_tag": "v1.2.0",
-  "method": "Original Fortran baseline retained unchanged from 21\u201322 October; fresh v1.2.0 measurements on 30 October 2026. Complete executable includes input, computation, buffered output and LM temporary I/O. Compilation, container startup, input warming, post-exit fsync and hashing excluded.",
-  "selection": "All 28 planned observations: seven published corrected synthetic datasets, two technical repeats per mode and dataset. No excluded, substituted or reused C++ timings.",
+  "method": "30 October 2026 measurements: one expanded-flag GNU Fortran observation and two observations per TurboHap mode/dataset. Complete executable includes input, computation, buffered output and LM temporary I/O. Startup, build, post-exit fsync and hashing excluded.",
+  "selection": "All seven initial unrestricted Fortran observations plus all 28 frozen TurboHap observations. The second Fortran replicate is deferred. No excluded or substituted observations.",
   "measurement_dates": {
-    "Fortran baseline": "21\u201322 October 2026",
+    "Fortran baseline": "30 October 2026",
     "TurboHap": "30 October 2026",
     "TurboHap LM": "30 October 2026"
   },
@@ -66,7 +70,7 @@
     ]
   },
   "concurrent_load": {
-    "Fortran baseline": "The server was shared with other work; competing load was not systematically recorded or controlled.",
+    "Fortran baseline": "No competing benchmark intentionally run; unrelated background activity was not comprehensively measured.",
     "TurboHap": "Host made available for qualification; no competing benchmark was intentionally run.",
     "TurboHap LM": "Host made available for qualification; no competing benchmark was intentionally run."
   },
@@ -77,11 +81,11 @@
   },
   "storage": "Internal NVMe; LM temporary-file activity included in executable time.",
   "timing_sources": {
-    "Fortran baseline": "Existing wall_seconds measurement from v1.0.0 benchmark record.",
+    "Fortran baseline": "GNU time elapsed seconds (%e), like C++; wrapper wall time retained separately.",
     "TurboHap": "GNU time elapsed seconds (%e); excludes measurement-wrapper overhead.",
     "TurboHap LM": "GNU time elapsed seconds (%e); excludes measurement-wrapper overhead."
   },
-  "measurement_order": "Per dataset: standard-1, LM-1, LM-2, standard-2. Datasets in ascending animal count, then locus count. Fresh output directories, warm checked inputs before each run; no forced cache eviction or untimed inference warmups.",
+  "measurement_order": "Fortran: one run per dataset in ascending animal count, then locus count. C++: standard-1, LM-1, LM-2, standard-2 per dataset, with all 28 original timings unchanged. Separate sequential studies on 30 October.",
   "historical_baseline_metadata": "turbohap_benchmarks_221026.json",
   "fortran_source_sha256": {
     "findhap.f90": {
@@ -205,7 +209,7 @@
   },
   "source_identity_note": "Public release layout was frozen before building and measuring. Source files and CMake match the measured snapshot; CMake project version is 1.2.0.",
   "measured_binary_sha256": {
-    "Fortran baseline": "8b48d375dcf3bf718ee770c8ec362265a9095696b34feb784aa4bc7164afc7c1",
+    "Fortran baseline": "6a2e28072ae68f7eb892666a874a85e63a7bf0287cd97dc96e71eac854b5e110",
     "TurboHap": "ae41bcf5747d4c189dd758b7fd0eba35df02a354ae39f72f653a1d6590ec6d2d",
     "TurboHap LM": "ae41bcf5747d4c189dd758b7fd0eba35df02a354ae39f72f653a1d6590ec6d2d"
   },
@@ -214,197 +218,106 @@
       "dataset": "10,000 \u00d7 1,000",
       "program": "Fortran baseline",
       "repeat": 1,
-      "wall_seconds": 10.73102258698782,
-      "peak_rss_kib": 316424,
-      "user_seconds": 89.34,
-      "system_seconds": 0.55,
-      "swaps": 0,
-      "filesystem_inputs": 640,
-      "filesystem_outputs": 162808,
-      "major_page_faults": 2,
-      "output_check": "pass; retained reference"
-    },
-    {
-      "dataset": "10,000 \u00d7 1,000",
-      "program": "Fortran baseline",
-      "repeat": 2,
-      "wall_seconds": 10.308390206017066,
-      "peak_rss_kib": 316424,
-      "user_seconds": 85.23,
-      "system_seconds": 0.49,
+      "wall_seconds": 10.23,
+      "peak_rss_kib": 316064,
+      "user_seconds": 84.34,
+      "system_seconds": 0.51,
       "swaps": 0,
       "filesystem_inputs": 0,
       "filesystem_outputs": 162808,
       "major_page_faults": 0,
-      "output_check": "pass; crossover record order exception"
+      "output_check": "pass; exact records; raw cross.overs order differs",
+      "wrapper_wall_seconds": 10.28262002300471
     },
     {
       "dataset": "10,000 \u00d7 10,000",
       "program": "Fortran baseline",
       "repeat": 1,
-      "wall_seconds": 74.95623857801547,
-      "peak_rss_kib": 1255464,
-      "user_seconds": 311.06,
-      "system_seconds": 10.8,
+      "wall_seconds": 72.31,
+      "peak_rss_kib": 1255280,
+      "user_seconds": 309.89,
+      "system_seconds": 10.05,
       "swaps": 0,
       "filesystem_inputs": 0,
       "filesystem_outputs": 852760,
       "major_page_faults": 0,
-      "output_check": "pass; retained reference"
-    },
-    {
-      "dataset": "10,000 \u00d7 10,000",
-      "program": "Fortran baseline",
-      "repeat": 2,
-      "wall_seconds": 76.04546036897227,
-      "peak_rss_kib": 1255272,
-      "user_seconds": 313.36,
-      "system_seconds": 10.95,
-      "swaps": 0,
-      "filesystem_inputs": 0,
-      "filesystem_outputs": 852760,
-      "major_page_faults": 0,
-      "output_check": "pass; crossover record order exception"
+      "output_check": "pass; exact records; raw cross.overs order differs",
+      "wrapper_wall_seconds": 72.35796913603554
     },
     {
       "dataset": "10,000 \u00d7 100,000",
       "program": "Fortran baseline",
       "repeat": 1,
-      "wall_seconds": 450.14248745999066,
-      "peak_rss_kib": 11162468,
-      "user_seconds": 869.31,
-      "system_seconds": 30.44,
+      "wall_seconds": 442.21,
+      "peak_rss_kib": 11162500,
+      "user_seconds": 852.64,
+      "system_seconds": 29.62,
       "swaps": 0,
       "filesystem_inputs": 0,
-      "filesystem_outputs": 6949560,
+      "filesystem_outputs": 6949552,
       "major_page_faults": 0,
-      "output_check": "pass; retained reference"
-    },
-    {
-      "dataset": "10,000 \u00d7 100,000",
-      "program": "Fortran baseline",
-      "repeat": 2,
-      "wall_seconds": 446.5260324389674,
-      "peak_rss_kib": 11162392,
-      "user_seconds": 863.47,
-      "system_seconds": 29.76,
-      "swaps": 0,
-      "filesystem_inputs": 0,
-      "filesystem_outputs": 6949560,
-      "major_page_faults": 0,
-      "output_check": "pass; crossover record order exception"
+      "output_check": "pass; exact records; raw cross.overs order differs",
+      "wrapper_wall_seconds": 442.2165151190129
     },
     {
       "dataset": "100,000 \u00d7 1,000",
       "program": "Fortran baseline",
       "repeat": 1,
-      "wall_seconds": 871.5730552090099,
-      "peak_rss_kib": 395608,
-      "user_seconds": 3900.59,
-      "system_seconds": 98.76,
+      "wall_seconds": 843.04,
+      "peak_rss_kib": 395568,
+      "user_seconds": 3788.26,
+      "system_seconds": 95.6,
       "swaps": 0,
       "filesystem_inputs": 0,
       "filesystem_outputs": 1392376,
       "major_page_faults": 0,
-      "output_check": "pass; retained reference"
-    },
-    {
-      "dataset": "100,000 \u00d7 1,000",
-      "program": "Fortran baseline",
-      "repeat": 2,
-      "wall_seconds": 876.2060168550233,
-      "peak_rss_kib": 395208,
-      "user_seconds": 3942.01,
-      "system_seconds": 100.34,
-      "swaps": 0,
-      "filesystem_inputs": 0,
-      "filesystem_outputs": 1392376,
-      "major_page_faults": 0,
-      "output_check": "pass; crossover record order exception"
+      "output_check": "pass; exact records; raw cross.overs order differs",
+      "wrapper_wall_seconds": 843.0816374110291
     },
     {
       "dataset": "100,000 \u00d7 10,000",
       "program": "Fortran baseline",
       "repeat": 1,
-      "wall_seconds": 1187.165954166965,
-      "peak_rss_kib": 1693012,
-      "user_seconds": 4715.95,
-      "system_seconds": 143.08,
+      "wall_seconds": 1144.89,
+      "peak_rss_kib": 1692816,
+      "user_seconds": 4611.6,
+      "system_seconds": 140.68,
       "swaps": 0,
       "filesystem_inputs": 0,
       "filesystem_outputs": 7992392,
       "major_page_faults": 0,
-      "output_check": "pass; retained reference"
+      "output_check": "pass; exact records; raw cross.overs order differs",
+      "wrapper_wall_seconds": 1144.934634395002
     },
     {
-      "dataset": "100,000 \u00d7 10,000",
+      "dataset": "100,000 \u00d7 100,000",
       "program": "Fortran baseline",
-      "repeat": 2,
-      "wall_seconds": 1177.6232280239929,
-      "peak_rss_kib": 1693012,
-      "user_seconds": 4693.86,
-      "system_seconds": 142.18,
+      "repeat": 1,
+      "wall_seconds": 4627.65,
+      "peak_rss_kib": 15713332,
+      "user_seconds": 10365.18,
+      "system_seconds": 268.03,
       "swaps": 0,
       "filesystem_inputs": 0,
-      "filesystem_outputs": 7992400,
+      "filesystem_outputs": 68246544,
       "major_page_faults": 0,
-      "output_check": "pass; crossover record order exception"
-    },
-    {
-      "dataset": "100,000 \u00d7 100,000",
-      "program": "Fortran baseline",
-      "repeat": 1,
-      "wall_seconds": 4596.082542138989,
-      "peak_rss_kib": 15713276,
-      "user_seconds": 10557.2,
-      "system_seconds": 256.51,
-      "swaps": 0,
-      "filesystem_inputs": 856,
-      "filesystem_outputs": 68246536,
-      "major_page_faults": 3,
-      "output_check": "pass; retained reference"
-    },
-    {
-      "dataset": "100,000 \u00d7 100,000",
-      "program": "Fortran baseline",
-      "repeat": 2,
-      "wall_seconds": 4644.075171667966,
-      "peak_rss_kib": 15713388,
-      "user_seconds": 10556.28,
-      "system_seconds": 267.73,
-      "swaps": 0,
-      "filesystem_inputs": 8336,
-      "filesystem_outputs": 68246528,
-      "major_page_faults": 0,
-      "output_check": "pass; crossover record order exception"
+      "output_check": "pass; exact records; raw cross.overs order differs",
+      "wrapper_wall_seconds": 4627.704505386006
     },
     {
       "dataset": "1,000,000 \u00d7 10,000",
       "program": "Fortran baseline",
       "repeat": 1,
-      "wall_seconds": 24715.296886948985,
-      "peak_rss_kib": 16899524,
-      "user_seconds": 83156.95,
-      "system_seconds": 2050.8,
+      "wall_seconds": 24245.51,
+      "peak_rss_kib": 16899336,
+      "user_seconds": 80898.83,
+      "system_seconds": 2123.73,
       "swaps": 0,
-      "filesystem_inputs": 17006944,
-      "filesystem_outputs": 77872264,
-      "major_page_faults": 1,
-      "output_check": "pass; retained reference"
-    },
-    {
-      "dataset": "1,000,000 \u00d7 10,000",
-      "program": "Fortran baseline",
-      "repeat": 2,
-      "wall_seconds": 24924.011008136964,
-      "peak_rss_kib": 16899324,
-      "user_seconds": 82407.29,
-      "system_seconds": 2149.66,
-      "swaps": 0,
-      "filesystem_inputs": 101192,
-      "filesystem_outputs": 77872248,
-      "major_page_faults": 1,
-      "output_check": "pass; crossover record order exception"
+      "filesystem_inputs": 0,
+      "filesystem_outputs": 77872176,
+      "major_page_faults": 0,
+      "output_check": "pass; exact records; raw cross.overs order differs",
+      "wrapper_wall_seconds": 24245.55896027398
     },
     {
       "dataset": "10,000 \u00d7 1,000",
@@ -808,7 +721,7 @@
     "strict_raw_output_checks": 280
   },
   "cpu_placement": {
-    "Fortran baseline": "Historical unbound ten-thread runs with all 20 CPU cores eligible.",
+    "Fortran baseline": "Ten threads; all 20 CPUs eligible; no taskset, affinity restriction or added OpenMP binding.",
     "TurboHap": "All 20 CPU cores available to container; default auto policy selects the ten X925 cores. No taskset or additional OpenMP binding.",
     "TurboHap LM": "Same automatic selection and unbound worker policy as standard."
   },
@@ -826,5 +739,20 @@
     "libc6:arm64\t2.39-0ubuntu8.9",
     "libgomp1:arm64\t14.2.0-4ubuntu2~24.04.1",
     "libstdc++6:arm64\t14.2.0-4ubuntu2~24.04.1"
-  ]
+  ],
+  "fortran_validation": {
+    "observations": 7,
+    "raw_files_identical": 63,
+    "raw_files_checked": 70,
+    "exact_record_equivalence": true,
+    "raw_mismatches": [
+      "cross.overs"
+    ],
+    "second_replicate_deferred": true
+  },
+  "fortran_runtime": {
+    "compiler": "GNU Fortran (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0\nCopyright (C) 2023 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+    "packages": "binutils\t2.42-4ubuntu2.10\ngcc-13\t13.3.0-6ubuntu2~24.04.1\ngfortran-13\t13.3.0-6ubuntu2~24.04.1\nlibc6:arm64\t2.39-0ubuntu8.9\nlibgfortran5:arm64\t14.2.0-4ubuntu2~24.04.1\nlibgomp1:arm64\t14.2.0-4ubuntu2~24.04.1\n",
+    "execution": "Native qualified host binary; C++ uses its recorded container runtime."
+  }
 }

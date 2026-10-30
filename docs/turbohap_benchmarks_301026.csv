@@ -1,43 +1,36 @@
-dataset,program,repeat,wall_seconds,peak_rss_kib,user_seconds,system_seconds,swaps,filesystem_inputs,filesystem_outputs,major_page_faults,output_check
-"10,000 × 1,000",Fortran baseline,1,10.73102258698782,316424,89.34,0.55,0,640,162808,2,pass; retained reference
-"10,000 × 1,000",Fortran baseline,2,10.308390206017066,316424,85.23,0.49,0,0,162808,0,pass; crossover record order exception
-"10,000 × 10,000",Fortran baseline,1,74.95623857801547,1255464,311.06,10.8,0,0,852760,0,pass; retained reference
-"10,000 × 10,000",Fortran baseline,2,76.04546036897227,1255272,313.36,10.95,0,0,852760,0,pass; crossover record order exception
-"10,000 × 100,000",Fortran baseline,1,450.14248745999066,11162468,869.31,30.44,0,0,6949560,0,pass; retained reference
-"10,000 × 100,000",Fortran baseline,2,446.5260324389674,11162392,863.47,29.76,0,0,6949560,0,pass; crossover record order exception
-"100,000 × 1,000",Fortran baseline,1,871.5730552090099,395608,3900.59,98.76,0,0,1392376,0,pass; retained reference
-"100,000 × 1,000",Fortran baseline,2,876.2060168550233,395208,3942.01,100.34,0,0,1392376,0,pass; crossover record order exception
-"100,000 × 10,000",Fortran baseline,1,1187.165954166965,1693012,4715.95,143.08,0,0,7992392,0,pass; retained reference
-"100,000 × 10,000",Fortran baseline,2,1177.6232280239929,1693012,4693.86,142.18,0,0,7992400,0,pass; crossover record order exception
-"100,000 × 100,000",Fortran baseline,1,4596.082542138989,15713276,10557.2,256.51,0,856,68246536,3,pass; retained reference
-"100,000 × 100,000",Fortran baseline,2,4644.075171667966,15713388,10556.28,267.73,0,8336,68246528,0,pass; crossover record order exception
-"1,000,000 × 10,000",Fortran baseline,1,24715.296886948985,16899524,83156.95,2050.8,0,17006944,77872264,1,pass; retained reference
-"1,000,000 × 10,000",Fortran baseline,2,24924.011008136964,16899324,82407.29,2149.66,0,101192,77872248,1,pass; crossover record order exception
-"10,000 × 1,000",TurboHap,1,0.52,191808,3.0,0.12,0,0,162784,0,pass; strict raw SHA256 and byte count
-"10,000 × 1,000",TurboHap LM,1,0.54,189552,3.0,0.17,0,48968,182368,0,pass; strict raw SHA256 and byte count
-"10,000 × 1,000",TurboHap LM,2,0.55,189996,2.99,0.17,0,48976,182368,0,pass; strict raw SHA256 and byte count
-"10,000 × 1,000",TurboHap,2,0.52,191540,2.98,0.13,0,0,162784,0,pass; strict raw SHA256 and byte count
-"10,000 × 10,000",TurboHap,1,1.71,803472,11.47,0.48,0,0,852704,0,pass; strict raw SHA256 and byte count
-"10,000 × 10,000",TurboHap LM,1,1.98,783296,11.77,0.65,0,467432,1046104,0,pass; strict raw SHA256 and byte count
-"10,000 × 10,000",TurboHap LM,2,1.98,783016,11.73,0.66,0,467720,1046104,0,pass; strict raw SHA256 and byte count
-"10,000 × 10,000",TurboHap,2,1.72,803240,11.41,0.5,0,0,852704,0,pass; strict raw SHA256 and byte count
-"10,000 × 100,000",TurboHap,1,11.82,6618980,76.76,3.86,0,0,6949360,0,pass; strict raw SHA256 and byte count
-"10,000 × 100,000",TurboHap LM,1,20.55,6196544,78.88,5.57,0,5150008,9140840,0,pass; strict raw SHA256 and byte count
-"10,000 × 100,000",TurboHap LM,2,20.38,6196796,78.73,5.74,0,5143704,9140840,0,pass; strict raw SHA256 and byte count
-"10,000 × 100,000",TurboHap,2,11.99,6619028,77.83,3.96,0,0,6949360,0,pass; strict raw SHA256 and byte count
-"100,000 × 1,000",TurboHap,1,5.58,349728,39.36,0.5,0,0,1392304,0,pass; strict raw SHA256 and byte count
-"100,000 × 1,000",TurboHap LM,1,5.97,335312,40.1,0.64,0,751704,1588088,0,pass; strict raw SHA256 and byte count
-"100,000 × 1,000",TurboHap LM,2,5.96,335436,40.09,0.65,0,753640,1588088,0,pass; strict raw SHA256 and byte count
-"100,000 × 1,000",TurboHap,2,5.6,348448,39.63,0.48,0,0,1392304,0,pass; strict raw SHA256 and byte count
-"100,000 × 10,000",TurboHap,1,16.71,1577792,121.5,2.35,0,0,7992232,0,pass; strict raw SHA256 and byte count
-"100,000 × 10,000",TurboHap LM,1,19.11,1165176,123.39,3.41,0,7529104,9953496,0,pass; strict raw SHA256 and byte count
-"100,000 × 10,000",TurboHap LM,2,19.07,1165248,123.37,3.53,0,7543536,9953496,0,pass; strict raw SHA256 and byte count
-"100,000 × 10,000",TurboHap,2,16.1,1577520,120.59,2.32,0,0,7992232,0,pass; strict raw SHA256 and byte count
-"100,000 × 100,000",TurboHap,1,112.87,13658564,815.45,18.09,0,0,68245520,0,pass; strict raw SHA256 and byte count
-"100,000 × 100,000",TurboHap LM,1,193.49,8998620,824.97,32.24,0,78454000,90053856,0,pass; strict raw SHA256 and byte count
-"100,000 × 100,000",TurboHap LM,2,193.55,8998364,827.31,33.47,0,78407728,90053856,0,pass; strict raw SHA256 and byte count
-"100,000 × 100,000",TurboHap,2,112.97,13659032,810.85,18.96,0,0,68245520,0,pass; strict raw SHA256 and byte count
-"1,000,000 × 10,000",TurboHap,1,186.45,17296780,1481.02,21.26,0,0,77871200,0,pass; strict raw SHA256 and byte count
-"1,000,000 × 10,000",TurboHap LM,1,223.97,12665940,1556.31,30.49,0,77863624,97472184,0,pass; strict raw SHA256 and byte count
-"1,000,000 × 10,000",TurboHap LM,2,224.19,12665844,1561.55,30.52,0,77854848,97472184,0,pass; strict raw SHA256 and byte count
-"1,000,000 × 10,000",TurboHap,2,186.44,17297156,1478.99,21.3,0,0,77871200,0,pass; strict raw SHA256 and byte count
+dataset,program,repeat,wall_seconds,peak_rss_kib,user_seconds,system_seconds,swaps,filesystem_inputs,filesystem_outputs,major_page_faults,output_check,wrapper_wall_seconds
+"10,000 × 1,000",Fortran baseline,1,10.23,316064,84.34,0.51,0,0,162808,0,pass; exact records; raw cross.overs order differs,10.28262002300471
+"10,000 × 10,000",Fortran baseline,1,72.31,1255280,309.89,10.05,0,0,852760,0,pass; exact records; raw cross.overs order differs,72.35796913603554
+"10,000 × 100,000",Fortran baseline,1,442.21,11162500,852.64,29.62,0,0,6949552,0,pass; exact records; raw cross.overs order differs,442.2165151190129
+"100,000 × 1,000",Fortran baseline,1,843.04,395568,3788.26,95.6,0,0,1392376,0,pass; exact records; raw cross.overs order differs,843.0816374110291
+"100,000 × 10,000",Fortran baseline,1,1144.89,1692816,4611.6,140.68,0,0,7992392,0,pass; exact records; raw cross.overs order differs,1144.934634395002
+"100,000 × 100,000",Fortran baseline,1,4627.65,15713332,10365.18,268.03,0,0,68246544,0,pass; exact records; raw cross.overs order differs,4627.704505386006
+"1,000,000 × 10,000",Fortran baseline,1,24245.51,16899336,80898.83,2123.73,0,0,77872176,0,pass; exact records; raw cross.overs order differs,24245.55896027398
+"10,000 × 1,000",TurboHap,1,0.52,191808,3.0,0.12,0,0,162784,0,pass; strict raw SHA256 and byte count,
+"10,000 × 1,000",TurboHap LM,1,0.54,189552,3.0,0.17,0,48968,182368,0,pass; strict raw SHA256 and byte count,
+"10,000 × 1,000",TurboHap LM,2,0.55,189996,2.99,0.17,0,48976,182368,0,pass; strict raw SHA256 and byte count,
+"10,000 × 1,000",TurboHap,2,0.52,191540,2.98,0.13,0,0,162784,0,pass; strict raw SHA256 and byte count,
+"10,000 × 10,000",TurboHap,1,1.71,803472,11.47,0.48,0,0,852704,0,pass; strict raw SHA256 and byte count,
+"10,000 × 10,000",TurboHap LM,1,1.98,783296,11.77,0.65,0,467432,1046104,0,pass; strict raw SHA256 and byte count,
+"10,000 × 10,000",TurboHap LM,2,1.98,783016,11.73,0.66,0,467720,1046104,0,pass; strict raw SHA256 and byte count,
+"10,000 × 10,000",TurboHap,2,1.72,803240,11.41,0.5,0,0,852704,0,pass; strict raw SHA256 and byte count,
+"10,000 × 100,000",TurboHap,1,11.82,6618980,76.76,3.86,0,0,6949360,0,pass; strict raw SHA256 and byte count,
+"10,000 × 100,000",TurboHap LM,1,20.55,6196544,78.88,5.57,0,5150008,9140840,0,pass; strict raw SHA256 and byte count,
+"10,000 × 100,000",TurboHap LM,2,20.38,6196796,78.73,5.74,0,5143704,9140840,0,pass; strict raw SHA256 and byte count,
+"10,000 × 100,000",TurboHap,2,11.99,6619028,77.83,3.96,0,0,6949360,0,pass; strict raw SHA256 and byte count,
+"100,000 × 1,000",TurboHap,1,5.58,349728,39.36,0.5,0,0,1392304,0,pass; strict raw SHA256 and byte count,
+"100,000 × 1,000",TurboHap LM,1,5.97,335312,40.1,0.64,0,751704,1588088,0,pass; strict raw SHA256 and byte count,
+"100,000 × 1,000",TurboHap LM,2,5.96,335436,40.09,0.65,0,753640,1588088,0,pass; strict raw SHA256 and byte count,
+"100,000 × 1,000",TurboHap,2,5.6,348448,39.63,0.48,0,0,1392304,0,pass; strict raw SHA256 and byte count,
+"100,000 × 10,000",TurboHap,1,16.71,1577792,121.5,2.35,0,0,7992232,0,pass; strict raw SHA256 and byte count,
+"100,000 × 10,000",TurboHap LM,1,19.11,1165176,123.39,3.41,0,7529104,9953496,0,pass; strict raw SHA256 and byte count,
+"100,000 × 10,000",TurboHap LM,2,19.07,1165248,123.37,3.53,0,7543536,9953496,0,pass; strict raw SHA256 and byte count,
+"100,000 × 10,000",TurboHap,2,16.1,1577520,120.59,2.32,0,0,7992232,0,pass; strict raw SHA256 and byte count,
+"100,000 × 100,000",TurboHap,1,112.87,13658564,815.45,18.09,0,0,68245520,0,pass; strict raw SHA256 and byte count,
+"100,000 × 100,000",TurboHap LM,1,193.49,8998620,824.97,32.24,0,78454000,90053856,0,pass; strict raw SHA256 and byte count,
+"100,000 × 100,000",TurboHap LM,2,193.55,8998364,827.31,33.47,0,78407728,90053856,0,pass; strict raw SHA256 and byte count,
+"100,000 × 100,000",TurboHap,2,112.97,13659032,810.85,18.96,0,0,68245520,0,pass; strict raw SHA256 and byte count,
+"1,000,000 × 10,000",TurboHap,1,186.45,17296780,1481.02,21.26,0,0,77871200,0,pass; strict raw SHA256 and byte count,
+"1,000,000 × 10,000",TurboHap LM,1,223.97,12665940,1556.31,30.49,0,77863624,97472184,0,pass; strict raw SHA256 and byte count,
+"1,000,000 × 10,000",TurboHap LM,2,224.19,12665844,1561.55,30.52,0,77854848,97472184,0,pass; strict raw SHA256 and byte count,
+"1,000,000 × 10,000",TurboHap,2,186.44,17297156,1478.99,21.3,0,0,77871200,0,pass; strict raw SHA256 and byte count,

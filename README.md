@@ -48,19 +48,20 @@ The manuscript and figures are also available under CC BY 4.0. See the
 
 ## Performance
 
-On a simulated dataset of **1,000,000 animals × 10,000 loci**, the original
-Fortran baseline took **6 hours 53 minutes 40 seconds**.
-TurboHap v1.2.0 finished in **3 minutes 6 seconds**: **133.1× faster**, with
+On a simulated dataset of **1,000,000 animals × 10,000 loci**, GNU Fortran
+FindHap took **6 hours 44 minutes 6 seconds**.
+TurboHap v1.2.0 finished in **3 minutes 6 seconds**: **130.0× faster**, with
 **2.4% more peak memory**. TurboHap LM finished in **3 minutes 44 seconds**:
-**110.8× faster**, with **25.1% less peak memory**.
+**108.2× faster**, with **25.1% less peak memory**.
 
-All benchmarks used **ten CPU threads** on the same NVIDIA DGX Spark.
-The GPU was not used. The Fortran measurements are retained from 21–22 October;
-TurboHap and LM were measured on 30 October. Speedups therefore compare with a
-historical baseline. Values are medians of two complete runs per program,
-including input, computation, buffered output and temporary-file I/O.
-The older baseline was measured on a shared server. Performance depends on the
-dataset, options, storage, hardware and competing load.
+All benchmarks used **ten CPU threads** and **GCC/gfortran 13.3** on the same
+NVIDIA DGX Spark. The GPU was not used. All measurements were collected on
+30 October in separate studies. Fortran uses expanded optimisation flags,
+all 20 CPUs eligible, no taskset and no added binding. Its values are
+**single observations**; TurboHap and LM use **medians of two runs per mode**.
+The second Fortran replicate is deferred. Complete executable times include
+input, computation, buffered output and temporary-file I/O. Performance
+depends on the dataset, options, storage, hardware and competing load.
 
 Version 1.2.0 also improves performance on **AMD and Intel x86 computers**.
 Detailed benchmarks are ongoing.
@@ -74,17 +75,17 @@ individual measurements, runtime, peak resident memory and output checks.
 
 ### Runtime
 
-Speedup is relative to the retained Fortran baseline measured on 21–22 October 2026.
+Speedup uses the single expanded-flag Fortran measurement and the median of two TurboHap measurements per mode, all collected on 30 October 2026.
 
 | Animals × loci | Fortran baseline | TurboHap | Speedup | TurboHap LM | Speedup |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 10,000 × 1,000 | 10.52s | **0.52s** | **20.2×** | 0.55s | 19.3× |
-| 10,000 × 10,000 | 1m 16s | **1.71s** | **44.0×** | 1.98s | 38.1× |
-| 10,000 × 100,000 | 7m 28s | **11.91s** | **37.7×** | 20.46s | 21.9× |
-| 100,000 × 1,000 | 14m 34s | **5.59s** | **156.3×** | 5.96s | 146.5× |
-| 100,000 × 10,000 | 19m 42s | **16.41s** | **72.1×** | 19.09s | 61.9× |
-| 100,000 × 100,000 | 1h 17m 00s | **1m 53s** | **40.9×** | 3m 14s | 23.9× |
-| 1,000,000 × 10,000 | 6h 53m 40s | **3m 06s** | **133.1×** | 3m 44s | 110.8× |
+| 10,000 × 1,000 | 10.23s | **0.52s** | **19.7×** | 0.55s | 18.8× |
+| 10,000 × 10,000 | 1m 12s | **1.71s** | **42.2×** | 1.98s | 36.5× |
+| 10,000 × 100,000 | 7m 22s | **11.91s** | **37.1×** | 20.46s | 21.6× |
+| 100,000 × 1,000 | 14m 03s | **5.59s** | **150.8×** | 5.96s | 141.3× |
+| 100,000 × 10,000 | 19m 05s | **16.41s** | **69.8×** | 19.09s | 60.0× |
+| 100,000 × 100,000 | 1h 17m 08s | **1m 53s** | **41.0×** | 3m 14s | 23.9× |
+| 1,000,000 × 10,000 | 6h 44m 06s | **3m 06s** | **130.0×** | 3m 44s | 108.2× |
 
 ### Peak memory
 
@@ -92,13 +93,13 @@ Negative percentages mean less memory than Fortran.
 
 | Animals × loci | Fortran baseline | TurboHap | Memory change | TurboHap LM | Memory change |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 10,000 × 1,000 | 0.302 GiB | 0.183 GiB | -39.4% | **0.181 GiB** | **-40.0%** |
+| 10,000 × 1,000 | 0.301 GiB | 0.183 GiB | -39.4% | **0.181 GiB** | **-40.0%** |
 | 10,000 × 10,000 | 1.197 GiB | 0.766 GiB | -36.0% | **0.747 GiB** | **-37.6%** |
 | 10,000 × 100,000 | 10.645 GiB | 6.312 GiB | -40.7% | **5.910 GiB** | **-44.5%** |
-| 100,000 × 1,000 | 0.377 GiB | 0.333 GiB | -11.7% | **0.320 GiB** | **-15.2%** |
-| 100,000 × 10,000 | 1.615 GiB | 1.505 GiB | -6.8% | **1.111 GiB** | **-31.2%** |
+| 100,000 × 1,000 | 0.377 GiB | 0.333 GiB | -11.8% | **0.320 GiB** | **-15.2%** |
+| 100,000 × 10,000 | 1.614 GiB | 1.505 GiB | -6.8% | **1.111 GiB** | **-31.2%** |
 | 100,000 × 100,000 | 14.985 GiB | 13.026 GiB | -13.1% | **8.582 GiB** | **-42.7%** |
-| 1,000,000 × 10,000 | 16.117 GiB | 16.496 GiB | +2.4% | **12.079 GiB** | **-25.1%** |
+| 1,000,000 × 10,000 | 16.116 GiB | 16.496 GiB | +2.4% | **12.079 GiB** | **-25.1%** |
 
 <!-- BENCHMARK_TABLES_END -->
 

@@ -31,13 +31,15 @@ def main():
     data = json.loads((ROOT / 'docs' / f'{BASE}.json').read_text())
     observations = data['observations']
     datasets = list(dict.fromkeys(r['dataset'] for r in observations))
-    assert len(datasets) == 7 and len(observations) == 42
+    assert len(datasets) == 7 and len(observations) == 35
+    repeats = data['repeats']
+    assert repeats == {'Fortran baseline': 1, 'TurboHap': 2, 'TurboHap LM': 2}
     assert {r['program'] for r in observations} == set(PROGRAMS)
     summaries = {}
     for dataset in datasets:
         for program in PROGRAMS:
             runs = [r for r in observations if r['dataset'] == dataset and r['program'] == program]
-            assert len(runs) == 2 and {r['repeat'] for r in runs} == {1, 2}
+            assert len(runs) == repeats[program] and {r['repeat'] for r in runs} == set(range(1, repeats[program]+1))
             assert all(r['swaps'] == 0 and r['output_check'].startswith('pass') for r in runs)
             summaries[dataset, program] = (
                 median(r['wall_seconds'] for r in runs),
@@ -45,7 +47,7 @@ def main():
     datasets.sort(key=lambda d: summaries[d, PROGRAMS[0]][0])
 
     with (ROOT / 'docs' / f'{BASE}.csv').open('w', newline='') as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(observations[0]), lineterminator='\n')
+        writer = csv.DictWriter(handle, fieldnames=list(dict.fromkeys(k for row in observations for k in row)), lineterminator='\n')
         writer.writeheader()
         writer.writerows(observations)
 
@@ -59,7 +61,7 @@ def main():
     for d in datasets:
         f, t, lm = [summaries[d, p][1] for p in PROGRAMS]
         memory_table.append(f'| {d} | {f:.3f} GiB | {t:.3f} GiB | {100*(t/f-1):+.1f}% | **{lm:.3f} GiB** | **{100*(lm/f-1):+.1f}%** |')
-    tables = ['### Runtime', '', 'Speedup is relative to the retained Fortran baseline measured on 21–22 October 2026.', '', *time_table, '',
+    tables = ['### Runtime', '', 'Speedup uses the single expanded-flag Fortran measurement and the median of two TurboHap measurements per mode, all collected on 30 October 2026.', '', *time_table, '',
               '### Peak memory', '', 'Negative percentages mean less memory than Fortran.', '', *memory_table]
     readme = ROOT / 'README.md'
     before, remainder = readme.read_text().split('<!-- BENCHMARK_TABLES_START -->', 1)
@@ -67,9 +69,9 @@ def main():
     readme.write_text(before + '<!-- BENCHMARK_TABLES_START -->\n\n' + '\n'.join(tables)
                       + '\n\n<!-- BENCHMARK_TABLES_END -->' + after)
     lines = ['# TurboHap v1.2.0 benchmarks', '',
-             '30 October 2026. Seven synthetic datasets; two measurements per program and dataset.', '',
-             'TurboHap and TurboHap LM were measured on 30 October. The original Fortran observations are retained unchanged from 21–22 October. Ratios against Fortran use that historical baseline; they are not fresh matched Fortran comparisons.', '',
-             'Values are medians of two runs for each program. Runtime and RSS medians are calculated independently. Bold marks the lowest recorded runtime or RSS and its corresponding ratio, not statistical significance.', '', *tables]
+             '30 October 2026. Seven synthetic datasets; one Fortran measurement and two measurements per TurboHap mode and dataset.', '',
+             'All 35 observations were collected on 30 October in separate studies. The refreshed GNU Fortran baseline uses expanded compiler flags with no taskset or added binding. The second Fortran replicate is deferred; all 28 previously collected TurboHap observations are unchanged. Historical baselines remain available separately.', '',
+             'Fortran values are single observations; TurboHap values are medians of two technical runs per mode. Runtime and RSS medians are calculated independently. Bold marks the lowest recorded runtime or RSS and its corresponding ratio, not statistical significance. No Fortran variation estimate is available yet.', '', *tables]
     lines += ['', f'![Runtime and peak memory](assets/{BASE}.png)', '',
               f'[Download runtime and memory figure (SVG)](assets/{BASE}.svg)', '',
               f'![Speedup over Fortran](assets/{BASE}_speedup.png)', '',
@@ -79,17 +81,17 @@ def main():
               '## Methodology', '',
               '- Hardware: NVIDIA DGX Spark; 20 logical CPU cores; Ubuntu 24.04 ARM64.',
               '- Ten OpenMP threads for every measured program. GCC/gfortran 13.3.0.',
-              '- Original Fortran flags: `-O3 -fopenmp -fno-underscoring`.',
+              '- Fortran flags: `'+data['fortran_flags']+'`. No fast-math or profile-guided optimisation.',
               '- C++ release flags: `-O3 -march=native -funroll-loops -flto -ffp-contract=off -std=gnu++17 -fopenmp`; GNU linking uses `-flto-partition=1to1`. No fast-math or profile-guided optimisation.',
               '- The seven datasets were generated with genosimV4; dimensions are genotyped animals × map loci. Each pedigree also contains four ungenotyped founders. Chip membership and pedigree structure affect work; see the [generation recipe and input checksums](turbohap_benchmark_datasets_221026.md).',
               '- Wall time covers the complete executable, including reading inputs, computation, writing results and temporary-file I/O. Output validation is outside the timer.',
               '- Peak memory is process peak resident set size from GNU `time`, converted from KiB to GiB. It is not total system memory, filesystem cache or disk usage.',
-              '- Each dataset used standard-1, LM-1, LM-2, standard-2 order. All 28 new observations are included; Fortran was not rerun.',
-              '- Both C++ modes use the default automatic CPU policy: the full 20-core container allocation is available, and the launcher selects the ten Cortex-X925 cores (logical IDs 5–9 and 15–19). No taskset or additional worker binding is used. The historical Fortran runs had access to all 20 cores with ten threads. Both C++ modes use `LC_ALL=C`, `OMP_NUM_THREADS=10` and `OMP_DYNAMIC=FALSE`; explicit placement variables are unset.',
-              '- C++ elapsed times use GNU time (%e), excluding monitoring-wrapper overhead. Historical Fortran timings retain their original wall-clock measurement. These are different sessions, with different affinity and recorded timing precision.',
+              '- Each dataset used standard-1, LM-1, LM-2, standard-2 order. All 28 C++ observations are included unchanged. Fortran used one run per dataset in ascending animal count, then locus count; all seven are included.',
+              '- Both C++ modes use the default automatic CPU policy: the full 20-core container allocation is available, and the launcher selects the ten Cortex-X925 cores (logical IDs 5–9 and 15–19). No taskset or additional worker binding is used. The new Fortran runs had access to all 20 cores with ten threads, no taskset and no added binding. Both C++ modes use `LC_ALL=C`, `OMP_NUM_THREADS=10` and `OMP_DYNAMIC=FALSE`; explicit placement variables are unset.',
+              '- All primary elapsed times use GNU time (%e), excluding measurement-wrapper overhead. Fortran wrapper wall time is retained separately in the raw observations. Studies used different sessions and the placement policies above.',
               '- A clean release layout, with CMake project version 1.2.0, was frozen and built before measurement. All 19 packaged tests passed. Source and measured executable hashes are included in the JSON metadata. Every benchmark input matches its published SHA-256 and byte count, including the million-animal benchmark options.',
-              '- Inputs were explicitly warmed and residency checked before each timed C++ run. There were no inference warmup runs or forced cache eviction. Outputs were fresh; post-exit checked file/directory fsync and hashing occurred outside the timer. The C++ host was quiet, while the older Fortran baseline was measured on a shared server. Two technical repeats do not establish confidence intervals, statistical equivalence or universal speedup.',
-              '- Every C++ output passes its saved reference check. All result bytes match; Fortran comparisons allow only complete crossover-record ordering to differ. C++ mode comparisons are strict, including crossover order.', '',
+              '- Inputs were explicitly warmed and residency checked before each timed C++ run. There were no inference warmup runs or forced cache eviction. Outputs were fresh; post-exit checked file/directory fsync and hashing occurred outside the timer. Fortran inputs were verified before its study, with no forced cache eviction or inference warmups. No competing benchmark was intentionally run; unrelated background activity was not comprehensively traced. One Fortran observation and two C++ technical repeats do not establish confidence intervals, statistical equivalence or universal speedup.',
+              '- All 280 C++ raw-file checks pass. Fortran passes 63/70 raw-file checks: only cross.overs record order differs. Its header and every complete record match after C-locale sorting with duplicates retained. These seven raw mismatches remain explicit; no other difference is accepted.', '',
               f'[All observations (CSV)]({BASE}.csv) · [Metadata and observations (JSON)]({BASE}.json) · [Raw output checks](turbohap_validation_301026.json) · [Compatibility](COMPATIBILITY.md)', '',
               '[Historical v1.1.0 benchmarks](turbohap_benchmarks_281026.md) · [Historical v1.0.0 benchmarks](turbohap_benchmarks_221026.md). The manuscript and supplementary files continue to describe v1.0.0; they have not been revised for this software release.', '',
               '## Regenerate the tables and figures', '',
@@ -141,7 +143,11 @@ def plot_runtime_memory(datasets, labels, summaries, observations):
                 runs = [r for r in observations if r['dataset'] == dataset and r['program'] == program]
                 times = [r['wall_seconds'] for r in runs]
                 memories = [r['peak_rss_kib'] / 1048576 for r in runs]
-                ax.errorbar(time, memory,
+                if len(runs)==1:
+                    ax.plot(time,memory,marker=markers[program],color=colors[program],linestyle='',
+                        markersize=marker_sizes[program],markeredgecolor='white',markeredgewidth=.8,zorder=4)
+                else:
+                    ax.errorbar(time, memory,
                             xerr=[[time - min(times)], [max(times) - time]],
                             yerr=[[memory - min(memories)], [max(memories) - memory]],
                             fmt=markers[program], color=colors[program],
@@ -180,9 +186,9 @@ def plot_runtime_memory(datasets, labels, summaries, observations):
                                   markeredgewidth=.8, label=p) for p in PROGRAMS],
                   loc='upper left', frameon=False, ncols=3)
         fig.suptitle('TurboHap v1.2.0: runtime and memory', fontsize=17, weight='bold')
-        ax.set_title('Seven simulated datasets · 10 CPU threads · two runs per program', fontsize=11)
+        ax.set_title('Seven simulated datasets · 10 CPU threads · Fortran: 1 run; each TurboHap mode: 2 runs', fontsize=11)
         fig.supxlabel('Further left is faster. Lower means less memory. Labels: animals × loci.\n'
-                      'Log axes · medians and observed ranges · Fortran: 21–22 Oct; C++: 30 Oct 2026', fontsize=10)
+                      'Log axes · Fortran: single observations; C++: medians and observed ranges · 30 Oct 2026', fontsize=10)
         save(fig, BASE)
 
 
