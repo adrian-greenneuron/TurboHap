@@ -1,3 +1,4 @@
-# Exact versions used to regenerate the v1.2.0 release figures.
+# Exact versions used to regenerate the v1.3.0 release figures.
+# Release generation and checking require Python 3.11 or newer.
 matplotlib==3.11.0
 numpy==2.5.0

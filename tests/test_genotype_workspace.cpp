@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <random>
+#include <fcntl.h>
+#include <unistd.h>
 #include <omp.h>
 
 static void require(bool condition) {
@@ -80,6 +82,22 @@ static void check_chromosomes(int loci, int width, int chromosome_count, size_t 
         if (iteration == 3) require(workspace.write_bytes() == written_before);
     }
     require(workspace.read_bytes() == 4 * workspace.bytes());
+}
+
+// A standard workspace without a pool must not interpret a null pointer as
+// descriptor zero when the optional compact descriptor/pool slot is used.
+static void check_standard_descriptor_lifetime() {
+    const int original_flags = fcntl(STDIN_FILENO, F_GETFD);
+    const int starts[] = {0, 1}, lengths[] = {0, 4};
+    const int8_t expected[] = {0, 1, 2, 5};
+    {
+        GenotypeWorkspace workspace(1, 4, starts, lengths, 1);
+        workspace.store_row(0, expected);
+        int8_t scratch[4];
+        const auto* actual = workspace.segment(0, 0, scratch);
+        require(std::equal(actual, actual + 4, expected));
+    }
+    if (original_flags >= 0) require(fcntl(STDIN_FILENO, F_GETFD) == original_flags);
 }
 
 static void check_batch_boundaries() {
@@ -168,7 +186,45 @@ static void check_rolling(size_t requested, size_t budget) {
     }
 }
 
+#if FINDHAP_MMAP_PHASE_BUFFERS
+static void check_reused_workspace() {
+    constexpr int records = 257, loci = 1003;
+    findhap::NativePhaseBufferPool<uint8_t> pool(4096);
+    for (int width : {7, 11, 25, -1, -2}) {
+        std::vector<int> starts(1, 0), lengths(1, 0);
+        for (int first = 0; width > 0 && first < loci; first += width) {
+            starts.push_back(first + 1);
+            lengths.push_back(std::min(width, loci - first));
+        }
+        if (width < 0) { starts = {0, 1, 500}; lengths = {0, 700, 504}; }
+        const int pattern = std::abs(width);
+        const int segments = int(lengths.size() - 1);
+        std::vector<int8_t> expected(size_t(records) * loci);
+        const int8_t states[] = {0, 1, 2, 5};
+        for (size_t i = 0; i < expected.size(); ++i) expected[i] = states[(i * pattern + i / 7) % 4];
+        {
+            GenotypeWorkspace workspace(records, loci, starts.data(), lengths.data(), segments,
+                                         nullptr, 64 * 1024 * 1024, &pool);
+            for (int n = 0; n < records; ++n) workspace.store_row(n, expected.data() + size_t(n) * loci);
+            for (int seg = 0; seg < segments; ++seg) {
+                std::vector<int8_t> scratch(lengths[seg + 1]);
+                for (int n = 0; n < records; ++n) {
+                    const auto* actual = workspace.segment(n, seg, scratch.data());
+                    const auto* wanted = expected.data() + size_t(n) * loci + starts[seg + 1] - 1;
+                    require(std::equal(actual, actual + lengths[seg + 1], wanted));
+                }
+            }
+        }
+        require(pool.spare_capacity() >= 65536);
+    }
+}
+#endif
+
 int main() {
+    check_standard_descriptor_lifetime();
+#if FINDHAP_MMAP_PHASE_BUFFERS
+    check_reused_workspace();
+#endif
     check_batch_boundaries();
     for (size_t workers : {size_t(1), size_t(4), size_t(10)})
         for (size_t budget : {size_t(1), size_t(544), size_t(2175), size_t(2176), size_t(5440)})
@@ -180,7 +236,7 @@ int main() {
         for (int width : {1, 3, 4, 17, 100, 600}) {
             const int records = 17;
             std::vector<int> starts(1, 0), lengths(1, 0);
-            for (int first = 0; first < loci; first += width) {
+            for (int first = 0; width > 0 && first < loci; first += width) {
                 starts.push_back(first + 1);
                 lengths.push_back(std::min(width, loci - first));
             }

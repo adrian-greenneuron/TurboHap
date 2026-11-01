@@ -7,6 +7,8 @@ import subprocess
 import tempfile
 import time
 
+from fixture_build import build_fixture
+
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
@@ -60,11 +62,12 @@ static int report(const char* mode, int argc, char** argv) {
 }
 namespace findhap_standard { int run(int n, char** v) { return report("standard", n, v); } }
 namespace findhap_low_memory { int run(int n, char** v) { return report("lm", n, v); } }
+namespace findhap_dynamic_standard { int run(int n,char** v) { return findhap_standard::run(n,v); } }
+namespace findhap_dynamic_low_memory { int run(int n,char** v) { return findhap_low_memory::run(n,v); } }
 ''')
         binary = root / 'probe'
-        subprocess.run([os.environ.get('CXX', 'c++'), '-O2', '-std=c++17', '-fopenmp',
-                        '-DFINDHAP_NATIVE_GB10=1', '-I' + str(source), str(source / 'launcher.cpp'),
-                        str(stub), '-o', str(binary)], check=True, capture_output=True)
+        build_fixture([source/'launcher.cpp', stub], binary,
+                      ['-DFINDHAP_NATIVE_GB10=1', '-I' + str(source)])
 
         def run(args, expected, effective, overrides=None, mask=None):
             environment = dict(env, **(overrides or {}))

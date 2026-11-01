@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include "conflict_scan.hpp"
+#include "neon_bits.hpp"
 
 namespace findhap_pedigree {
 struct CrossoverScan {
@@ -34,7 +35,21 @@ inline CrossoverScan scan_crossovers(const int8_t* child, const int8_t* a,
         } else
 #endif
         {
-            for (int q = 0; q < n; ++q) {
+            int q = 0;
+#if defined(__ARM_NEON)
+            if constexpr (Backend == 4) {
+                // Signed byte differences can have magnitude 255. SABD retains
+                // that magnitude in eight bits; compare its unsigned bit pattern.
+                for (; q + 16 <= n; q += 16) {
+                    const auto c = vld1q_s8(child + base + q);
+                    const auto da = vreinterpretq_u8_s8(vabdq_s8(c, vld1q_s8(a + base + q)));
+                    const auto db = vreinterpretq_u8_s8(vabdq_s8(c, vld1q_s8(b + base + q)));
+                    masks[0] |= uint64_t(findhap_neon::lane_mask(vcgtq_u8(da, vdupq_n_u8(1)))) << q;
+                    masks[1] |= uint64_t(findhap_neon::lane_mask(vcgtq_u8(db, vdupq_n_u8(1)))) << q;
+                }
+            }
+#endif
+            for (; q < n; ++q) {
                 masks[0] |= uint64_t(std::abs(int(child[base+q])-int(a[base+q])) > 1) << q;
                 masks[1] |= uint64_t(std::abs(int(child[base+q])-int(b[base+q])) > 1) << q;
             }

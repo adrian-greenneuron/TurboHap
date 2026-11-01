@@ -9,9 +9,25 @@
 #include <sys/resource.h>
 #include <time.h>
 #include <omp.h>
+#if defined(__linux__)
 #include <sched.h>
+#endif
 
 namespace findhap_profile {
+inline int logical_cpu() {
+#if defined(__linux__)
+    return sched_getcpu();
+#else
+    return -1; // macOS exposes no supported current-CPU identifier.
+#endif
+}
+inline long peak_kib(const rusage& usage) {
+#if defined(__APPLE__)
+    return usage.ru_maxrss / 1024;
+#else
+    return usage.ru_maxrss;
+#endif
+}
 inline double seconds(clockid_t clock) {
     timespec value{};
     clock_gettime(clock, &value);
@@ -71,8 +87,8 @@ public:
             "\"start_monotonic_seconds\":%.9f,\"end_monotonic_seconds\":%.9f,"
             "\"wall_seconds\":%.9f,\"owner_thread_cpu_seconds\":%.9f,"
             "\"haplotypes_before\":%d,\"haplotypes_after\":%d,\"process_peak_rss_so_far_kib\":%ld}\n",
-            phase_, step_, iteration_, segment_, chromosome_, loci_, omp_get_thread_num(), sched_getcpu(),
-            wall_, end, end - wall_, cpu, before_, haplotypes_ ? *haplotypes_ : 0, usage.ru_maxrss);
+            phase_, step_, iteration_, segment_, chromosome_, loci_, omp_get_thread_num(), logical_cpu(),
+            wall_, end, end - wall_, cpu, before_, haplotypes_ ? *haplotypes_ : 0, peak_kib(usage));
         std::fflush(writer.file);
         active_ = false;
     }

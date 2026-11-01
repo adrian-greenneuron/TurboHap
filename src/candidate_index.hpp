@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdint>
+#include <cstring>
 #include <vector>
 #include "platform_policy.hpp"
 #include "neon_bits.hpp"
@@ -63,7 +64,7 @@ private:
 #if FINDHAP_POP_ENCODE == 2
     std::array<int, 64> gather_positions_{}, gather_shifts_{};
 #endif
-#if FINDHAP_POP_ENCODE == 3
+#if FINDHAP_POP_ENCODE == 3 || FINDHAP_POP_ENCODE == 5
     std::array<uint8_t, 64> byte_positions_{};
 #endif
     std::array<int, 64> positions_{};
@@ -100,7 +101,7 @@ public:
             gather_shifts_[k] = (positions_[k]-gather_positions_[k])*8;
         }
 #endif
-#if FINDHAP_POP_ENCODE == 3
+#if FINDHAP_POP_ENCODE == 3 || FINDHAP_POP_ENCODE == 5
         for (int k=0; k<width_; ++k) byte_positions_[k] = uint8_t(positions_[k]);
 #endif
 #if FINDHAP_POP_FULL && FINDHAP_POP_COMPACT
@@ -114,7 +115,63 @@ public:
     Signature encode(const int8_t* alleles) const {
         Signature result;
         int k = 0;
-#if FINDHAP_POP_ENCODE == 4 && defined(__ARM_NEON)
+#if FINDHAP_POP_FULL && (FINDHAP_POP_ENCODE == 4 || FINDHAP_POP_ENCODE == 5) && defined(__ARM_NEON)
+        // Exact full planes extend the existing full-count/fill path to NEON.
+        // Invalid signed bytes keep the original full scan authoritative.
+        if (length_ <= 128) {
+            result.full_valid = true;
+            int q = 0;
+            for (; q + 16 <= length_; q += 16) {
+                const auto values = vld1q_s8(alleles + q);
+                const auto zero = findhap_neon::lane_mask(vceqq_s8(values, vdupq_n_s8(0)));
+                const auto two = findhap_neon::lane_mask(vceqq_s8(values, vdupq_n_s8(2)));
+                const auto invalid = findhap_neon::lane_mask(vorrq_u8(
+                    vcltq_s8(values, vdupq_n_s8(0)), vcgtq_s8(values, vdupq_n_s8(2))));
+                result.full_zero[q / 64] |= uint64_t(zero) << (q % 64);
+                result.full_two[q / 64] |= uint64_t(two) << (q % 64);
+                result.full_valid = result.full_valid && !invalid;
+#if FINDHAP_POP_COMPLETE
+                if (contiguous_) result.invalid |= uint64_t(invalid) << q;
+#endif
+            }
+            for (; q < length_; ++q) {
+                const int value = alleles[q];
+                result.full_zero[q / 64] |= uint64_t(value == 0) << (q % 64);
+                result.full_two[q / 64] |= uint64_t(value == 2) << (q % 64);
+                result.full_valid = result.full_valid && value >= 0 && value <= 2;
+#if FINDHAP_POP_COMPLETE
+                if (contiguous_) result.invalid |= uint64_t(value < 0 || value > 2) << q;
+#endif
+            }
+            if (contiguous_) {
+                result.zero = result.full_zero[0]; result.two = result.full_two[0];
+                return result;
+            }
+        }
+#endif
+#if FINDHAP_POP_ENCODE == 5 && defined(__ARM_NEON)
+        if (!contiguous_ && length_ <= 128) {
+            // Two 64-byte table lookups gather exactly the original sampled
+            // positions. Copy only the valid partial tail before vector loads.
+            alignas(16) uint8_t tail[64] = {};
+            std::memcpy(tail, alleles + 64, size_t(length_ - 64));
+            const auto* bytes=reinterpret_cast<const uint8_t*>(alleles);
+            const uint8x16x4_t low={{vld1q_u8(bytes),vld1q_u8(bytes+16),vld1q_u8(bytes+32),vld1q_u8(bytes+48)}};
+            const uint8x16x4_t high={{vld1q_u8(tail),vld1q_u8(tail+16),vld1q_u8(tail+32),vld1q_u8(tail+48)}};
+            for(;k+16<=width_;k+=16) {
+                const auto positions=vld1q_u8(byte_positions_.data()+k);
+                const auto values=vreinterpretq_s8_u8(vorrq_u8(vqtbl4q_u8(low,positions),
+                    vqtbl4q_u8(high,vsubq_u8(positions,vdupq_n_u8(64)))));
+                result.zero|=uint64_t(findhap_neon::lane_mask(vceqq_s8(values,vdupq_n_s8(0))))<<k;
+                result.two|=uint64_t(findhap_neon::lane_mask(vceqq_s8(values,vdupq_n_s8(2))))<<k;
+#if FINDHAP_POP_COMPLETE
+                result.invalid|=uint64_t(findhap_neon::lane_mask(vorrq_u8(vcltq_s8(values,vdupq_n_s8(0)),
+                    vcgtq_s8(values,vdupq_n_s8(2)))))<<k;
+#endif
+            }
+        }
+#endif
+#if (FINDHAP_POP_ENCODE == 4 || FINDHAP_POP_ENCODE == 5) && defined(__ARM_NEON)
         if (contiguous_) {
             for (; k+16<=width_; k+=16) {
                 const auto values = vld1q_s8(alleles+k);
@@ -322,7 +379,7 @@ public:
                                     bool track_frequencies = true) {
         // Small libraries fit the compact signature scan well; amortise the
         // larger ordered bitmap and frequency tree only over longer searches.
-        if (count < 1024) return nullptr;
+        if (count < FINDHAP_ORDERED_MIN_HAPS) return nullptr;
         if (ordered_disabled_) return nullptr;
 #if defined(FINDHAP_LOW_MEMORY) && FINDHAP_LM_ORDERED_BYTES > 0
         if (ActiveOrderedLookup::storage_bound(width_, count) > FINDHAP_LM_ORDERED_BYTES) {

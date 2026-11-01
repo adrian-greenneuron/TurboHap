@@ -17,6 +17,7 @@ def main():
     ap.add_argument('--record',type=Path,required=True)
     ap.add_argument('--case',help='Run just one named case')
     ap.add_argument('--reference-single-thread',action='store_true',help='Use the legacy serial execution as the oracle')
+    ap.add_argument('--threads',type=int,nargs='+',default=[1,4,10])
     a=ap.parse_args()
     example=Path(__file__).resolve().parents[1]/'examples/small'
     inputs=json.loads((example/'expected.json').read_text())['inputs']
@@ -28,7 +29,10 @@ def main():
         'more_error':([4,30,100,50,3,50000,1,1,1,1],'.02'),
         'both_parents':([4,30,100,50,3,50000,2,2,2,-1],'.004'),
         'no_parent_imputation':([4,30,100,50,3,50000,0,5,0,0],'.004'),
-        'single_chromosome':([4,0,100,50,3,50000,1,1,1,1],'.004')}
+        'single_chromosome':([4,0,100,50,3,50000,1,1,1,1],'.004'),
+        'wide_haplotype_ids':([4,30,100,50,3,100000,1,1,1,1],'.004'),
+        'shifted_chromosomes':([4,34,100,50,3,50000,1,1,1,1],'.004'),
+        'coincident_parents':([4,30,100,50,3,50000,1,1,1,1],'.004')}
     results=[]
     if a.case:cases={a.case:cases[a.case]}
     with tempfile.TemporaryDirectory(prefix='pedigree-differential-') as tmp:
@@ -36,7 +40,7 @@ def main():
             for mode,flags in [('standard',[]),('lm',['--low-memory'])]:
                 reference=None
                 for label,binary in [('reference',a.reference),('candidate',a.candidate)]:
-                    for threads in ([1] if label=='reference' and a.reference_single_thread else [1,4,10]):
+                    for threads in ([1] if label=='reference' and a.reference_single_thread else a.threads):
                         root=Path(tmp)/f'{case}-{mode}-{label}-{threads}';root.mkdir()
                         for f in inputs:shutil.copy2(example/f,root/f)
                         if case=='single_chromosome':
@@ -46,6 +50,20 @@ def main():
                                 fields=line.split();fields[1]='1';fields[2]=fields[3];fields[4]=str(int(fields[3])*10000)
                                 rows.append(' '.join(fields))
                             (root/'chromosome.data').write_text('\n'.join(rows)+'\n')
+                        if case=='shifted_chromosomes':
+                            lines=(root/'chromosome.data').read_text().splitlines();rows=[lines[0]]
+                            for line in lines[1:]:
+                                fields=line.split();fields[1]=str(int(fields[1])+4);rows.append(' '.join(fields))
+                            (root/'chromosome.data').write_text('\n'.join(rows)+'\n')
+                        if case=='coincident_parents':
+                            # Artificial aliasing fixture for cursor compatibility,
+                            # not a biological pedigree accuracy measurement.
+                            rows=[]
+                            for line in (root/'pedigree.file').read_text().splitlines():
+                                fields=line.split()
+                                if int(fields[2]):fields[3]=fields[2]
+                                rows.append(' '.join(fields))
+                            (root/'pedigree.file').write_text('\n'.join(rows)+'\n')
                         (root/'findhap.options').write_text(' '.join(map(str,values))+'\nlabels\n\n'+error+'\n')
                         p=subprocess.run([str(binary.resolve()),str(threads),*flags],cwd=root,capture_output=True,
                             env=dict(os.environ,OMP_NUM_THREADS=str(threads),OMP_DYNAMIC='FALSE',LC_ALL='C'))

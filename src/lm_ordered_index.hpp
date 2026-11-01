@@ -4,6 +4,7 @@
 #include <array>
 #include <cstdint>
 #include <vector>
+#include "ordered_scan.hpp"
 #include <new>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -69,6 +70,14 @@ class LowMemoryCandidateLookup {
         const int af = frequencies_[order_[a] - 1], bf = frequencies_[order_[b] - 1];
         return af < bf || (af == bf && a < b) ? a : b;
     }
+    size_t plane_index(int locus, size_t word) const {
+#if FINDHAP_ORDERED_LAYOUT
+        return word * size_t(width_) + size_t(locus);
+#else
+        return size_t(locus) * active_.size() + word;
+#endif
+    }
+
     void update_minimum(int position) {
         if (!track_frequencies_) return;
         int leaf = capacity_ + position - 1;
@@ -82,12 +91,12 @@ class LowMemoryCandidateLookup {
         const size_t words = active_.size();
         uint64_t changes = previous[0] ^ current[0];
         while (changes) {
-            zero_[size_t(__builtin_ctzll(changes)) * words + word] ^= bit;
+            zero_[plane_index(__builtin_ctzll(changes), word)] ^= bit;
             changes &= changes - 1;
         }
         changes = previous[1] ^ current[1];
         while (changes) {
-            two_[size_t(__builtin_ctzll(changes)) * words + word] ^= bit;
+            two_[plane_index(__builtin_ctzll(changes), word)] ^= bit;
             changes &= changes - 1;
         }
     }
@@ -187,23 +196,27 @@ public:
             const Signature value = signature(order_[first]);
             if (!((query_zero & value[1]) | (query_two & value[0]))) return first;
         }
+#if (FINDHAP_ORDERED_SCAN_ORDER || FINDHAP_ORDERED_SCAN_NEON) && !FINDHAP_ORDERED_LAYOUT
+        return findhap_ordered_scan::next(first,last,active_.size(),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
+#else
         const size_t words = active_.size();
         for (size_t word = size_t(first - 1) / 64; word <= size_t(last - 1) / 64; ++word) {
             uint64_t candidates = active_[word];
             if (word == size_t(first - 1) / 64) candidates &= UINT64_MAX << ((first - 1) % 64);
             uint64_t sites = query_zero;
             while (sites && candidates) {
-                candidates &= ~two_[size_t(__builtin_ctzll(sites)) * words + word];
+                candidates &= ~two_[plane_index(__builtin_ctzll(sites), word)];
                 sites &= sites - 1;
             }
             sites = query_two;
             while (sites && candidates) {
-                candidates &= ~zero_[size_t(__builtin_ctzll(sites)) * words + word];
+                candidates &= ~zero_[plane_index(__builtin_ctzll(sites), word)];
                 sites &= sites - 1;
             }
             if (candidates) return std::min(last + 1, int(word * 64 + __builtin_ctzll(candidates) + 1));
         }
         return last + 1;
+#endif
     }
     void minimum(int first, int last, int& frequency, int& position) const {
         Position best = 0;

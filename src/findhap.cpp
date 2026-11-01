@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdint>
+#include <cinttypes>
 #include <cmath>
 #include <algorithm>
 #include <limits>
@@ -32,8 +33,14 @@
 #endif
 #include "options_reader.hpp"
 #include "thread_request.hpp"
+#include "macos_policy.hpp"
+#ifndef FINDHAP_ROW_SCHEDULE
+#define FINDHAP_ROW_SCHEDULE static
+#endif
+#include "phase_buffer.hpp"
 #include "genotype_workspace.hpp"
 #include "genotype_cache.hpp"
+#include "genotype_text.hpp"
 #ifdef FINDHAP_LOW_MEMORY_PLUS
 #include "external_genotype_cache.hpp"
 #include "bounded_genotype_workspace.hpp"
@@ -67,6 +74,9 @@ using ActiveGenotypeCache = GenotypeCache;
 #endif
 #include "pedigree_conflict.hpp"
 #include "pedigree_rematch.hpp"
+#include "ordered_crossovers.hpp"
+#include "crossover_output.hpp"
+#include "haplotype_initialization.hpp"
 #if FINDHAP_PEDIGREE_MASK_BACKEND >= 0
 #include "pedigree_crossovers.hpp"
 #endif
@@ -140,10 +150,27 @@ static size_t hapfound_buf_capacity = 0;
 // records are written. Otherwise CLOSE truncates it after the last record.
 static std::vector<std::pair<FILE*, std::string>> output_files;
 
+static size_t worker_stride(int length) {
+#if FINDHAP_PAD_SCRATCH
+    // At least one whole M4 cache line between independently written slices,
+    // including when malloc's base is aligned to fewer than 128 bytes.
+    return (size_t(length) + 255) / 128 * 128;
+#else
+    return size_t(length);
+#endif
+}
+static void configure_io_buffer(FILE* file) {
+#if FINDHAP_IO_BUFFER_BYTES > 0
+    if (file && setvbuf(file, nullptr, _IOFBF, FINDHAP_IO_BUFFER_BYTES) != 0)
+        input_error("cannot configure I/O buffer");
+#endif
+}
+
 static FILE* open_output(const char* path) {
     FILE* file = fopen(path, "r+");
     if (!file && errno == ENOENT) file = fopen(path, "w+");
     if (!file) input_error("cannot open output file");
+    configure_io_buffer(file);
     output_files.emplace_back(file, path);
     return file;
 }
@@ -230,12 +257,16 @@ static int fast_read_genoline(FILE* fp, int& idnum, int& chipn, int& loc,
     }
 
     // Position 30 is space, digits start at position 31 (0-based)
+#if FINDHAP_NEON_TEXT
+    findhap_text::decode(read_buf + 31, genovec, loc);
+#else
     for (int l = 0; l < loc; l++) {
         // Fortran I1 input treats an all-blank field as zero. Do not skip
         // it: it occupies a locus, including when followed by extra digits.
         const char field = read_buf[31 + l];
         genovec[l] = field == ' ' ? 0 : static_cast<int8_t>(field - '0');
     }
+#endif
     return 0;
 }
 
@@ -411,7 +442,7 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
         } else {
             // Population haplotypes
             if (j == sugnum + 1) starti = 1;
-            stopi = nhap_arr[seg - 1];
+            stopi = nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE];
         }
 
         minfreq = 99999999;
@@ -421,7 +452,7 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
             (SWITCH_VAL == 1 || (errate * check >= 0 && errate * check < 1)) &&
             __builtin_popcountll(signature.zero | signature.two) >= 4) {
             ordered = candidate_index->ordered(order_arr + ord_base, hapfreq_arr + freq_base,
-                                               nhap_arr[seg - 1], SWITCH_VAL == 1);
+                                               nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE], SWITCH_VAL == 1);
         }
 #endif
         // Search list in frequency order
@@ -457,7 +488,11 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
             // Keep minfreq/minhap bookkeeping even for filtered candidates.
             // This only rejects a proven conflict excess; survivors still use
             // the unchanged full scan and position-dependent acceptance rule.
-            if (candidate_index) {
+            if (candidate_index
+#if FINDHAP_USE_ORDERED && !FINDHAP_ORDERED_RECHECK
+                && !ordered
+#endif
+            ) {
                 const uint64_t bits = candidate_index->conflicts(signature, ii);
                 if constexpr (SWITCH_VAL == 1) {
                     if (bits) goto label_50;
@@ -636,25 +671,26 @@ static bool listhap(int8_t* __restrict__ storeseg, int8_t* __restrict__ haplist_
         // No matching haplotype
         if (j > sugnum) {
             fnd++;
-            nhap_arr[seg - 1]++;
-            found[fnd - 1] = nhap_arr[seg - 1];
-            minhap = nhap_arr[seg - 1];
-            if (nhap_arr[seg - 1] > maxhap) {
+            nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE]++;
+            found[fnd - 1] = nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE];
+            minhap = nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE];
+            if (nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE] > maxhap) {
                 printf("\n");
                 printf(" More haplotypes than maxhap = %d in segment %d\n", maxhap, seg);
                 printf(" Increase maxhap in findhap.options\n");
                 exit(100);
             }
-            hapfreq_arr[freq_base + nhap_arr[seg - 1] - 1] = 1;
+            hapfreq_arr[freq_base + nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE] - 1] = 1;
             // Store new haplotype
-            int8_t* __restrict__ new_hap = &haplist_arr[seg_base + (nhap_arr[seg - 1] - 1) * maxlen];
+            int8_t* __restrict__ new_hap = &haplist_arr[seg_base + (nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE] - 1) * maxlen];
+            findhap_haplotype_init::publish_row(new_hap, maxlen);
             for (int l = 0; l < len; l++) {
                 new_hap[l] = segment[l];
             }
             for (int l = len; l < maxlen; l++) {
                 new_hap[l] = 0;
             }
-            if (candidate_index) candidate_index->refresh(nhap_arr[seg - 1], new_hap);
+            if (candidate_index) candidate_index->refresh(nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE], new_hap);
         }
     label_75:
         // Starting location for next search
@@ -730,8 +766,27 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     std::unique_ptr<char[]> patmat;  // each entry is 2 chars
     // These arrays contain only zero or segment-local IDs bounded by maxhap.
     // Animal indices, counts, frequency arithmetic and search remain int.
-    std::unique_ptr<HaplotypeId[]> keephap, prevkeephap, fromprog;
-    std::unique_ptr<int8_t[]> haplist_arr, prevhaplist;
+    std::unique_ptr<HaplotypeId[]> keephap, fromprog;
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_STD_SNAPSHOT_REUSE > 0 && !defined(FINDHAP_LOW_MEMORY)
+    findhap::ReusableSnapshotBuffer<HaplotypeId, FINDHAP_PHASE_STD_SNAPSHOT_REUSE == 2> prevkeephap;
+#else
+    findhap::PhaseBuffer<HaplotypeId> prevkeephap;
+#endif
+#if FINDHAP_HAPLIST_INIT == 3
+    findhap_haplotype_init::MappedLibrary haplist_arr;
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_STD_SNAPSHOT_REUSE > 0 && !defined(FINDHAP_LOW_MEMORY)
+    findhap::ReusableSnapshotBuffer<int8_t, FINDHAP_PHASE_STD_SNAPSHOT_REUSE == 2> prevhaplist;
+#else
+    findhap::PhaseBuffer<int8_t> prevhaplist;
+#endif
+#else
+    std::unique_ptr<int8_t[]> haplist_arr;
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_STD_SNAPSHOT_REUSE > 0 && !defined(FINDHAP_LOW_MEMORY)
+    findhap::ReusableSnapshotBuffer<int8_t, FINDHAP_PHASE_STD_SNAPSHOT_REUSE == 2> prevhaplist;
+#else
+    findhap::PhaseBuffer<int8_t> prevhaplist;
+#endif
+#endif
     std::vector<size_t> prevhap_offsets;
     std::unique_ptr<int8_t[]> hapseg_arr;
     std::unique_ptr<int[]> hapfreq_arr, order_arr;
@@ -797,6 +852,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     FILE* fp10 = fopen("pedigree.file", "r");
     FILE* fp13 = fopen("genotypes.txt", "r");
     FILE* fp14 = fopen("chromosome.data", "r");
+    configure_io_buffer(fp10); configure_io_buffer(fp13); configure_io_buffer(fp14);
 
     // Haplotype priors
     exist15 = std::filesystem::exists("hap.listpriors");
@@ -804,6 +860,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     exist22 = std::filesystem::exists("hap.Xseg");
     FILE* fp15 = exist15 ? fopen("hap.listpriors", "r") : nullptr;
     FILE* fp16 = exist16 ? fopen("hap.foundpriors", "r") : nullptr;
+    configure_io_buffer(fp15); configure_io_buffer(fp16);
 
     if (exist15 && (!fp15 || !fp16 || !exist22))
         input_error("hap.listpriors requires readable hap.foundpriors and hap.Xseg");
@@ -891,7 +948,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     chromes = 0;
     chrome1 = 99999;
     skip_line(fp14); // skip header
-    while (fscanf(fp14, "%50s %d %d %d %ld %d", markername, &chrome, &nloci, &loc, &location, &chips) == 6) {
+    while (fscanf(fp14, "%50s %d %d %d %" SCNd64 " %d", markername, &chrome, &nloci, &loc, &location, &chips) == 6) {
         loci++;
         chrome1 = std::min(chrome, chrome1);
         chromes = std::max(chrome, chromes);
@@ -929,7 +986,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     // --------------------------------------------------- Read chromosome.data
     skip_line(fp14); // skip header
     while (true) {
-        int nread = fscanf(fp14, "%50s %d %d %d %ld %d", markername, &chrome, &nloci, &loc, &location, &chips);
+        int nread = fscanf(fp14, "%50s %d %d %d %" SCNd64 " %d", markername, &chrome, &nloci, &loc, &location, &chips);
         if (nread < 6) break;
         loci++;
         for (chipn = 1; chipn <= chips; chipn++) {
@@ -1168,9 +1225,14 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     }
 
     // Globally allocate step-reusable buffers to prevent repeated page faults
-    haplist_arr.reset(new int8_t[(size_t)largest_length * maxhap * abs_maxseg]);
+    const size_t haplist_capacity_bytes = (size_t)largest_length * maxhap * abs_maxseg;
+#if FINDHAP_HAPLIST_INIT == 3
+    haplist_arr.allocate(haplist_capacity_bytes);
+#else
+    haplist_arr.reset(new int8_t[haplist_capacity_bytes]);
+#endif
     hapfreq_arr.reset(new int[(size_t)maxhap * abs_maxseg]);
-    nhap_arr.reset(new int[(size_t)abs_maxseg]);
+    nhap_arr.reset(new int[(size_t)abs_maxseg * FINDHAP_NHAP_STRIDE]);
     keephap.reset(new HaplotypeId[(size_t)2 * maxped * abs_maxseg]);
     hapseg_arr.reset(new int8_t[(size_t)2 * loci]);
     proghaps.reset(new int[(size_t)(maxhap + 1)]);
@@ -1191,6 +1253,12 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 
     // ------------------------------------- Start with maxlen, end with minlen
     FINDHAP_END(setup_trace);
+#if FINDHAP_MMAP_PHASE_BUFFERS && !defined(FINDHAP_LOW_MEMORY)
+    findhap::NativePhaseBufferPool<uint8_t> genotype_workspace_pool;
+#endif
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE && defined(FINDHAP_LOW_MEMORY_PLUS)
+    findhap::NativePhaseBufferBank<uint8_t> genotype_worker_pools;
+#endif
     for (step = 1; step <= steps; step++) {
         FINDHAP_PHASE(step_trace, "step", step);
         if (step == 1) {
@@ -1200,8 +1268,8 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             // Report previous maxhap
             maxnhap = 0;
             for (seg = 1; seg <= maxseg; seg++) {
-                if (nhap_arr[seg - 1] > maxnhap) {
-                    maxnhap = nhap_arr[seg - 1];
+                if (nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE] > maxnhap) {
+                    maxnhap = nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE];
                     maxnseg = seg;
                 }
             }
@@ -1214,7 +1282,11 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             printf(" Step  %d change maxlen to  %d\n", step, maxlen);
             // Store previous haplotypes
             prevsegs = maxseg;
-            prevkeephap.reset(new HaplotypeId[(size_t)2 * maxped * prevsegs]);
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_STD_SNAPSHOT_REUSE > 0 && !defined(FINDHAP_LOW_MEMORY)
+            prevkeephap.prepare((size_t)2 * maxped * prevsegs);
+#else
+            prevkeephap = findhap::make_phase_buffer<HaplotypeId>((size_t)2 * maxped * prevsegs);
+#endif
             // The output pass changes nhap_arr to a count of used haplotypes,
             // but their IDs can have gaps. Copy through the largest referenced
             // ID in each segment, preserving those IDs and all required alleles.
@@ -1236,8 +1308,12 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                     input_error("previous haplotype storage is too large");
                 previous_bytes += bytes;
             }
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_STD_SNAPSHOT_REUSE > 0 && !defined(FINDHAP_LOW_MEMORY)
+            prevhaplist.prepare(previous_bytes);
+#else
             prevhaplist.reset();
-            prevhaplist.reset(new int8_t[previous_bytes]);
+            prevhaplist = findhap::make_phase_buffer<int8_t>(previous_bytes);
+#endif
             memcpy(prevlen.get(), len_arr.get(), (loci + 1) * sizeof(int));
             for (int ss = 0; ss < prevsegs; ++ss) {
                 memcpy(prevhaplist.get() + prevhap_offsets[ss],
@@ -1281,18 +1357,41 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         }
         printf("\n");
 
+        FINDHAP_PHASE(initialization_trace, "step_initialization", step);
+#if FINDHAP_HAPLIST_INIT == 3
+        if (step > 1) haplist_arr.allocate(haplist_capacity_bytes);
+#endif
+        findhap_haplotype_init::begin_step(haplist_arr.get(), haplist_capacity_bytes);
         // Initialize arrays in parallel to avoid single-thread memory bandwidth bottleneck
+#if defined(__APPLE__) && defined(__aarch64__)
+        #pragma omp parallel num_threads(threads)
+        {
+            findhap::macos::worker_enter();
+            #pragma omp for schedule(static)
+#else
         #pragma omp parallel for schedule(static) num_threads(threads)
+#endif
         for (seg = 1; seg <= maxseg; seg++) {
-            memset(&haplist_arr[((size_t)seg - 1) * maxhap * maxlen], 0, (size_t)maxhap * maxlen * sizeof(int8_t));
+            findhap_haplotype_init::clear_capacity(
+                &haplist_arr[((size_t)seg - 1) * maxhap * maxlen], (size_t)maxhap * maxlen);
             memset(&hapfreq_arr[((size_t)seg - 1) * maxhap], 0, (size_t)maxhap * sizeof(int));
         }
-        memset(nhap_arr.get(), 0, maxseg * sizeof(int));
+#if defined(__APPLE__) && defined(__aarch64__)
+        }
+#endif
+        memset(nhap_arr.get(), 0, (size_t)maxseg * FINDHAP_NHAP_STRIDE * sizeof(int));
         memset(keephap.get(), 0, (size_t)2 * maxped * maxseg * sizeof(HaplotypeId));
         memset(hapseg_arr.get(), 0, 2 * loci * sizeof(int8_t));
         memset(phaps.get(), 0, maxseg * sizeof(int));
 
+#if defined(__APPLE__) && defined(__aarch64__)
+        #pragma omp parallel num_threads(threads)
+        {
+            findhap::macos::worker_enter();
+            #pragma omp for schedule(static)
+#else
         #pragma omp parallel for schedule(static) num_threads(threads)
+#endif
         for (seg = 1; seg <= maxseg; seg++) {
             for (int jj = 1; jj <= maxped; jj++) {
                 // patmat init: ". "
@@ -1304,6 +1403,11 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 order_arr[ORDIDX(jj, seg, maxhap + 1)] = 0;
             }
         }
+#if defined(__APPLE__) && defined(__aarch64__)
+        }
+#endif
+
+        FINDHAP_END(initialization_trace);
 
         // Read each step in file order, remapping original haplotype numbers
         // to their loaded slots before resetting the population search order.
@@ -1332,6 +1436,13 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 }
                 if (++slot > maxhap) input_error("prior haplotypes exceed maxhap");
                 startloc[prior_segment] = start;
+#if FINDHAP_HAPLIST_INIT
+                // Prior records may be shorter than the stride. Preserve the
+                // original zero padding for every published row.
+                int8_t* prior_row = &haplist_arr[IDX3(1, slot, prior_segment, maxlen, maxhap)];
+                findhap_haplotype_init::publish_row(prior_row, maxlen);
+                std::memset(prior_row, 0, size_t(maxlen));
+#endif
                 for (int ll = 0; ll < prior_length; ++ll) {
                     char value = record[58 + ll];
                     if (value < '0' || value > '2') input_error("invalid haplotype digit in priors");
@@ -1339,7 +1450,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 }
                 hapfreq_arr[IDX2(slot, prior_segment, maxhap)] = std::lround(prior_frequency * nprior / 100.0);
                 order_arr[ORDIDX(original_hap, prior_segment, maxhap + 1)] = slot;
-                nhap_arr[prior_segment - 1] = std::max(slot, nhap_arr[prior_segment - 1]);
+                nhap_arr[(prior_segment - 1) * FINDHAP_NHAP_STRIDE] = std::max(slot, nhap_arr[(prior_segment - 1) * FINDHAP_NHAP_STRIDE]);
                 ++loaded;
             }
             printf(" %d records read from hap.listpriors (unit 15)\n", loaded);
@@ -1408,14 +1519,25 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         FINDHAP_PHASE(expansion_trace, "expansion", step);
         memset(called.get(), 0, maxped * sizeof(int));
 #ifdef FINDHAP_LOW_MEMORY_PLUS
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE
+        BoundedGenotypeWorkspace cache_expanded(cache_ngen, loci, startloc.get(), len_arr.get(), maxseg, chro.get(),
+                                                64 * 1024 * 1024, 128 * 1024 * 1024, &genotype_worker_pools);
+#else
         BoundedGenotypeWorkspace cache_expanded(cache_ngen, loci, startloc.get(), len_arr.get(), maxseg, chro.get());
+#endif
 #elif defined(FINDHAP_LOW_MEMORY)
         ChromosomeWorkspace cache_expanded(cache_ngen, loci, startloc.get(), len_arr.get(), maxseg, chro.get());
 #else
+#if FINDHAP_MMAP_PHASE_BUFFERS
+        GenotypeWorkspace cache_expanded(cache_ngen, loci, startloc.get(), len_arr.get(), maxseg,
+                                          nullptr, 64 * 1024 * 1024, &genotype_workspace_pool);
+#else
         GenotypeWorkspace cache_expanded(cache_ngen, loci, startloc.get(), len_arr.get(), maxseg);
 #endif
-        auto expanded_scratch = std::make_unique<int8_t[]>((size_t)loci * threads);
-        auto raw_scratch = std::make_unique<int8_t[]>((size_t)maxl * threads);
+#endif
+        const size_t expansion_loci_stride = worker_stride(loci), expansion_raw_stride = worker_stride(maxl);
+        auto expanded_scratch = std::make_unique<int8_t[]>(expansion_loci_stride * threads);
+        auto raw_scratch = std::make_unique<int8_t[]>(expansion_raw_stride * threads);
         int expanded_nhigh = 0;
         int* p_sumfreq = sumfreq_arr.get();
         int* p_nfreq = nfreq.get();
@@ -1453,11 +1575,18 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         const size_t input_count = std::min(cache_expanded.input_batch_size(), (size_t)cache_ngen - input_first);
 #endif
         cache_expanded.begin_input(input_first, input_count);
+#if defined(__APPLE__) && defined(__aarch64__)
+        #pragma omp parallel private(n, idnum, chipn, loc, nn, locus, seg, pnt, l, hap, anmlmiss) reduction(+: expanded_nhigh, p_sumfreq[:loci], p_nfreq[:loci], p_sumcurr[:loci], p_cfreq[:loci], p_ofreq[:loci], genfreq[:6]) num_threads(threads)
+        {
+            findhap::macos::worker_enter();
+            #pragma omp for schedule(FINDHAP_ROW_SCHEDULE)
+#else
         #pragma omp parallel for private(n, idnum, chipn, loc, nn, locus, seg, pnt, l, hap, anmlmiss) \
                 reduction(+: expanded_nhigh, p_sumfreq[:loci], p_nfreq[:loci], p_sumcurr[:loci], p_cfreq[:loci], p_ofreq[:loci], genfreq[:6]) \
-                schedule(static) num_threads(threads)
+                schedule(FINDHAP_ROW_SCHEDULE) num_threads(threads)
+#endif
         for (n = (int)input_first + 1; n <= (int)(input_first + input_count); n++) {
-            int8_t* expanded = expanded_scratch.get() + (size_t)omp_get_thread_num() * loci;
+            int8_t* expanded = expanded_scratch.get() + (size_t)omp_get_thread_num() * expansion_loci_stride;
             int l_idnum = p_cache_id[n - 1];
             int l_chipn = p_cache_chipn[n - 1];
             int l_loc = p_cache_loc[n - 1];
@@ -1485,7 +1614,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             memset(expanded, missing, loci);
             p_cache_called_cnt[n - 1] = 0;
             const int8_t* raw_genotype = genotype_cache->row(n - 1, l_loc,
-                raw_scratch.get() + (size_t)omp_get_thread_num() * maxl);
+                raw_scratch.get() + (size_t)omp_get_thread_num() * expansion_raw_stride);
             for (int ll = 1; ll <= l_loc; ll++) {
                 int cl = p_chiplist[CHIPIDX(ll, l_chipn, loci)];
                 if (cl < 1 || cl > loci) continue;
@@ -1550,6 +1679,9 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 cache_expanded.store_row(n - 1, expanded);
             }
         }
+#if defined(__APPLE__) && defined(__aarch64__)
+        }
+#endif
         cache_expanded.end_input();
         input_first += input_count;
         }
@@ -1572,14 +1704,24 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 
             if (iter > iter1) {
                 // Zero active hapfreq entries
+#if defined(__APPLE__) && defined(__aarch64__)
+                #pragma omp parallel num_threads(threads)
+                {
+                    findhap::macos::worker_enter();
+                    #pragma omp for
+#else
                 #pragma omp parallel for num_threads(threads)
+#endif
                 for (seg = 1; seg <= maxseg; seg++) {
                     // i is shared outside this worksharing loop. A local
                     // counter prevents incomplete resets under concurrency.
-                    for (int hap = 1; hap <= nhap_arr[seg - 1]; hap++) {
+                    for (int hap = 1; hap <= nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE]; hap++) {
                         hapfreq_arr[IDX2(hap, seg, maxhap)] = 0;
                     }
                 }
+#if defined(__APPLE__) && defined(__aarch64__)
+                }
+#endif
             }
 
             // Serial pre-pass
@@ -1595,13 +1737,23 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             }
 
             if (iter == 2) {
+#if defined(__APPLE__) && defined(__aarch64__)
+                #pragma omp parallel private(n, nn) reduction(+: nmed) num_threads(threads)
+                {
+                    findhap::macos::worker_enter();
+                    #pragma omp for schedule(static)
+#else
                 #pragma omp parallel for private(n, nn) reduction(+: nmed) \
                     schedule(static) num_threads(threads)
+#endif
                 for (n = 1; n <= cache_ngen; n++) {
                     nn = cache_eqns_nn[n - 1];
                     if (nn == 0) continue;
                     if (high[nn - 1] != 0) nmed++;
                 }
+#if defined(__APPLE__) && defined(__aarch64__)
+                }
+#endif
             }
 
             // ---- Parallel segment processing ----
@@ -1626,6 +1778,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             #pragma omp parallel num_threads(population_threads) firstprivate(switch_val)
 #endif
             {
+                findhap::macos::worker_enter();
                 int n, nn, j, k, l, pnt, pedx_temp, length, found_temp;
                 int suggest[16] = {0}; // Thread-private initialized ONCE to zero
                 int l_found[2];
@@ -1644,7 +1797,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 FINDHAP_END(segment_read_trace);
 #endif
                 FINDHAP_PHASE(segment_trace, "population_segment", step, iter, seg,
-                              chro[seg - 1], len_arr[seg], &nhap_arr[seg - 1]);
+                              chro[seg - 1], len_arr[seg], &nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE]);
                 // Own this index only during one population segment pass.
                 // Rebuild after pedigree/prior mutations in later iterations.
                 std::unique_ptr<CandidateIndex> candidate_index;
@@ -1714,10 +1867,10 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 #else
                     int8_t* working_genotype = cache_expanded.segment(n - 1, seg - 1, segment_scratch.data());
 #endif
-                    if (!candidate_index && length >= FINDHAP_POP_INDEX_LENGTH && nhap_arr[seg - 1] >= FINDHAP_POP_INDEX_HAPS)
+                    if (!candidate_index && length >= FINDHAP_POP_INDEX_LENGTH && nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE] >= FINDHAP_POP_INDEX_HAPS)
                         candidate_index = std::make_unique<CandidateIndex>(length,
                             haplist_arr.get() + (size_t)(seg - 1) * maxhap * maxlen,
-                            maxlen, nhap_arr[seg - 1]);
+                            maxlen, nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE]);
                     bool genotype_changed;
                     if (switch_val == 1) {
                         genotype_changed = listhap<1>(working_genotype,
@@ -1855,7 +2008,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 if (fp98) {
                     fprintf(fp98, "=== NHAP AFTER STEP %d ITER %d ===\n", step, iter);
                     for (seg = 1; seg <= maxseg; seg++) {
-                        fprintf(fp98, "seg=%d nhap=%d\n", seg, nhap_arr[seg - 1]);
+                        fprintf(fp98, "seg=%d nhap=%d\n", seg, nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE]);
                     }
                     fclose(fp98);
                 }
@@ -1882,6 +2035,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 if (!rematch_animals.empty()) {
                     #pragma omp parallel num_threads(threads)
                     {
+                        findhap::macos::worker_enter();
                         int local_suggest[16] = {};
                         std::vector<int8_t> reconstructed;
                         #pragma omp for schedule(dynamic, 1)
@@ -1935,7 +2089,14 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             }
                         }
                     }
+#if defined(__APPLE__) && defined(__aarch64__)
+                    #pragma omp parallel private(length, l, locus, found, known) num_threads(threads)
+                    {
+                        findhap::macos::worker_enter();
+                        #pragma omp for
+#else
                     #pragma omp parallel for private(length, l, locus, found, known) num_threads(threads)
+#endif
                     for (seg = 1; seg <= maxseg; seg++) {
                         known = 0;
                         for (l = 1; l <= len_arr[seg]; l++) {
@@ -1960,6 +2121,9 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             }
                         }
                     }
+#if defined(__APPLE__) && defined(__aarch64__)
+                    }
+#endif
                 }
             }
 
@@ -1969,11 +2133,16 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             FINDHAP_PHASE(pedigree_main_trace, "pedigree_main", step, iter);
             // Each chromosome owns disjoint segment/genotype/frequency state.
             // Preserve animal order within it, including parent mutations and
-            // adjacent-segment orientation. The final pass retains the original
-            // animal-major traversal so crossover records need no reordering.
+            // adjacent-segment orientation. Final-pass batches emit records in
+            // the original animal/segment order; the fallback keeps that traversal.
+            const bool final_pedigree = iter == iters && step == steps;
+            const bool ordered_final = FINDHAP_PEDIGREE_ORDERED_FINAL && final_pedigree &&
+                FINDHAP_PEDIGREE_CHROMOSOMES && chromes - chrome1 + 1 >= threads &&
+                findhap::OrderedCrossoverBatch::capacity(size_t(maxseg)) > 0;
             const bool chromosome_pass = FINDHAP_PEDIGREE_CHROMOSOMES &&
-                chromes - chrome1 + 1 >= threads &&
-                !(iter == iters && step == steps);
+                chromes - chrome1 + 1 >= threads && (!final_pedigree || ordered_final);
+            std::unique_ptr<findhap::OrderedCrossoverBatch> crossover_batch;
+            if (ordered_final) crossover_batch = std::make_unique<findhap::OrderedCrossoverBatch>(size_t(maxseg));
             std::vector<int> parent_slots;
             if (chromosome_pass) {
                 parent_slots.resize(2 * (size_t(maxped) + 1));
@@ -1994,6 +2163,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             #pragma omp parallel private(i, pnt, j, grdpnt, pnthap, mismatch, match_arr, matches, pedx, found, k, l, locus, hold) \
                 reduction(+: ncross) num_threads(pedigree_threads)
             {
+                findhap::macos::worker_enter();
                 // These operations sit inside millions of animal/segment
                 // visits. Outlining the lambdas hides loop-invariant state
                 // and proved substantially slower in the qualification study.
@@ -2096,12 +2266,17 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                             ncross++;
                                             if (iter == iters && step == steps) {
                                                 num_cross[seg - 1]++;
-                                                if (num_cross[seg - 1] <= 10)  // guard: max 10 per seg (matches Fortran 10*maxseg global limit)
-                                                    snprintf(&cross_buf[(num_cross[seg - 1] - 1) * 80 + ((size_t)seg - 1) * 80 * 10], 80,
-                                                         "%9d%9d%7d%7d%7d%7d%7d%7d",
+                                                if (num_cross[seg - 1] <= 10) { // legacy 80-byte, ten-record slot
+                                                    char* destination = &cross_buf[(num_cross[seg - 1] - 1) * 80 + ((size_t)seg - 1) * 800];
+#if FINDHAP_CROSSOVER_FORMAT
+                                                    turbohap_output::crossover_line(destination,
+#else
+                                                    snprintf(destination, 80, "%9d%9d%7d%7d%7d%7d%7d%7d",
+#endif
                                                          animkey[i], animkey[ped[IDX2(pnt, i, 2)]],
                                                          seg, l_where[0][grdpnt - 1], l_where[1][grdpnt - 1],
                                                          l_found[j - 1], l_pnthap[grdpnt - 1], l_pnthap[2 - grdpnt]);
+                                                }
                                             }
                                             if (l_match[j - 1][pnt - 1] == 0)
                                                 l_match[j - 1][pnt - 1] = 2 + grdpnt;
@@ -2353,7 +2528,33 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                         }
                     }
                 };
-                if (chromosome_pass) {
+                if (ordered_final) {
+                    // Independent chromosome state keeps the original animal
+                    // traversal. Batch boundaries replace per-animal barriers;
+                    // crossover emission still uses the exact historical order.
+                    const int batch_rows = int(crossover_batch->rows());
+                    for (int begin = 1; begin <= maxped; begin += batch_rows) {
+                        const int end = std::min(maxped + 1, begin + batch_rows);
+                        #pragma omp for schedule(dynamic, 1)
+                        for (int chromosome = chrome1; chromosome <= chromes; ++chromosome) {
+                            const int first = startseg[chromosome - 1];
+                            const int last = stopseg[chromosome - 1];
+                            for (i = begin; i < end; ++i) {
+                                for (int segment = first; segment <= last; ++segment) {
+                                    process_segment(segment, true);
+                                    crossover_batch->capture(size_t(i - begin), size_t(segment - 1),
+                                        num_cross[segment - 1], cross_buf.get() + size_t(segment - 1) * 800);
+                                }
+                                orient_chromosome(first, last - first + 1);
+                            }
+                        }
+                        #pragma omp single
+                        {
+                            if (!crossover_batch->emit(fp27, size_t(end - begin)))
+                                input_error("cannot write crossover output");
+                        }
+                    }
+                } else if (chromosome_pass) {
                     // One scheduling operation per chromosome, not per animal.
                     #pragma omp for schedule(dynamic, 1)
                     for (int chromosome = chrome1; chromosome <= chromes; ++chromosome) {
@@ -2445,6 +2646,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             #pragma omp parallel private(i, pnt, pedx, mosthap, mosthaps, j, agree, grdpnt, search, proghaps) \
                 num_threads(threads)
             {
+                findhap::macos::worker_enter();
                 int tid = omp_get_thread_num();
                 int* l_proghaps = &l_proghaps_all[tid * (maxhap + 1)];
                 memset(l_proghaps, 0, (maxhap + 1) * sizeof(int));
@@ -2554,7 +2756,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 
             // Output storage is needed only in the last step. Bound each batch
             // by bytes as well as animals; a single wider record still fits.
-            constexpr size_t output_buffer_budget = 32 * 1024 * 1024;
+            constexpr size_t output_buffer_budget = FINDHAP_OUTPUT_BUFFER_BYTES;
             const size_t geno_record_bytes = (size_t)loci + 32;
             const size_t hap_record_bytes = (size_t)2 * loci + 32;
             const size_t bytes_per_animal =
@@ -2563,15 +2765,16 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 3 * sizeof(int) + sizeof(float) + 50 * sizeof(int8_t);
             const int output_chunk_size = static_cast<int>(std::max<size_t>(1,
                 std::min({(size_t)1000, (size_t)nped, output_buffer_budget / bytes_per_animal})));
-            std::unique_ptr<char[]> chunk_buffer_geno, chunk_buffer_hap;
+            findhap::PhaseBuffer<char> chunk_buffer_geno, chunk_buffer_hap;
             // Every emitted byte is filled before the serial writer reads it.
             if (genout > 0)
-                chunk_buffer_geno.reset(new char[output_chunk_size * geno_record_bytes]);
+                chunk_buffer_geno = findhap::make_phase_buffer<char>(output_chunk_size * geno_record_bytes);
             if (hapout == 1)
-                chunk_buffer_hap.reset(new char[output_chunk_size * hap_record_bytes]);
-            auto thread_genotype = std::make_unique<int8_t[]>((size_t)loci * threads);
-            auto thread_genovec2_buf = std::make_unique<int8_t[]>((size_t)loci * threads);
-            auto thread_raw_genotypes = std::make_unique<int8_t[]>((size_t)maxl * threads);
+                chunk_buffer_hap = findhap::make_phase_buffer<char>(output_chunk_size * hap_record_bytes);
+            const size_t output_loci_stride = worker_stride(loci), output_raw_stride = worker_stride(maxl);
+            auto thread_genotype = std::make_unique<int8_t[]>(output_loci_stride * threads);
+            auto thread_genovec2_buf = std::make_unique<int8_t[]>(output_loci_stride * threads);
+            auto thread_raw_genotypes = std::make_unique<int8_t[]>(output_raw_stride * threads);
             auto usable_chunk = std::make_unique<int[]>(output_chunk_size);
             auto imputed_chunk = std::make_unique<int[]>(output_chunk_size);
             auto corr2_chunk = std::make_unique<float[]>(output_chunk_size);
@@ -2594,6 +2797,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 reduction(+: nmale, ndrop, nadd, n13a, p_missall[:loci], p_missadd[:loci], genfreq[:10]) \
                 num_threads(threads)
             {
+                findhap::macos::worker_enter();
                 for (int chunk_start = 1; chunk_start <= nped;) {
                     FINDHAP_PHASE(reconstruction_trace, "output_reconstruction", step, 0, 0, chunk_start);
 #ifdef FINDHAP_LOW_MEMORY_PLUS
@@ -2620,7 +2824,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 #endif
                     const int chunk_end = chunk_start + chunk_count - 1;
 
-                    #pragma omp for schedule(static)
+                    #pragma omp for schedule(FINDHAP_ROW_SCHEDULE)
                     for (ii = chunk_start; ii <= chunk_end; ii++) {
                         int tid = omp_get_thread_num();
                         int chunk_idx = ii - chunk_start;
@@ -2678,7 +2882,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                 const auto second = keephap[KHIDX(2, i, seg, maxped)];
                                 const int8_t* a = first > 0 ? &haplist_arr[IDX3(1, first, seg, maxlen, maxhap)] : nullptr;
                                 const int8_t* b = second > 0 ? &haplist_arr[IDX3(1, second, seg, maxlen, maxhap)] : nullptr;
-                                turbohap_output::reconstruct(a, b, thread_genotype.get() + size_t(tid)*loci + startloc[seg]-1,
+                                turbohap_output::reconstruct(a, b, thread_genotype.get() + size_t(tid)*output_loci_stride + startloc[seg]-1,
                                     len_arr[seg], gencode, output_gencode, sexv[i-1]=='M' && seg>=Xseg);
 #else
                                 for (loc = 1; loc <= len_arr[seg]; loc++) {
@@ -2690,11 +2894,11 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                                             l_pnthap[pnt - 1] = missing;
                                         }
                                     }
-                                    thread_genotype[tid * loci + locus - 1] = gencode[l_pnthap[0]][l_pnthap[1]];
+                                    thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = gencode[l_pnthap[0]][l_pnthap[1]];
                                     if (sexv[i - 1] == 'M' && seg >= Xseg) {
-                                        if (thread_genotype[tid * loci + locus - 1] == 1 ||
-                                            thread_genotype[tid * loci + locus - 1] > 2)
-                                            thread_genotype[tid * loci + locus - 1] = 5;
+                                        if (thread_genotype[size_t(tid) * output_loci_stride + locus - 1] == 1 ||
+                                            thread_genotype[size_t(tid) * output_loci_stride + locus - 1] > 2)
+                                            thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = 5;
                                     }
                                 }
 #endif
@@ -2707,58 +2911,58 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                             chipn = cache_chipn[n - 1];
                             loc = cache_loc[n - 1];
                             const int8_t* raw_genotype = genotype_cache->row(n - 1, loc,
-                                thread_raw_genotypes.get() + (size_t)tid * maxl);
+                                thread_raw_genotypes.get() + (size_t)tid * output_raw_stride);
                             for (int ll = 0; ll < loci; ll++)
-                                thread_genovec2_buf[tid * loci + ll] = missing;
+                                thread_genovec2_buf[size_t(tid) * output_loci_stride + ll] = missing;
                             for (int ll = 1; ll <= loc; ll++) {
                                 int cl = chiplist_arr[CHIPIDX(ll, chipn, loci)];
                                 if (cl >= 1 && cl <= loci)
-                                    thread_genovec2_buf[tid * loci + cl - 1] =
+                                    thread_genovec2_buf[size_t(tid) * output_loci_stride + cl - 1] =
                                         raw_genotype[ll - 1] > 2 ? missing : raw_genotype[ll - 1];
                             }
                         }
                         if (n > 0) {
                             n13a++;
                             for (locus = 1; locus <= loci; locus++) {
-                                if (thread_genovec2_buf[tid * loci + locus - 1] == 0)
-                                    thread_genotype[tid * loci + locus - 1] = 0;
-                                if (thread_genovec2_buf[tid * loci + locus - 1] == 1)
-                                    thread_genotype[tid * loci + locus - 1] = 1;
-                                if (thread_genovec2_buf[tid * loci + locus - 1] == 2)
-                                    thread_genotype[tid * loci + locus - 1] = 2;
+                                if (thread_genovec2_buf[size_t(tid) * output_loci_stride + locus - 1] == 0)
+                                    thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = 0;
+                                if (thread_genovec2_buf[size_t(tid) * output_loci_stride + locus - 1] == 1)
+                                    thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = 1;
+                                if (thread_genovec2_buf[size_t(tid) * output_loci_stride + locus - 1] == 2)
+                                    thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = 2;
                             }
                         }
 
                         if (usable == 1) {
                             if (listeqn[i] == 0) nadd++;
-                            memcpy(&preview_chunk[chunk_idx * 50], &thread_genotype[tid * loci], std::min(50, loci));
+                            memcpy(&preview_chunk[chunk_idx * 50], &thread_genotype[size_t(tid) * output_loci_stride], std::min(50, loci));
                             char* geno_record = genout > 0 ? &chunk_buffer_geno[chunk_idx * geno_record_bytes] : nullptr;
                             if (geno_record)
                                 snprintf(geno_record, 32, "%10d%10d%10d ", animkey[i], chip_arr[i - 1], loci);
                             for (locus = 1; locus <= loci; locus++) {
                                 // The baseline counts and previews codes before genout transforms them.
-                                genfreq[thread_genotype[tid * loci + locus - 1]]++;
-                                if (genout == 5 && thread_genotype[tid * loci + locus - 1] > 2)
-                                    thread_genotype[tid * loci + locus - 1] = 5;
+                                genfreq[thread_genotype[size_t(tid) * output_loci_stride + locus - 1]]++;
+                                if (genout == 5 && thread_genotype[size_t(tid) * output_loci_stride + locus - 1] > 2)
+                                    thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = 5;
                                 if (genout == 2) {
-                                    if (thread_genotype[tid * loci + locus - 1] == 3)
-                                        thread_genotype[tid * loci + locus - 1] = static_cast<int8_t>(freq[locus - 1] + 0.5f);
-                                    if (thread_genotype[tid * loci + locus - 1] == 4)
-                                        thread_genotype[tid * loci + locus - 1] = static_cast<int8_t>(freq[locus - 1] + 1.5f);
-                                    if (thread_genotype[tid * loci + locus - 1] == 5) {
-                                        thread_genotype[tid * loci + locus - 1] = 1;
-                                        if (freq[locus - 1] < 0.3333f) thread_genotype[tid * loci + locus - 1] = 0;
-                                        if (freq[locus - 1] > 0.6666f) thread_genotype[tid * loci + locus - 1] = 2;
+                                    if (thread_genotype[size_t(tid) * output_loci_stride + locus - 1] == 3)
+                                        thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = static_cast<int8_t>(freq[locus - 1] + 0.5f);
+                                    if (thread_genotype[size_t(tid) * output_loci_stride + locus - 1] == 4)
+                                        thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = static_cast<int8_t>(freq[locus - 1] + 1.5f);
+                                    if (thread_genotype[size_t(tid) * output_loci_stride + locus - 1] == 5) {
+                                        thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = 1;
+                                        if (freq[locus - 1] < 0.3333f) thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = 0;
+                                        if (freq[locus - 1] > 0.6666f) thread_genotype[size_t(tid) * output_loci_stride + locus - 1] = 2;
                                     }
                                 }
-                                if (thread_genotype[tid * loci + locus - 1] == missing) {
+                                if (thread_genotype[size_t(tid) * output_loci_stride + locus - 1] == missing) {
                                     p_missall[locus - 1]++;
                                     if (listeqn[i] == 0) {
                                         p_missadd[locus - 1]++;
                                     }
                                 }
                                 if (geno_record)
-                                    geno_record[30 + locus] = static_cast<char>(thread_genotype[tid * loci + locus - 1] + '0');
+                                    geno_record[30 + locus] = static_cast<char>(thread_genotype[size_t(tid) * output_loci_stride + locus - 1] + '0');
                             }
                         }
 
@@ -3008,7 +3212,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                     maxnhap = std::max(order_arr[ORDIDX(i, seg, maxhap + 1)], maxnhap);
                 }
             }
-            nhap_arr[seg - 1] = n;
+            nhap_arr[(seg - 1) * FINDHAP_NHAP_STRIDE] = n;
         }
         FINDHAP_END(library_list_trace);
         FINDHAP_LIBRARY_ENABLE(false);
@@ -3059,7 +3263,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     for (chrome = chrome1; chrome <= chromes; chrome++) {
         segs = 1 + (locN[chrome - 1] - loc1[chrome - 1]) / maxlen;
         printf("%3d", chrome);
-        for (i = seg; i <= seg + segs - 1; i++) printf("%7d", nhap_arr[i - 1]);
+        for (i = seg; i <= seg + segs - 1; i++) printf("%7d", nhap_arr[(i - 1) * FINDHAP_NHAP_STRIDE]);
         printf("\n");
         seg += segs;
     }

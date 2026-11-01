@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generated Mendelian deep-pedigree integration fixtures; strict Fortran bytes.
+"""Generated Mendelian deep-pedigree integration fixtures; strict raw reference bytes.
 
 These fixtures test compatibility, not the causal runtime effect of depth or
 structural accuracy. Family widths and founder fractions differ with depth.
@@ -17,8 +17,10 @@ import subprocess
 
 
 def identity(path):
+    digest=hashlib.sha256()
     with path.open('rb') as f:
-        return dict(bytes=path.stat().st_size, sha256=hashlib.file_digest(f,'sha256').hexdigest())
+        for block in iter(lambda:f.read(1024*1024),b''):digest.update(block)
+    return dict(bytes=path.stat().st_size,sha256=digest.hexdigest())
 
 
 def identities(directory, exclude=()):
@@ -92,7 +94,9 @@ def generate(directory, levels, coverage, seed):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
-    for name in ['reference','control','candidate','work','record']:ap.add_argument('--'+name,type=Path,required=True)
+    ap.add_argument('--reference',type=Path,help='Optional Fortran reference; otherwise frozen control is the raw oracle')
+    ap.add_argument('--threads',type=int,nargs='+',default=[1,4,10])
+    for name in ['control','candidate','work','record']:ap.add_argument('--'+name,type=Path,required=True)
     a=ap.parse_args(); a.work.mkdir(parents=True,exist_ok=False)
     records=[]; inputs=['pedigree.file','genotypes.txt','chromosome.data','findhap.options']
     for levels in [3,9,17]:
@@ -101,8 +105,8 @@ def main():
             meta=generate(base,levels,coverage,291026+levels*100+int(coverage*100))
             (base/'metadata.json').write_text(json.dumps(meta,indent=2)+'\n')
             reference=None
-            conditions=[('fortran',a.reference,1,[]),('control',a.control,1,[])]
-            conditions += [(mode,a.candidate,t,flags) for mode,flags in [('standard',[]),('lm',['--low-memory'])] for t in [1,4,10]]
+            conditions=([('fortran',a.reference,1,[])] if a.reference else [])+[('control',a.control,1,[])]
+            conditions += [(mode,a.candidate,t,flags) for mode,flags in [('standard',[]),('lm',['--low-memory'])] for t in a.threads]
             for label,binary,threads,flags in conditions:
                 directory=base/f'{label}-{threads}';directory.mkdir()
                 for name in inputs:shutil.copy2(base/name,directory/name)
@@ -120,7 +124,7 @@ def main():
                 a.record.write_text(json.dumps(records,indent=2)+'\n')
                 assert passed,(case,label,threads,[k for k in actual if actual[k]!=reference.get(k)])
                 shutil.rmtree(directory)
-            print('PASS',case,'every file byte identical to one-thread GNU FindHap',flush=True)
+            print('PASS',case,'every file byte identical to '+('one-thread Fortran reference' if a.reference else 'frozen one-thread TurboHap control'),flush=True)
 
 
 if __name__=='__main__':main()

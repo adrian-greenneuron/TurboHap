@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Render release tables and figures from the included aggregate measurements."""
-from release_summary import render_summary
+from release_summary import (measurement_dates_text, qualification_text,
+                             release_suffix, render_summary)
 
 import csv
 import json
@@ -16,7 +17,7 @@ from matplotlib.ticker import FixedLocator, FuncFormatter, LogLocator, NullLocat
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = 'turbohap_benchmarks_301026'
+BASE = 'turbohap_benchmarks_011126'
 PROGRAMS = ('Fortran baseline', 'TurboHap', 'TurboHap LM')
 
 
@@ -31,6 +32,10 @@ def duration(seconds):
 
 def main():
     data = json.loads((ROOT / 'docs' / f'{BASE}.json').read_text())
+    version = data['release_tag']
+    suffix = release_suffix(data)
+    assert BASE == f'turbohap_benchmarks_{suffix}'
+    validation = json.loads((ROOT / 'docs' / f'turbohap_validation_{suffix}.json').read_text())
     observations = data['observations']
     datasets = list(dict.fromkeys(r['dataset'] for r in observations))
     assert len(datasets) == 7 and len(observations) == 35
@@ -46,6 +51,9 @@ def main():
             summaries[dataset, program] = (
                 median(r['wall_seconds'] for r in runs),
                 median(r['peak_rss_kib'] for r in runs) / 1048576)
+    assert all(summaries[d, PROGRAMS[1]][0] < summaries[d, PROGRAMS[2]][0]
+               and summaries[d, PROGRAMS[2]][1] < summaries[d, PROGRAMS[1]][1]
+               for d in datasets), 'Release ordering claim must match selected evidence'
     datasets.sort(key=lambda d: summaries[d, PROGRAMS[0]][0])
     render_summary(data, summaries, datasets, ROOT)
 
@@ -64,16 +72,16 @@ def main():
     for d in datasets:
         f, t, lm = [summaries[d, p][1] for p in PROGRAMS]
         memory_table.append(f'| {d} | {f:.3f} GiB | {t:.3f} GiB | {100*(t/f-1):+.1f}% | **{lm:.3f} GiB** | **{100*(lm/f-1):+.1f}%** |')
-    tables = ['### Runtime', '', 'Speedup uses the single expanded-flag Fortran measurement and the median of two TurboHap measurements per mode, all collected on 30 October 2026.', '', *time_table, '',
+    tables = ['### Runtime', '', 'Speedup uses the unchanged single expanded-flag Fortran measurement and the median of two TurboHap measurements per mode. ' + measurement_dates_text(data), '', *time_table, '',
               '### Peak memory', '', 'Negative percentages mean less memory than Fortran.', '', *memory_table]
     readme = ROOT / 'README.md'
     before, remainder = readme.read_text().split('<!-- BENCHMARK_TABLES_START -->', 1)
     _, after = remainder.split('<!-- BENCHMARK_TABLES_END -->', 1)
     readme.write_text(before + '<!-- BENCHMARK_TABLES_START -->\n\n' + '\n'.join(tables)
                       + '\n\n<!-- BENCHMARK_TABLES_END -->' + after)
-    lines = ['# TurboHap v1.2.0 benchmarks', '',
-             '30 October 2026. Seven synthetic datasets; one Fortran measurement and two measurements per TurboHap mode and dataset.', '',
-             'All 35 observations were collected on 30 October in separate studies. The refreshed GNU Fortran baseline uses expanded compiler flags with no taskset or added binding. The second Fortran replicate is deferred; all 28 previously collected TurboHap observations are unchanged. Historical baselines remain available separately.', '',
+    lines = [f'# TurboHap {version} benchmarks', '',
+             'Seven synthetic datasets; one Fortran measurement and two measurements per TurboHap mode and dataset. ' + measurement_dates_text(data), '',
+             f'The {len(observations)} selected observations combine the unchanged GNU Fortran baseline with the current TurboHap measurements. The GNU Fortran baseline uses expanded compiler flags with no taskset or added binding. It has one observation per dataset; no second replicate is included. Historical software-release results remain available separately.', '',
              'Fortran values are single observations; TurboHap values are medians of two technical runs per mode. Runtime and RSS medians are calculated independently. Bold marks the lowest recorded runtime or RSS and its corresponding ratio, not statistical significance. No Fortran variation estimate is available yet.', '', *tables]
     lines += ['', f'![Runtime and peak memory](assets/{BASE}.png)', '',
               f'[Download runtime and memory figure (SVG)](assets/{BASE}.svg)', '',
@@ -82,23 +90,23 @@ def main():
               f'![Memory change relative to Fortran](assets/{BASE}_memory.png)', '',
               f'[Download memory change figure (SVG)](assets/{BASE}_memory.svg)', '',
               '## Methodology', '',
-              '- Hardware: NVIDIA DGX Spark; 20 logical CPU cores; Ubuntu 24.04 ARM64.',
-              '- Ten OpenMP threads for every measured program. GCC/gfortran 13.3.0.',
+              '- Hardware: ' + data['hardware'] + '; ' + data['platform'] + '.',
+              f'- {data["threads"]} OpenMP threads for every measured program. ' + data['compiler'] + '.',
               '- Fortran flags: `'+data['fortran_flags']+'`. No fast-math or profile-guided optimisation.',
-              '- C++ release flags: `-O3 -march=native -funroll-loops -flto -ffp-contract=off -std=gnu++17 -fopenmp`; GNU linking uses `-flto-partition=1to1`. No fast-math or profile-guided optimisation.',
+              '- C++ release flags: `' + data['cpp_flags'] + '`; GNU linking uses `' + data['cpp_link_flags'] + '`. No fast-math or profile-guided optimisation.',
               '- The seven datasets were generated with genosimV4; dimensions are genotyped animals × map loci. Each pedigree also contains four ungenotyped founders. Chip membership and pedigree structure affect work; see the [generation recipe and input checksums](turbohap_benchmark_datasets_221026.md).',
               '- Wall time covers the complete executable, including reading inputs, computation, writing results and temporary-file I/O. Output validation is outside the timer.',
               '- Peak memory is process peak resident set size from GNU `time`, converted from KiB to GiB. It is not total system memory, filesystem cache or disk usage.',
-              '- Each dataset used standard-1, LM-1, LM-2, standard-2 order. All 28 C++ observations are included unchanged. Fortran used one run per dataset in ascending animal count, then locus count; all seven are included.',
-              '- Both C++ modes use the default automatic CPU policy: the full 20-core container allocation is available, and the launcher selects the ten Cortex-X925 cores (logical IDs 5–9 and 15–19). No taskset or additional worker binding is used. The new Fortran runs had access to all 20 cores with ten threads, no taskset and no added binding. Both C++ modes use `LC_ALL=C`, `OMP_NUM_THREADS=10` and `OMP_DYNAMIC=FALSE`; explicit placement variables are unset.',
+              '- Measurement order: ' + data['measurement_order'],
+              '- Both C++ modes use the default automatic CPU policy: the full 20-core container allocation is available, and the launcher selects the ten Cortex-X925 cores (logical IDs 5–9 and 15–19). No taskset or additional worker binding is used. The unchanged Fortran runs had access to all 20 cores with ten threads, no taskset and no added binding. Both C++ modes use `LC_ALL=C`, `OMP_NUM_THREADS=10` and `OMP_DYNAMIC=FALSE`; explicit placement variables are unset.',
               '- All primary elapsed times use GNU time (%e), excluding measurement-wrapper overhead. Fortran wrapper wall time is retained separately in the raw observations. Studies used different sessions and the placement policies above.',
-              '- A clean release layout, with CMake project version 1.2.0, was frozen and built before measurement. All 19 packaged tests passed. Source and measured executable hashes are included in the JSON metadata. Every benchmark input matches its published SHA-256 and byte count, including the million-animal benchmark options.',
+              '- The measured source and executable identities are retained in the JSON metadata. The release packages the qualified implementation with the project-version metadata updated to ' + version + '. ' + qualification_text(data) + ' Every benchmark input matches its published SHA-256 and byte count, including the million-animal benchmark options.',
               '- Inputs were explicitly warmed and residency checked before each timed C++ run. There were no inference warmup runs or forced cache eviction. Outputs were fresh; post-exit checked file/directory fsync and hashing occurred outside the timer. Fortran inputs were verified before its study, with no forced cache eviction or inference warmups. No competing benchmark was intentionally run; unrelated background activity was not comprehensively traced. One Fortran observation and two C++ technical repeats do not establish confidence intervals, statistical equivalence or universal speedup.',
-              '- All 280 C++ raw-file checks pass. Fortran passes 63/70 raw-file checks: only cross.overs record order differs. Its header and every complete record match after C-locale sorting with duplicates retained. These seven raw mismatches remain explicit; no other difference is accepted.', '',
-              f'[All observations (CSV)]({BASE}.csv) · [Metadata and observations (JSON)]({BASE}.json) · [Raw output checks](turbohap_validation_301026.json) · [Compatibility](COMPATIBILITY.md)', '',
-              '[Historical v1.1.0 benchmarks](turbohap_benchmarks_281026.md) · [Historical v1.0.0 benchmarks](turbohap_benchmarks_221026.md). The manuscript and supplementary files continue to describe v1.0.0; they have not been revised for this software release.', '',
+              f'- All {validation["strict_raw_output_checks"]} C++ raw-file checks pass. Fortran passes {validation["fortran_raw_identical_files"]}/{validation["fortran_raw_files_checked"]} raw-file checks: only cross.overs record order differs. Its header and every complete record match after C-locale sorting with duplicates retained. These seven raw mismatches remain explicit; no other difference is accepted.', '',
+              f'[All observations (CSV)]({BASE}.csv) · [Metadata and observations (JSON)]({BASE}.json) · [Raw output checks](turbohap_validation_{suffix}.json) · [Compatibility](COMPATIBILITY.md)', '',
+              '[Historical v1.2.0 benchmarks](turbohap_benchmarks_301026.md) · [Historical v1.1.0 benchmarks](turbohap_benchmarks_281026.md) · [Historical v1.0.0 benchmarks](turbohap_benchmarks_221026.md). The manuscript and supplementary files continue to describe v1.0.0; they have not been revised for this software release.', '',
               '## Regenerate the tables and figures', '',
-              'With Python 3 and the versions in `tools/requirements-reporting.txt` installed, run `python3 tools/render_benchmarks.py` from the source directory. This reads the included aggregate JSON and does not access input genotypes or run either program.', '',
+              'With Python 3.11 or newer and the versions in `tools/requirements-reporting.txt` installed, run `python3 tools/render_benchmarks.py` from the source directory. This reads the included aggregate JSON and validation metadata; it does not access input genotypes or run either program.', '',
               'The same renderer updates the README headline, performance summary and release notes. See [release preparation](RELEASING.md) for complete-package checks and checksums.', '']
     (ROOT / 'docs' / f'{BASE}.md').write_text('\n'.join(lines))
 
@@ -106,14 +114,17 @@ def main():
                          'axes.spines.top': False, 'axes.spines.right': False,
                          'svg.hashsalt': 'turbohap-release'})
     short = [d.replace('1,000,000', '1M').replace('100,000', '100k').replace('10,000', '10k').replace('1,000', '1k') for d in datasets]
-    plot_runtime_memory(datasets, short, summaries, observations)
+    plot_runtime_memory(datasets, short, summaries, observations, data)
 
     for memory in (False, True):
         values = np.array([[100*(summaries[d, p][1]/summaries[d, PROGRAMS[0]][1]-1) if memory
                             else summaries[d, PROGRAMS[0]][0]/summaries[d, p][0]
                             for p in PROGRAMS[1:]] for d in datasets])
         fig, ax = plt.subplots(figsize=(7.5, 6))
-        kwargs = {'cmap': 'RdYlGn_r', 'norm': TwoSlopeNorm(vmin=-50, vcenter=0, vmax=5)} if memory else {'cmap':'YlOrRd', 'vmin':0, 'vmax':175}
+        # Include the full observed range; large memory reductions must not clip.
+        lower = min(-10, 10 * np.floor(float(values.min()) / 10))
+        upper = max(5, 5 * np.ceil(float(values.max()) / 5))
+        kwargs = {'cmap': 'RdYlGn_r', 'norm': TwoSlopeNorm(vmin=lower, vcenter=0, vmax=upper)} if memory else {'cmap':'YlOrRd', 'vmin':0, 'vmax':25 * np.ceil(float(values.max()) / 25)}
         im = ax.imshow(values, aspect='auto', **kwargs)
         ax.set_xticks(range(2), PROGRAMS[1:]); ax.set_yticks(range(len(datasets)), short)
         ax.set_ylabel('Animals × loci')
@@ -121,17 +132,18 @@ def main():
         for i in range(len(datasets)):
             for j in range(2):
                 val=values[i,j]
-                dark = (val < -35 or val > 3) if memory else val > 65
+                rgba = im.cmap(im.norm(val))
+                dark = .2126 * rgba[0] + .7152 * rgba[1] + .0722 * rgba[2] < .55
                 ax.text(j, i, f'{val:+.1f}%' if memory else f'{val:.1f}×',
                         ha='center', va='center', color='white' if dark else '#172033', weight='bold', fontsize=13)
         bar = fig.colorbar(im, ax=ax, label='Change in peak RSS (%)' if memory else 'Fortran time / C++ time (×)')
         if memory:
-            bar.set_ticks([-50, -40, -30, -20, -10, 0, 5])
+            bar.set_ticks([*np.arange(lower, 1, 20), 0, upper])
         fig.tight_layout()
         save(fig, BASE + ('_memory' if memory else '_speedup'))
 
 
-def plot_runtime_memory(datasets, labels, summaries, observations):
+def plot_runtime_memory(datasets, labels, summaries, observations, data):
     colors = dict(zip(PROGRAMS, ['#17365d', '#2878c8', '#864ba2']))
     markers = dict(zip(PROGRAMS, ['o', 'P', 'D']))
     marker_sizes = dict(zip(PROGRAMS, [10, 12, 10]))
@@ -189,10 +201,10 @@ def plot_runtime_memory(datasets, labels, summaries, observations):
                                   markersize=marker_sizes[p], markeredgecolor='white',
                                   markeredgewidth=.8, label=p) for p in PROGRAMS],
                   loc='upper left', frameon=False, ncols=3)
-        fig.suptitle('TurboHap v1.2.0: runtime and memory', fontsize=17, weight='bold')
+        fig.suptitle(f'TurboHap {data["release_tag"]}: runtime and memory', fontsize=17, weight='bold')
         ax.set_title('Seven simulated datasets · 10 CPU threads · Fortran: 1 run; each TurboHap mode: 2 runs', fontsize=11)
         fig.supxlabel('Further left is faster. Lower means less memory. Labels: animals × loci.\n'
-                      'Log axes · Fortran: single observations; C++: medians and observed ranges · 30 Oct 2026', fontsize=10)
+                      'Log axes · Fortran: single observations; C++: medians and observed ranges\n' + measurement_dates_text(data), fontsize=10)
         save(fig, BASE)
 
 

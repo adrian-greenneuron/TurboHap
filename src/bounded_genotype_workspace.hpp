@@ -11,17 +11,31 @@ class BoundedGenotypeWorkspace {
     std::vector<size_t> starts_, lengths_, strides_, offsets_;
     std::unique_ptr<low_memory_plus::BackingFile> file_;
     std::unique_ptr<ChromosomeWorkspace> dense_;
-    std::unique_ptr<uint8_t[]> input_;
+    findhap::PhaseBuffer<uint8_t> input_;
     size_t input_capacity_ = 0, input_batch_ = 0, input_first_ = 0, input_count_ = 0;
     uint64_t read_bytes_ = 0, write_bytes_ = 0;
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_RESERVE
+    size_t input_reserve_ = 0;
+#endif
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE
+    findhap::NativePhaseBufferBank<uint8_t>* worker_pools_ = nullptr;
+#endif
 
 public:
     BoundedGenotypeWorkspace(int records, int loci, const int* starts, const int* lengths,
                             int segments, const int* chromosomes,
                             size_t staging_budget = 64 * 1024 * 1024,
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE
+                            size_t population_budget = 128 * 1024 * 1024,
+                            findhap::NativePhaseBufferBank<uint8_t>* worker_pools = nullptr)
+#else
                             size_t population_budget = 128 * 1024 * 1024)
+#endif
         : records_(records), loci_(loci), population_budget_(std::max(size_t(1), population_budget)),
           starts_(segments), lengths_(segments), strides_(segments), offsets_(segments + 1, 0) {
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE
+        worker_pools_ = worker_pools;
+#endif
         size_t next = 0, row_bytes = 0;
         bool partitioned = true;
         for (int s = 0; s < segments; ++s) {
@@ -50,6 +64,9 @@ public:
         }
         input_batch_ = std::min(records_, std::max(size_t(1), staging_budget /
                                                   std::max(size_t(1), row_bytes)));
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_RESERVE
+        input_reserve_ = low_memory_plus::product(input_batch_, row_bytes);
+#endif
         file_ = std::make_unique<low_memory_plus::BackingFile>(offsets_.back());
     }
 
@@ -66,8 +83,14 @@ public:
         if (bytes > input_capacity_) {
             input_.reset();
             input_capacity_ = 0;
-            input_.reset(new uint8_t[bytes]);
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_RESERVE
+            const size_t capacity = std::max(bytes, input_reserve_);
+            input_ = findhap::make_phase_buffer<uint8_t>(capacity);
+            input_capacity_ = capacity;
+#else
+            input_ = findhap::make_phase_buffer<uint8_t>(bytes);
             input_capacity_ = bytes;
+#endif
         }
     }
 
@@ -123,9 +146,16 @@ public:
 
     class PopulationWorker {
         BoundedGenotypeWorkspace& workspace_;
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_MAPPING
+        findhap::PhaseBuffer<uint8_t> buffer_;
+#else
         std::unique_ptr<uint8_t[]> buffer_;
+#endif
         size_t capacity_, segment_ = 0, first_ = 0, count_ = 0;
         size_t dirty_first_ = 0, dirty_end_ = 0;
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE
+        findhap::NativePhaseBufferPool<uint8_t>* pool_ = nullptr;
+#endif
 
         void flush() {
             if (dirty_first_ < dirty_end_) {
@@ -159,8 +189,22 @@ public:
 
     public:
         uint64_t read_bytes = 0, write_bytes = 0;
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE
+        PopulationWorker(BoundedGenotypeWorkspace& workspace, size_t capacity,
+                         findhap::NativePhaseBufferPool<uint8_t>* pool = nullptr)
+            : workspace_(workspace),
+              buffer_(pool ? pool->acquire(capacity) : std::unique_ptr<uint8_t[]>(capacity ? new uint8_t[capacity] : nullptr)),
+              capacity_(capacity), pool_(pool) {}
+        ~PopulationWorker() { if (pool_) pool_->recycle(std::move(buffer_)); }
+#elif FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_MAPPING
+        PopulationWorker(BoundedGenotypeWorkspace& workspace, size_t capacity)
+            : workspace_(workspace),
+              buffer_(capacity ? findhap::make_phase_buffer<uint8_t>(capacity) : findhap::PhaseBuffer<uint8_t>()),
+              capacity_(capacity) {}
+#else
         PopulationWorker(BoundedGenotypeWorkspace& workspace, size_t capacity)
             : workspace_(workspace), buffer_(capacity ? new uint8_t[capacity] : nullptr), capacity_(capacity) {}
+#endif
 
         size_t resident_bytes() const { return capacity_; }
 
@@ -208,8 +252,15 @@ public:
         PopulationWorkers workers;
         const size_t capacity = population_buffer_bytes(count);
         workers.reserve(count);
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE
+        for (size_t i = 0; i < count; ++i) {
+            auto* pool = worker_pools_ ? &worker_pools_->at(i) : nullptr;
+            workers.push_back(std::make_unique<PopulationWorker>(*this, capacity, pool));
+        }
+#else
         for (size_t i = 0; i < count; ++i)
             workers.push_back(std::make_unique<PopulationWorker>(*this, capacity));
+#endif
         return workers;
     }
 

@@ -5,6 +5,8 @@ import subprocess
 import tempfile
 import unittest
 
+from fixture_build import build_fixture
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -29,17 +31,23 @@ int run(int argc, char* argv[]) { return check("standard", 21, argc, argv); }
 namespace findhap_low_memory {
 int run(int argc, char* argv[]) { return check("low-memory", 22, argc, argv); }
 }
+namespace findhap_dynamic_standard {
+int run(int argc, char* argv[]) { return check("dynamic-standard", 23, argc, argv); }
+}
+namespace findhap_dynamic_low_memory {
+int run(int argc, char* argv[]) { return check("dynamic-low-memory", 24, argc, argv); }
+}
 ''')
         cls.binary = cls.root / 'findhap'
-        subprocess.run([os.environ.get('CXX', 'c++'), '-std=c++17', '-O2',
-                        '-fopenmp',
-                        str(ROOT/'src/launcher.cpp'), str(stub), '-o', str(cls.binary)],
-                       check=True, capture_output=True)
+        build_fixture([ROOT/'src/launcher.cpp', stub], cls.binary)
 
     def check(self, args, mode, forwarded):
         result = subprocess.run([str(self.binary), *args], cwd=self.root, capture_output=True, text=True)
-        self.assertEqual(result.returncode, 21 if mode == 'standard' else 22)
-        self.assertEqual(result.stdout.splitlines(), [mode, *forwarded])
+        actual=result.stdout.splitlines()[0]
+        self.assertIn(actual, [mode, "dynamic-"+mode])
+        codes={'standard':21,'low-memory':22,'dynamic-standard':23,'dynamic-low-memory':24}
+        self.assertEqual(result.returncode, codes[actual])
+        self.assertEqual(result.stdout.splitlines(), [actual, *forwarded])
         self.assertIn('TurboHap CPU policy=', result.stderr)
 
     def test_default_and_legacy_arguments(self):
@@ -79,6 +87,19 @@ int run(int argc, char* argv[]) { return check("low-memory", 22, argc, argv); }
             result = subprocess.run([str(self.binary), *args], cwd=self.root, capture_output=True, text=True)
             self.assertEqual(result.returncode, 0)
             self.assertIn('Usage: findhap [threads] [--low-memory]', result.stdout)
+
+    def test_row_schedule_overrides_and_validation(self):
+        for mode, flags in [('standard', []), ('low-memory', ['--low-memory'])]:
+            for policy in ['static','dynamic']:
+                args=['--row-schedule='+policy,'11',*flags]
+                result=subprocess.run([str(self.binary),*args],cwd=self.root,capture_output=True,text=True)
+                expected=mode if policy=='static' else 'dynamic-'+mode
+                self.assertEqual(result.stdout.splitlines(),[expected,'11'])
+                self.assertIn('TurboHap row schedule='+('static' if policy=='static' else 'dynamic,4'),result.stderr)
+        for args in [['--row-schedule=bad'],['--row-schedule'],['--row-schedule=static','--row-schedule=dynamic']]:
+            result=subprocess.run([str(self.binary),*args],cwd=self.root,capture_output=True,text=True)
+            self.assertEqual(result.returncode,2)
+            self.assertEqual(result.stdout,'')
 
     def test_only_exact_flag_is_consumed(self):
         self.check(['10', '--low-memory-extra', '--help'], 'standard',

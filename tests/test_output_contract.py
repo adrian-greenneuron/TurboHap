@@ -8,6 +8,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 
 
@@ -51,8 +52,9 @@ def main():
             env=dict(env,**(extra or {})),capture_output=True,timeout=40)
     with tempfile.TemporaryDirectory(prefix='turbohap-output-contract-') as tmp:
         base=Path(tmp)
-        fault=base/'stdio_fault.so'
-        subprocess.run([os.environ.get('CC',os.environ.get('CXX','cc')),'-x','c','-O2','-shared','-fPIC',source/'tests/stdio_fault.c','-ldl','-o',fault],check=True)
+        darwin=sys.platform=='darwin'
+        fault=base/('stdio_fault.dylib' if darwin else 'stdio_fault.so')
+        subprocess.run([os.environ.get('CC',os.environ.get('CXX','cc')),'-x','c','-O2',*(['-dynamiclib','-fPIC'] if darwin else ['-shared','-fPIC']),source/'tests/stdio_fault.c',*([] if darwin else ['-ldl']),'-o',fault],check=True)
         cases=[('outputs_'+''.join(map(str,c)),[4,30,100,50,3,50000,c[0],c[1],1,c[2]])
                for c in itertools.product([0,1],repeat=3)]
         cases += [(name,[4,30,100,50,3,50000,1,1,1,1]) for name in
@@ -89,7 +91,8 @@ def main():
             for stage in ['write','flush','close','open']:
                 for label,binary in ([('reference',a.reference)] if a.reference else [])+[('candidate',a.candidate)]:
                     root=base/f'fault-{stage}-{mode}-{label}';setup(root,'default',[4,30,100,50,3,50000,1,1,1,1])
-                    extra=dict(LD_PRELOAD=str(fault),TURBOHAP_FAULT_FILE='hap.inherit',TURBOHAP_FAULT_STAGE=stage)
+                    extra=dict(TURBOHAP_FAULT_FILE='hap.inherit',TURBOHAP_FAULT_STAGE=stage)
+                    extra.update(dict(DYLD_INSERT_LIBRARIES=str(fault)) if darwin else dict(LD_PRELOAD=str(fault)))
                     if stage=='open':(root/'hap.inherit').mkdir();extra={}
                     result=run(binary,root,mode,extra)
                     passed=result.returncode!=0 and b'Program findhap completed normally' not in result.stdout

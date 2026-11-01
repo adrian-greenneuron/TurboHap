@@ -1,0 +1,25 @@
+{
+  "version": "1.3.0",
+  "measurement_date": "2026-11-01",
+  "measurement_dates": {
+    "Fortran baseline": "30 October 2026",
+    "TurboHap": "1 November 2026",
+    "TurboHap LM": "1 November 2026"
+  },
+  "threads": 10,
+  "repeats": {
+    "Fortran baseline": 1,
+    "TurboHap": 2,
+    "TurboHap LM": 2
+  },
+  "maximum_speedup_dataset": "100,000 \u00d7 1,000",
+  "maximum_standard_speedup": 167.60238568588468,
+  "largest_dataset": "1,000,000 \u00d7 10,000",
+  "fortran_seconds": 24245.51,
+  "standard_seconds": 169.8,
+  "lm_seconds": 215.655,
+  "standard_speedup": 142.78863368669022,
+  "lm_speedup": 112.42730286800676,
+  "standard_memory_change_percent": -31.22437473282974,
+  "lm_memory_change_percent": -58.57157938039697
+}

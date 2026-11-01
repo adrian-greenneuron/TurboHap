@@ -133,6 +133,14 @@ inline constexpr bool qualified_platform() {
 #endif
 }
 
+// Generic file reader also serves synthetic topology fixtures on non-Linux hosts.
+inline std::string read_line(const std::string& path) {
+    std::ifstream input(path);
+    std::string value;
+    if (!std::getline(input, value) || value.size() > 65536) throw std::runtime_error("CPU topology information is unavailable");
+    return value;
+}
+
 #if defined(__linux__)
 struct Mask {
     cpu_set_t* data;
@@ -162,12 +170,6 @@ inline void set_affinity(const std::vector<int>& cpus) {
     for (int id : cpus) CPU_SET_S(id, mask.bytes, mask.data);
     if (sched_setaffinity(0, mask.bytes, mask.data))
         throw std::runtime_error(std::string("cannot set CPU affinity: ") + std::strerror(errno));
-}
-inline std::string read_line(const std::string& path) {
-    std::ifstream input(path);
-    std::string value;
-    if (!std::getline(input, value) || value.size() > 65536) throw std::runtime_error("CPU topology information is unavailable");
-    return value;
 }
 inline Topology discover(bool details) {
     Topology t;
@@ -256,10 +258,11 @@ inline std::string quote(const std::string& text) {
     }
     return result + '"';
 }
-inline void information(std::ostream& out, Policy policy, int threads, int limit, const Topology& t, const Decision& d) {
+inline void information(std::ostream& out, Policy policy, int threads, int limit, const Topology& t, const Decision& d,
+                        const std::string& extra_json = "", const std::string& advisory_backend = "") {
     out << "{\"policy\":" << quote(name(policy)) << ",\"effective_threads\":" << threads
         << ",\"openmp_limit\":" << limit << ",\"dry_run\":true,\"qualified\":" << (t.qualified ? "true" : "false")
-        << ",\"backend\":" << quote(t.qualified ? "Linux capacity/MIDR" : "inherited scheduling")
+        << ",\"backend\":" << quote(t.qualified ? "Linux capacity/MIDR" : advisory_backend.empty() ? "inherited scheduling" : advisory_backend)
         << ",\"calling_thread_cpus\":" << quote(cpu_list(d.inherited))
         << ",\"proposed_cpus\":" << quote(cpu_list(d.selected)) << ",\"reason\":" << quote(d.reason) << ",\"cpus\":[";
     for (size_t i = 0; i < t.cpus.size(); ++i) {
@@ -268,6 +271,8 @@ inline void information(std::ostream& out, Policy policy, int threads, int limit
         out << "{\"id\":" << c.id << ",\"capacity\":" << c.capacity << ",\"kind\":" << c.kind
             << ",\"siblings\":" << quote(cpu_list(c.siblings)) << '}';
     }
-    out << "]}\n";
+    out << ']';
+    if (!extra_json.empty()) out << ',' << extra_json;
+    out << "}\n";
 }
 }

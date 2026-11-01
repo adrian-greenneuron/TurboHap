@@ -5,7 +5,7 @@
 </p>
 
 **The FindHap algorithm, reimplemented in C++. Byte-for-byte compatible output.
-Up to 150.8× faster in DGX Spark benchmarks.**
+Up to 167.6× faster in DGX Spark benchmarks.**
 
 TurboHap is a drop-in replacement for FindHap v3 for haplotype phasing and
 genotype imputation. Keep your existing input files and options, and replace
@@ -19,15 +19,17 @@ except that multithreaded Fortran may write records in `cross.overs` in a
 different order. The crossover records themselves match exactly. See the
 [compatibility details](docs/COMPATIBILITY.md).
 
-**Version 1.2.0.** One executable provides two modes:
+**Version 1.3.0.** One executable provides two modes:
 
 | Mode | Command | Purpose |
 | --- | --- | --- |
 | **TurboHap** | `findhap 10` | The default, recommended for the fastest runs. |
 | **TurboHap LM** | `findhap 10 --low-memory` | Uses less RAM; requires temporary disk space and usually takes longer. |
 
-The number selects the CPU thread count: `10` means ten threads. Omitting it
-uses the OpenMP default. The executable remains named `findhap` for compatibility.
+The number selects the CPU thread count: `10` means ten threads. You can omit
+it to use the platform default, with explicit OpenMP settings respected. On
+Apple Silicon, automatic selection prefers performance cores when no count is
+specified. The executable remains named `findhap` for compatibility.
 
 ## Manuscript and supporting data
 
@@ -42,7 +44,7 @@ dated 22 October 2026. This author manuscript has not been peer reviewed.
 - [Seven synthetic datasets and simulation truth (Zenodo)](https://doi.org/10.5281/zenodo.23566926),
   available under CC BY 4.0.
 
-The manuscript describes v1.0.0; the v1.2.0 software benchmarks below are newer.
+The manuscript describes v1.0.0; the v1.3.0 software benchmarks below are newer.
 The manuscript and figures are also available under CC BY 4.0. See the
 [paper download page](docs/paper/README.md) for file details and checksums.
 
@@ -50,42 +52,43 @@ The manuscript and figures are also available under CC BY 4.0. See the
 
 On a simulated dataset of **1,000,000 animals × 10,000 loci**, GNU Fortran
 FindHap took **6 hours 44 minutes 6 seconds**.
-TurboHap v1.2.0 finished in **3 minutes 6 seconds**: **130.0× faster**, with
-**2.4% more peak memory**. TurboHap LM finished in **3 minutes 44 seconds**:
-**108.2× faster**, with **25.1% less peak memory**.
+TurboHap v1.3.0 finished in **2 minutes 50 seconds**: **142.8× faster**, with
+**31.2% less peak memory**. TurboHap LM finished in **3 minutes 36 seconds**:
+**112.4× faster**, with **58.6% less peak memory**.
 
 All benchmarks used **ten CPU threads** and **GCC/gfortran 13.3** on the same
-NVIDIA DGX Spark. The GPU was not used. All measurements were collected on
-30 October in separate studies. Fortran uses expanded optimisation flags,
+NVIDIA DGX Spark. The GPU was not used. TurboHap measurements were collected on
+1 November 2026; the existing Fortran measurements from 30 October are reused.
+They were collected in separate studies. Fortran uses expanded optimisation flags,
 all 20 CPUs eligible, no taskset and no added binding. Its values are
 **single observations**; TurboHap and LM use **medians of two runs per mode**.
 The second Fortran replicate is deferred. Complete executable times include
 input, computation, buffered output and temporary-file I/O. Performance
 depends on the dataset, options, storage, hardware and competing load.
 
-Version 1.2.0 also improves performance on **AMD and Intel x86 computers**.
-Detailed benchmarks are ongoing.
+TurboHap works on **Apple Silicon Macs, Linux ARM64, and Intel/AMD x86-64
+systems**. Detailed benchmarking on these systems is ongoing.
 
-![Runtime and peak memory on seven synthetic datasets](docs/assets/turbohap_benchmarks_301026.png)
+![Runtime and peak memory on seven synthetic datasets](docs/assets/turbohap_benchmarks_011126.png)
 
-See [all results and methodology](docs/turbohap_benchmarks_301026.md), including
+See [all results and methodology](docs/turbohap_benchmarks_011126.md), including
 individual measurements, runtime, peak resident memory and output checks.
 
 <!-- BENCHMARK_TABLES_START -->
 
 ### Runtime
 
-Speedup uses the single expanded-flag Fortran measurement and the median of two TurboHap measurements per mode, all collected on 30 October 2026.
+Speedup uses the unchanged single expanded-flag Fortran measurement and the median of two TurboHap measurements per mode. GNU Fortran measurements: 30 October 2026; TurboHap measurements: 1 November 2026.
 
 | Animals × loci | Fortran baseline | TurboHap | Speedup | TurboHap LM | Speedup |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 10,000 × 1,000 | 10.23s | **0.52s** | **19.7×** | 0.55s | 18.8× |
-| 10,000 × 10,000 | 1m 12s | **1.71s** | **42.2×** | 1.98s | 36.5× |
-| 10,000 × 100,000 | 7m 22s | **11.91s** | **37.1×** | 20.46s | 21.6× |
-| 100,000 × 1,000 | 14m 03s | **5.59s** | **150.8×** | 5.96s | 141.3× |
-| 100,000 × 10,000 | 19m 05s | **16.41s** | **69.8×** | 19.09s | 60.0× |
-| 100,000 × 100,000 | 1h 17m 08s | **1m 53s** | **41.0×** | 3m 14s | 23.9× |
-| 1,000,000 × 10,000 | 6h 44m 06s | **3m 06s** | **130.0×** | 3m 44s | 108.2× |
+| 10,000 × 1,000 | 10.23s | **0.48s** | **21.3×** | 0.53s | 19.5× |
+| 10,000 × 10,000 | 1m 12s | **1.65s** | **44.0×** | 1.91s | 37.9× |
+| 10,000 × 100,000 | 7m 22s | **11.18s** | **39.6×** | 19.74s | 22.4× |
+| 100,000 × 1,000 | 14m 03s | **5.03s** | **167.6×** | 5.64s | 149.5× |
+| 100,000 × 10,000 | 19m 05s | **15.39s** | **74.4×** | 18.66s | 61.4× |
+| 100,000 × 100,000 | 1h 17m 08s | **1m 49s** | **42.6×** | 3m 12s | 24.1× |
+| 1,000,000 × 10,000 | 6h 44m 06s | **2m 50s** | **142.8×** | 3m 36s | 112.4× |
 
 ### Peak memory
 
@@ -93,20 +96,24 @@ Negative percentages mean less memory than Fortran.
 
 | Animals × loci | Fortran baseline | TurboHap | Memory change | TurboHap LM | Memory change |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 10,000 × 1,000 | 0.301 GiB | 0.183 GiB | -39.4% | **0.181 GiB** | **-40.0%** |
-| 10,000 × 10,000 | 1.197 GiB | 0.766 GiB | -36.0% | **0.747 GiB** | **-37.6%** |
-| 10,000 × 100,000 | 10.645 GiB | 6.312 GiB | -40.7% | **5.910 GiB** | **-44.5%** |
-| 100,000 × 1,000 | 0.377 GiB | 0.333 GiB | -11.8% | **0.320 GiB** | **-15.2%** |
-| 100,000 × 10,000 | 1.614 GiB | 1.505 GiB | -6.8% | **1.111 GiB** | **-31.2%** |
-| 100,000 × 100,000 | 14.985 GiB | 13.026 GiB | -13.1% | **8.582 GiB** | **-42.7%** |
-| 1,000,000 × 10,000 | 16.116 GiB | 16.496 GiB | +2.4% | **12.079 GiB** | **-25.1%** |
+| 10,000 × 1,000 | 0.301 GiB | 0.053 GiB | -82.6% | **0.050 GiB** | **-83.5%** |
+| 10,000 × 10,000 | 1.197 GiB | 0.230 GiB | -80.8% | **0.208 GiB** | **-82.7%** |
+| 10,000 × 100,000 | 10.645 GiB | 1.623 GiB | -84.8% | **1.184 GiB** | **-88.9%** |
+| 100,000 × 1,000 | 0.377 GiB | 0.230 GiB | -39.1% | **0.218 GiB** | **-42.1%** |
+| 100,000 × 10,000 | 1.614 GiB | 0.984 GiB | -39.0% | **0.562 GiB** | **-65.2%** |
+| 100,000 × 100,000 | 14.985 GiB | 8.431 GiB | -43.7% | **3.943 GiB** | **-73.7%** |
+| 1,000,000 × 10,000 | 16.116 GiB | 11.084 GiB | -31.2% | **6.677 GiB** | **-58.6%** |
 
 <!-- BENCHMARK_TABLES_END -->
 
 ## Build and run
 
 A C++17 compiler with OpenMP and CMake 3.16 or newer are required.
-From the source directory on Linux:
+Download the [v1.3.0 source release](https://github.com/adrian-greenneuron/TurboHap/releases/tag/v1.3.0)
+and extract it, or check out the `v1.3.0` tag.
+
+On Linux, install your distribution’s C++/OpenMP compiler and CMake, then run
+these commands from the extracted source directory:
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++
@@ -123,13 +130,19 @@ Run from a directory containing `findhap.options`, `pedigree.file`,
 /path/to/turbohap/build/findhap 10 --low-memory
 ```
 
-The build is tuned to the local CPU. Build on the machine that will run it.
-On DGX Spark, the default CPU policy automatically selects the faster cores
-when the requested thread count fits. Explicit CPU and OpenMP placement settings
-take precedence; see [CPU placement](docs/USAGE.md#cpu-placement).
-Linux ARM64 and Intel/AMD x86-64 builds with GCC 13.3 have passed output checks.
-Other Linux systems, macOS and Windows through WSL2 require local validation.
-Native Windows is not supported. A GPU, CUDA and a Fortran compiler are unnecessary.
+On **Apple Silicon macOS**, install Apple’s Command Line Tools and Homebrew
+GCC, libomp and CMake; follow the [native Mac installation instructions](docs/INSTALL.md#macos-apple-silicon).
+The build selects the native Mac defaults automatically.
+
+The build is tuned to the local CPU. Build on the machine that will run it and
+keep its C++/OpenMP runtime installed. The default CPU policy respects explicit
+CPU and OpenMP settings; see [CPU placement](docs/USAGE.md#cpu-placement).
+Windows users can follow the Linux route inside WSL2; native Windows is not
+supported. A GPU, CUDA and a Fortran compiler are unnecessary.
+
+With Python 3.11 or newer available, check a fresh build with
+`ctest --test-dir build --output-on-failure`. See the installation guide for
+platform support and test requirements.
 
 - [Installation and platform instructions](docs/INSTALL.md)
 - [Inputs, outputs and every original option](docs/USAGE.md)

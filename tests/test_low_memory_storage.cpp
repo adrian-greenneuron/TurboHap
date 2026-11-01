@@ -37,7 +37,13 @@ static void check_raw(size_t budget) {
     require(cache.complete(), "raw records incomplete");
     require(cache.resident_bytes() <= std::max(budget, widest), "append exceeded bounded payload");
     cache.finish_append();
-    require(cache.write_bytes() == bytes && cache.resident_bytes() == 0, "raw file not flushed/released");
+    require(cache.write_bytes() == bytes, "raw file not flushed");
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_RETAIN_CACHE
+    require(cache.resident_bytes() >= std::min(bytes, budget) &&
+            cache.resident_bytes() <= std::max(budget, widest), "retained raw cache capacity changed");
+#else
+    require(cache.resident_bytes() == 0, "raw file buffer not released");
+#endif
 
     auto check = [&](const size_t* records, size_t count) {
         int failures = 0;
@@ -76,7 +82,12 @@ static void check_raw(size_t budget) {
         first += count;
     }
     cache.release_batch();
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_RETAIN_CACHE
+    require(cache.resident_bytes() >= std::min(bytes, budget) &&
+            cache.resident_bytes() <= std::max(budget, widest), "reused raw cache capacity changed");
+#else
     require(cache.resident_bytes() == 0, "raw read buffer retained after release");
+#endif
     bool rejected = false;
     try { cache.append(states, 4); } catch (const std::length_error&) { rejected = true; }
     require(rejected, "sealed raw cache accepted a write");
@@ -96,7 +107,14 @@ static void check_working(size_t budget, size_t requested) {
     int starts[segments + 1] = {0, 1};
     for (size_t s = 1; s < segments; ++s) starts[s + 1] = starts[s] + lengths[s];
     const int loci = starts[segments] - 1 + lengths[segments];
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE
+    // A shared bank survives complete workspace destruction across differently
+    // sized cases. Small test grains exercise reuse as well as growth.
+    static findhap::NativePhaseBufferBank<uint8_t> pools(64);
+    BoundedGenotypeWorkspace workspace(records, loci, starts, lengths, segments, chromosomes, 151, budget, &pools);
+#else
     BoundedGenotypeWorkspace workspace(records, loci, starts, lengths, segments, chromosomes, 151, budget);
+#endif
     require(workspace.packed(), "partitioned layout fell back to dense storage");
     const int8_t states[] = {0, 1, 2, 5};
     std::vector<int8_t> expected(records * loci);
@@ -147,6 +165,12 @@ static void check_working(size_t budget, size_t requested) {
         workspace.finish_population_workers(workers);
         workspace.finish_population();
         require(workers.empty(), "worker buffers retained after pass");
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_WORKER_REUSE
+        require(pools.pool_count() >= threads, "worker pool slot lost");
+        for (size_t i = 0; i < threads; ++i)
+            require(pools.at(i).spare_capacity() >= capacity && pools.at(i).leased_capacity() == 0,
+                    "worker did not return its native buffer after the region");
+#endif
         if (pass == 3) require(workspace.write_bytes() == written, "read-only pass wrote data");
     }
 }

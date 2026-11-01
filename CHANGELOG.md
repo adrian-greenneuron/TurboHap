@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.3.0 — 1 November 2026
+
+- A unified implementation for Apple Silicon macOS, Linux ARM64 and Intel/AMD
+  x86-64. Detailed benchmarking across these systems is ongoing.
+- Updated native installation instructions, automatic platform defaults and
+  support for an external OpenMP runtime on macOS.
+- More compact working storage, improved ordered matching/library processing
+  and native instruction selection, with unchanged input and result formats.
+- Adaptive row scheduling for requests spanning clearly separated core classes;
+  the ordinary static path remains available. User thread counts, affinity and
+  explicit OpenMP settings take precedence.
+- Updated seven-dataset DGX Spark benchmark tables, figures and raw checks.
+  The existing GNU Fortran baseline is reused unchanged. See the
+  [results and methodology](docs/turbohap_benchmarks_011126.md).
+- The bundled v1.0.0 manuscript, supplementary material and historical benchmark
+  records remain unchanged.
+
 ## 1.2.0 — 30 October 2026
 
 - Faster matching, bounded LM lookup and output formatting, with native CPU

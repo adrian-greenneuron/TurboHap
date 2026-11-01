@@ -2,6 +2,7 @@
 
 ```text
 findhap [threads] [--low-memory] [--cpu-policy=auto|inherit|performance]
+        [--row-schedule=auto|static|dynamic] [--cpu-info]
 ```
 
 The default is TurboHap. Add `--low-memory` to select TurboHap LM. Both modes
@@ -9,8 +10,10 @@ are in the same executable and use the same input and output formats.
 The flag may precede or follow the thread count. `findhap --help` prints usage.
 
 Use a positive one- or two-digit thread count, capped by the OpenMP maximum.
-Without it, the program uses the OpenMP default, which can be set with
-`OMP_NUM_THREADS`. The original two-character interpretation is retained:
+Without it, Linux uses the OpenMP default, which can be set with
+`OMP_NUM_THREADS`. Native Apple Silicon automatic mode instead uses the
+performance-core count when neither a positional count nor `OMP_NUM_THREADS`
+is supplied. The original two-character interpretation is retained:
 `100` means 10, and `010` means 1. Extra unrecognised arguments after the count
 are ignored; recognised launcher flags are handled wherever they appear.
 
@@ -31,20 +34,58 @@ Native Milan, Cascade Lake and qualified Turin builds default to
 `OMP_PROC_BIND=close` and `OMP_PLACES=cores` when no explicit placement setting
 is supplied. The launcher re-executes before either engine starts so OpenMP
 initialises with those settings. The thread count and allowed CPU allocation
-are preserved. Other CPU profiles retain their existing placement policy.
+are preserved. Other CPU profiles retain their applicable placement policy.
+
+On native Apple Silicon, automatic mode discovers the host's performance-core
+count and requests user-initiated quality of service for the main thread and
+workers. This is an advisory scheduling request; macOS retains control of actual
+core placement. No fixed Mac model or core count is required. Explicit
+`OMP_NUM_THREADS`, positional counts and caller OpenMP placement settings take
+precedence. Caller wait-policy settings are also retained. See the
+[Mac guide](../MACOS.md).
 
 - `--cpu-policy=inherit` keeps the caller's placement without automatic selection
-  or binding.
+  or binding. On Apple Silicon it also leaves scheduling priority and the default
+  thread count to the caller and OpenMP runtime.
 - `--cpu-policy=performance` explicitly requires a sufficient, reliably ranked
-  performance-core group within the allowed allocation. It errors if that cannot
-  be established or an explicit binding setting conflicts.
-- `--cpu-info` prints the discovered topology and proposed placement, then exits
-  without reading data or writing results. It is a dry-run, not a record of every
-  worker's execution.
+  performance-core group within the allowed Linux allocation. It errors if that
+  cannot be established or an explicit binding setting conflicts. This strict
+  affinity policy is unavailable on macOS.
+- `--cpu-info` prints the discovered topology and proposed placement as JSON,
+  then exits without reading data or writing results. It is a dry-run, not a
+  record of every worker's execution.
 
-Both modes use the same policy. Rebuild on the intended CPU so the qualified
-native paths are selected. Automatic performance-core selection on Apple Silicon
-has not been implemented or validated.
+Both modes use the same placement policy. Rebuild on the intended CPU so the
+applicable native instruction paths are selected. TurboHap works on Apple Silicon
+Macs, Linux ARM64 and Intel/AMD x86-64 systems; detailed platform benchmarking
+is ongoing.
+
+## Row scheduling
+
+`--row-schedule=auto` is the default. It chooses how independent per-animal
+work is distributed among workers without changing inference decisions or
+result-file order.
+
+On Linux, automatic mode uses dynamic chunks of four rows only when the OS
+reports complete, consistently ranked core classes and the requested workers
+exceed the faster physical-core group while fitting the permitted physical
+cores. Static scheduling is retained when the request fits the faster group,
+all cores have one class, metadata is incomplete, the request requires SMT or
+oversubscription, or explicit OpenMP placement/scheduling or dynamic-team
+settings are present. Merely crossing the physical-core count on an x86 system
+does not enable the heterogeneous-core scheduler.
+
+Native Apple Silicon currently retains static rows in automatic mode. Its
+advisory scheduling and performance-core discovery are separate from Linux's
+strict affinity and capacity metadata.
+
+- `--row-schedule=static` distributes independent rows using the original static
+  schedule.
+- `--row-schedule=dynamic` explicitly selects chunks of four rows.
+
+An explicit row-schedule option takes precedence over automatic selection.
+This affects the independent row loops, not every stage of the program.
+Inspect the startup diagnostic or `--cpu-info` for the selected policy.
 
 ## Input files
 
@@ -140,7 +181,7 @@ TurboHap prioritises speed with resident genotype storage and indexed haplotype
 search. TurboHap LM reduces resident storage using chromosome processing,
 packed data, bounded working buffers and temporary disk files. It retains the
 same output decisions and bytes, at the cost of more I/O and some additional
-computation. See the [measured trade-offs](turbohap_benchmarks_301026.md).
+computation. See the [measured trade-offs](turbohap_benchmarks_011126.md).
 
 Peak memory depends on pedigree size, marker counts, chromosome lengths,
 haplotype diversity, options and threads. TurboHap LM also uses temporary disk

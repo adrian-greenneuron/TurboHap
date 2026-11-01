@@ -11,6 +11,8 @@
 #include <string>
 #include <fcntl.h>
 #include <unistd.h>
+#include "packed_genotypes.hpp"
+#include "platform_policy.hpp"
 
 namespace low_memory_plus {
 
@@ -21,6 +23,9 @@ inline size_t product(size_t a, size_t b) {
 }
 
 inline void pack(uint8_t* out, const int8_t* in, size_t length) {
+#if FINDHAP_NEON_PACK && defined(__ARM_NEON)
+    findhap_packed::pack(out,in,length); return;
+#endif
     auto code = [](int8_t value) -> uint8_t { return value == 5 ? 3 : value; };
     size_t l = 0;
     for (; length - l >= 4; l += 4)
@@ -36,6 +41,9 @@ inline void pack(uint8_t* out, const int8_t* in, size_t length) {
 }
 
 inline void unpack(int8_t* out, const uint8_t* in, size_t length) {
+#if FINDHAP_NEON_PACK && defined(__ARM_NEON)
+    findhap_packed::unpack(out,in,length); return;
+#endif
     static constexpr auto decoded = [] {
         std::array<std::array<int8_t, 4>, 256> table{};
         for (int byte = 0; byte < 256; ++byte)
@@ -79,6 +87,11 @@ public:
             errno = error;
             fail("prepare");
         }
+#if defined(__APPLE__) && FINDHAP_DARWIN_NOCACHE
+        if (fcntl(fd_, F_NOCACHE, 1) != 0) {
+            const int error = errno; close(fd_); fd_ = -1; errno = error; fail("disable file cache");
+        }
+#endif
     }
     BackingFile(const BackingFile&) = delete;
     BackingFile& operator=(const BackingFile&) = delete;

@@ -5,15 +5,21 @@
 #include <unistd.h>
 #include "platform_policy.hpp"
 #include "thread_request.hpp"
+#include "macos_policy.hpp"
 #include "cpu_policy.hpp"
+#include "row_schedule.hpp"
 
 namespace findhap_standard { int run(int argc, char* argv[]); }
 namespace findhap_low_memory { int run(int argc, char* argv[]); }
+namespace findhap_dynamic_standard { int run(int argc, char* argv[]); }
+namespace findhap_dynamic_low_memory { int run(int argc, char* argv[]); }
 
 int main(int argc, char* argv[]) {
     using namespace findhap::placement;
     bool low_memory = false, cpu_info = false, policy_seen = false;
     Policy policy = Policy::automatic;
+    findhap::rows::Policy row_policy = findhap::rows::Policy::automatic;
+    bool row_policy_seen = false;
     std::vector<char*> original(argv, argv + argc);
     original.push_back(nullptr);
     int count = 1;
@@ -21,6 +27,12 @@ int main(int argc, char* argv[]) {
         for (int i = 1; i < argc; ++i) {
             if (std::strcmp(argv[i], "--low-memory") == 0) low_memory = true;
             else if (std::strcmp(argv[i], "--cpu-info") == 0) cpu_info = true;
+            else if (std::strncmp(argv[i], "--row-schedule=", 15) == 0) {
+                const auto value = findhap::rows::parse(argv[i] + 15);
+                if (row_policy_seen && value != row_policy) throw std::runtime_error("conflicting --row-schedule values");
+                row_policy = value; row_policy_seen = true;
+            } else if (std::strncmp(argv[i], "--row-schedule", 14) == 0)
+                throw std::runtime_error("use --row-schedule=auto, --row-schedule=static or --row-schedule=dynamic");
             else if (std::strncmp(argv[i], "--cpu-policy=", 13) == 0) {
                 const Policy value = parse(argv[i] + 13);
                 if (policy_seen && value != policy) throw std::runtime_error("conflicting --cpu-policy values");
@@ -36,25 +48,39 @@ int main(int argc, char* argv[]) {
                 "Usage: findhap [threads] [--low-memory] [--cpu-policy=auto|inherit|performance] [--cpu-info]\n\n"
                 "Standard mode prioritizes speed. --low-memory reduces peak memory.\n"
                 "Options may appear before or after the thread count.\n"
-                "Without a thread count, preserve the OpenMP default (OMP_NUM_THREADS).\n"
-                "auto: qualified Spark performance-core selection when the thread request fits.\n"
-                "inherit: leave CPU placement to the caller/OpenMP runtime.\n"
+                "Without a thread count, honour OMP_NUM_THREADS; native Apple Silicon auto uses P-core count.\n"
+                "auto: qualified Spark selection; native Apple Silicon uses advisory user-initiated QoS.\n"
+                "inherit: leave CPU placement, QoS and default thread count to the caller/OpenMP runtime.\n"
                 "performance: require a qualified, sufficient performance-core allocation.\n"
                 "Explicit OpenMP placement and inherited CPU restrictions take precedence in auto.\n"
+                "--row-schedule=auto|static|dynamic: independent-row work distribution (default auto).\n"
+                "auto uses dynamic chunks of four when the request spans reliably ranked core types.\n"
+                "Otherwise retain static rows; explicit OpenMP settings and dynamic teams keep static.\n"
                 "--cpu-info: show the proposed CPU policy as JSON without applying it or reading inputs.\n"
                 "Original findhap.options fields and input/output filenames are unchanged.\n"
                 "Other arguments after the thread count are ignored, as in findhapV3.");
             return 0;
         }
+        findhap::macos::configure(policy == Policy::automatic);
         findhap::startup_thread_request = findhap::resolve_thread_request(count, argv);
+        if (count == 1)
+            findhap::startup_thread_request.effective = findhap::macos::default_threads(
+                findhap::startup_thread_request.openmp_limit, false);
         const auto request = findhap::startup_thread_request;
         Topology topology;
-        const auto decision = start(policy, request.effective, cpu_info, topology);
+        auto decision = start(policy, request.effective, cpu_info, topology);
+        if (findhap::macos::enabled)
+            decision.reason = "advisory user-initiated QoS; OS controls core placement";
         if (cpu_info) {
-            information(std::cout, policy, request.effective, request.openmp_limit, topology, decision);
+            const auto rows = findhap::rows::resolve(row_policy,
+                {request.effective, omp_get_thread_limit(), bool(omp_get_dynamic()), external_binding(),
+                 std::getenv("OMP_SCHEDULE") != nullptr}, decision.selected);
+            information(std::cout, policy, request.effective, request.openmp_limit, topology, decision,
+                        findhap::rows::json(rows) + (findhap::macos::json().empty() ? "" : "," + findhap::macos::json()),
+                        findhap::macos::enabled ? "Darwin QoS (advisory)" : "");
             return 0;
         }
-#if FINDHAP_TURIN_BINDING
+#if defined(__linux__) && FINDHAP_TURIN_BINDING
         // Native binding bootstrap: libgomp consumes placement before main.
         // The explicit inherit policy opts out; caller placement always wins.
         if (policy == Policy::automatic && !external_binding()) {
@@ -64,7 +90,21 @@ int main(int argc, char* argv[]) {
             throw std::runtime_error("cannot restart with OpenMP placement");
         }
 #endif
+        findhap::macos::worker_enter();
         diagnostic(std::cerr, policy, request.effective, decision);
+        if (!findhap::macos::json().empty())
+            std::cerr << "TurboHap Mac scheduling: " << findhap::macos::json() << '\n';
+        std::vector<int> allowed;
+#if defined(__linux__)
+        try { allowed = affinity(); } catch (const std::exception&) {}
+#endif
+        const auto rows = findhap::rows::resolve(row_policy,
+            {request.effective, omp_get_thread_limit(), bool(omp_get_dynamic()), external_binding(),
+             std::getenv("OMP_SCHEDULE") != nullptr}, allowed);
+        findhap::rows::diagnostic(std::cerr, rows);
+        if (rows.dynamic)
+            return low_memory ? findhap_dynamic_low_memory::run(count, argv)
+                              : findhap_dynamic_standard::run(count, argv);
         return low_memory ? findhap_low_memory::run(count, argv)
                           : findhap_standard::run(count, argv);
     } catch (const std::exception& error) {

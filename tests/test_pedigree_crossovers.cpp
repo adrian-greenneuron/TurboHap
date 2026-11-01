@@ -3,6 +3,10 @@
 #include <cassert>
 #include <random>
 #include <vector>
+#if defined(__ARM_NEON)
+#include <sys/mman.h>
+#include <unistd.h>
+#endif
 
 static findhap_pedigree::CrossoverScan oracle(const std::vector<int8_t>& child,
                                              const std::vector<int8_t>& a,
@@ -37,12 +41,43 @@ static void check(const std::vector<int8_t>& c,const std::vector<int8_t>& a,
                   const std::vector<int8_t>& b) {
     auto e=oracle(c,a,b);
     check_backend<0>(c,a,b,e);
+#if defined(__ARM_NEON)
+    check_backend<4>(c,a,b,e);
+#endif
 #if defined(__x86_64__) || defined(__i386__)
     if (findhap_simd::supported(2)) check_backend<2>(c,a,b,e);
     if (findhap_simd::supported(3)) check_backend<3>(c,a,b,e);
 #endif
 }
+#if defined(__ARM_NEON)
+static void guarded_tails() {
+    const size_t page = size_t(sysconf(_SC_PAGESIZE));
+    std::mt19937 rng(301026);
+    for (int n = 0; n <= 80; ++n) {
+        void* pages[3]; int8_t* rows[3];
+        std::vector<int8_t> values[3];
+        for (int r = 0; r < 3; ++r) {
+            pages[r] = mmap(nullptr, 2 * page, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+            assert(pages[r] != MAP_FAILED);
+            assert(mprotect(static_cast<char*>(pages[r]) + page, page, PROT_NONE) == 0);
+            rows[r] = static_cast<int8_t*>(pages[r]) + page - n;
+            values[r].resize(n);
+            for (int q = 0; q < n; ++q) rows[r][q] = values[r][q] = int(rng()%256)-128;
+        }
+        const auto expected = oracle(values[0], values[1], values[2]);
+        const auto got = findhap_pedigree::scan_crossovers<4>(rows[0],rows[1],rows[2],n);
+        for (int q=0;q<2;++q) {
+            assert(got.count[q]==expected.count[q]); assert(got.first[q]==expected.first[q]);
+            assert(got.last[q]==expected.last[q]);
+        }
+        for (void* p : pages) assert(munmap(p, 2 * page) == 0);
+    }
+}
+#endif
 int main() {
+#if defined(__ARM_NEON)
+    guarded_tails();
+#endif
     // Exhaust every short sequence of the four parental-conflict states.
     for (int n=0;n<=8;++n) {
         std::vector<int8_t> c(n,0),a(n),b(n);

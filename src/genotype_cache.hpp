@@ -1,4 +1,5 @@
 #pragma once
+#include "packed_genotypes.hpp"
 
 #include <array>
 #include <cstdint>
@@ -42,6 +43,9 @@ public:
         packed_[count_++] = packed;
         uint8_t* out = data_.get() + used_;
         if (packed) {
+#if FINDHAP_NEON_PACK && defined(__ARM_NEON)
+            findhap_packed::pack(out,row,length);
+#else
             size_t l = 0;
             for (; length - l >= 4; l += 4)
                 out[l / 4] = code(row[l]) | (code(row[l + 1]) << 2) |
@@ -53,6 +57,7 @@ public:
                     tail |= code(row[l]) << shift;
                 out[byte] = tail;
             }
+#endif
         } else {
             std::memcpy(out, row, length);
         }
@@ -62,6 +67,9 @@ public:
     const int8_t* row(size_t record, size_t length, int8_t* scratch) const {
         const uint8_t* in = data_.get() + offsets_[record];
         if (!packed_[record]) return reinterpret_cast<const int8_t*>(in);
+#if FINDHAP_NEON_PACK && defined(__ARM_NEON)
+        findhap_packed::unpack(scratch,in,length); return scratch;
+#endif
         static constexpr auto decoded = [] {
             std::array<std::array<int8_t, 4>, 256> table{};
             for (int byte = 0; byte < 256; ++byte)

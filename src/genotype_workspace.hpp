@@ -1,4 +1,6 @@
 #pragma once
+#include "packed_genotypes.hpp"
+#include "phase_buffer.hpp"
 
 #include <array>
 #include <algorithm>
@@ -24,13 +26,32 @@ class BasicGenotypeWorkspace {
     bool packed_ = true;
     std::vector<int> starts_, lengths_;
     std::vector<size_t> strides_, offsets_;
-    std::unique_ptr<uint8_t[]> data_;
+#if FINDHAP_MMAP_PHASE_BUFFERS
+    std::conditional_t<External, findhap::PhaseBuffer<uint8_t>, std::unique_ptr<uint8_t[]>> data_;
+#else
+    findhap::PhaseBuffer<uint8_t> data_;
+#endif
     std::vector<int> chromosomes_;
     std::vector<size_t> dirty_first_, dirty_end_;
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_STD_COMPACT_WORKSPACE
+    // Standard mode never owns a file descriptor. Its pool pointer can use
+    // that otherwise unused slot (including its existing alignment padding)
+    // rather than widening the hot workspace object. External mode keeps the
+    // descriptor active and never reads the pointer member.
+    union {
+        int backing_ = -1;
+        findhap::NativePhaseBufferPool<uint8_t>* workspace_pool_;
+    };
+#else
     int backing_ = -1;
+#endif
     size_t batch_first_ = 0, batch_records_ = 0, tile_first_ = 0;
     size_t input_batch_ = 0, buffer_bytes_ = 0;
     uint64_t read_bytes_ = 0, write_bytes_ = 0;
+#if FINDHAP_MMAP_PHASE_BUFFERS && !FINDHAP_PHASE_STD_COMPACT_WORKSPACE
+    // Keep existing workspace member offsets intact on the opt-in path.
+    findhap::NativePhaseBufferPool<uint8_t>* workspace_pool_ = nullptr;
+#endif
 
     [[noreturn]] static void io_error(const char* operation) {
         throw std::runtime_error(std::string("genotype workspace ") + operation +
@@ -76,6 +97,9 @@ class BasicGenotypeWorkspace {
     }
 
     static void pack(uint8_t* out, const int8_t* in, int length) {
+#if FINDHAP_NEON_PACK && defined(__ARM_NEON)
+        findhap_packed::pack(out,in,size_t(length)); return;
+#endif
         int l = 0;
         for (; l + 3 < length; l += 4)
             out[l / 4] = code(in[l]) | (code(in[l + 1]) << 2) |
@@ -90,6 +114,9 @@ class BasicGenotypeWorkspace {
     }
 
     static void unpack(int8_t* out, const uint8_t* in, int length) {
+#if FINDHAP_NEON_PACK && defined(__ARM_NEON)
+        findhap_packed::unpack(out,in,size_t(length)); return;
+#endif
         static constexpr auto decoded = [] {
             std::array<std::array<int8_t, 4>, 256> table{};
             for (int byte = 0; byte < 256; ++byte)
@@ -111,9 +138,17 @@ class BasicGenotypeWorkspace {
 public:
     BasicGenotypeWorkspace(int records, int loci, const int* starts, const int* lengths,
                           int segments, const int* chromosomes = nullptr,
+#if FINDHAP_MMAP_PHASE_BUFFERS
+                          size_t staging_budget = 64 * 1024 * 1024,
+                          findhap::NativePhaseBufferPool<uint8_t>* workspace_pool = nullptr)
+#else
                           size_t staging_budget = 64 * 1024 * 1024)
+#endif
         : records_(records), loci_(loci), starts_(segments), lengths_(segments),
           strides_(segments), offsets_(segments + 1, 0) {
+#if FINDHAP_MMAP_PHASE_BUFFERS
+        if constexpr (!External) workspace_pool_ = workspace_pool;
+#endif
         size_t next = 0;
         for (int s = 0; s < segments; ++s) {
             starts_[s] = starts[s + 1] - 1;
@@ -159,11 +194,26 @@ public:
                 return;
             }
         }
-        data_.reset(new uint8_t[packed_ ? offsets_.back() : product(records_, loci_)]);
+#if FINDHAP_MMAP_PHASE_BUFFERS
+        const size_t bytes = packed_ ? offsets_.back() : product(records_, loci_);
+        if constexpr (External) data_ = findhap::make_phase_buffer<uint8_t>(bytes);
+        else data_ = workspace_pool_ ? workspace_pool_->acquire(bytes)
+                                    : std::unique_ptr<uint8_t[]>(new uint8_t[bytes]);
+#else
+        data_ = findhap::make_phase_buffer<uint8_t>(packed_ ? offsets_.back() : product(records_, loci_));
+#endif
     }
 
     ~BasicGenotypeWorkspace() {
+#if FINDHAP_MMAP_PHASE_BUFFERS
+        if constexpr (!External) if (workspace_pool_) workspace_pool_->recycle(std::move(data_));
+#endif
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_STD_COMPACT_WORKSPACE
+        // Only the external instantiation has an active descriptor member.
+        if constexpr (External) if (backing_ >= 0) close(backing_);
+#else
         if (backing_ >= 0) close(backing_);
+#endif
     }
 
     size_t input_batch_size() const {
@@ -179,7 +229,7 @@ public:
             for (size_t stride : strides_) bytes += product(count, stride);
             if (bytes > buffer_bytes_) {
                 data_.reset();
-                data_.reset(new uint8_t[bytes]);
+                data_ = findhap::make_phase_buffer<uint8_t>(bytes);
                 buffer_bytes_ = bytes;
             }
         }
@@ -230,7 +280,7 @@ public:
             const size_t bytes = offsets_[end] - offsets_[first];
             if (bytes > buffer_bytes_) {
                 data_.reset();
-                data_.reset(new uint8_t[bytes]);
+                data_ = findhap::make_phase_buffer<uint8_t>(bytes);
                 buffer_bytes_ = bytes;
             }
             transfer(false, data_.get(), bytes, offsets_[first]);

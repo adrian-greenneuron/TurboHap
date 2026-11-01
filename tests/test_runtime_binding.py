@@ -4,6 +4,8 @@ from pathlib import Path
 import subprocess
 import tempfile
 
+from fixture_build import build_fixture
+
 
 def main():
     source=Path(__file__).resolve().parents[1]/'src/launcher.cpp'
@@ -30,15 +32,15 @@ static int report(const char* mode,int argc,char** argv) {
 }
 namespace findhap_standard {int run(int argc,char** argv){return report("standard",argc,argv);}}
 namespace findhap_low_memory {int run(int argc,char** argv){return report("lm",argc,argv);}}
+namespace findhap_dynamic_standard { int run(int n,char** v) { return findhap_standard::run(n,v); } }
+namespace findhap_dynamic_low_memory { int run(int n,char** v) { return findhap_low_memory::run(n,v); } }
 ''')
         allowed_cpu=min(os.sched_getaffinity(0))
         checks=0
         for enabled in [0,1]:
             binary=root/('launcher-'+str(enabled))
-            subprocess.run([os.environ.get('CXX','c++'),'-std=c++17','-O2',
-                '-fopenmp',
-                '-DFINDHAP_TURIN_BINDING='+str(enabled),str(source),str(stub),'-o',str(binary)],
-                check=True,capture_output=True)
+            build_fixture([source, stub], binary,
+                          ['-DFINDHAP_TURIN_BINDING=' + str(enabled)])
             for overrides,explicit_expected in [({},None),
                 ({'OMP_PROC_BIND':'false'},('false','unset')),
                 ({'OMP_PLACES':'threads'},('unset','threads')),

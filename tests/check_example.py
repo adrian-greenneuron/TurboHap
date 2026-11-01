@@ -21,6 +21,7 @@ def check_file(path, expected):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--binary', required=True, type=Path)
+    parser.add_argument('--row-schedule', choices=('auto', 'static', 'dynamic'))
     args = parser.parse_args()
     binary = args.binary.resolve(strict=True)
     example = ROOT / 'examples/small'
@@ -35,7 +36,8 @@ def main():
                 for name in expected['inputs']:
                     shutil.copyfile(example / name, run / name)
                 env = dict(os.environ, LC_ALL='C', OMP_NUM_THREADS=str(threads), OMP_DYNAMIC='FALSE')
-                result = subprocess.run([str(binary), str(threads), *flags], cwd=run,
+                row_flags = ['--row-schedule=' + args.row_schedule] if args.row_schedule else []
+                result = subprocess.run([str(binary), str(threads), *flags, *row_flags], cwd=run,
                                         env=env, capture_output=True)
                 if result.returncode or b'Program findhap completed normally' not in result.stdout:
                     raise RuntimeError(f'{mode} failed: {result.stderr.decode(errors="replace")}')

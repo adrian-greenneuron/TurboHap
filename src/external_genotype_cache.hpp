@@ -1,6 +1,7 @@
 #pragma once
 
 #include "low_memory_plus_storage.hpp"
+#include "phase_buffer.hpp"
 #include <memory>
 #include <vector>
 
@@ -11,7 +12,14 @@ class ExternalGenotypeCache {
     struct SelectedRow { size_t record, offset; };
     size_t records_, capacity_, budget_, count_ = 0, used_ = 0;
     std::unique_ptr<size_t[]> offsets_;
-    std::unique_ptr<uint8_t[]> packed_, buffer_;
+    std::unique_ptr<uint8_t[]> packed_;
+#if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_NATIVE_CACHE
+    // The native-cache experiment keeps the original hot pointer type.
+    // Retention and reservation are independent from its allocation backend.
+    std::unique_ptr<uint8_t[]> buffer_;
+#else
+    findhap::PhaseBuffer<uint8_t> buffer_;
+#endif
     low_memory_plus::BackingFile file_;
     size_t buffer_capacity_ = 0, append_bytes_ = 0, append_start_ = 0;
     size_t first_ = 0, end_ = 0;
@@ -23,8 +31,22 @@ class ExternalGenotypeCache {
         if (bytes > buffer_capacity_) {
             buffer_.reset();
             buffer_capacity_ = 0;
-            buffer_.reset(new uint8_t[bytes]);
+#if FINDHAP_MMAP_PHASE_BUFFERS
+#if FINDHAP_PHASE_LM_RESERVE
+            const size_t capacity = std::max(bytes, std::min(capacity_, budget_));
+#else
+            const size_t capacity = bytes;
+#endif
+#if FINDHAP_PHASE_LM_NATIVE_CACHE
+            buffer_ = std::unique_ptr<uint8_t[]>(new uint8_t[capacity]);
+#else
+            buffer_ = findhap::make_phase_buffer<uint8_t>(capacity);
+#endif
+            buffer_capacity_ = capacity;
+#else
+            buffer_ = findhap::make_phase_buffer<uint8_t>(bytes);
             buffer_capacity_ = bytes;
+#endif
         }
     }
 
@@ -81,6 +103,7 @@ public:
 
     bool complete() const { return count_ == records_ && used_ == capacity_; }
     size_t bytes() const { return capacity_; }
+    // Payload capacity, not a query of physical page residency.
     size_t resident_bytes() const { return buffer_capacity_; }
     uint64_t read_bytes() const { return read_bytes_; }
     uint64_t write_bytes() const { return write_bytes_; }
@@ -177,8 +200,10 @@ public:
     }
 
     void release_batch() {
+#if !FINDHAP_MMAP_PHASE_BUFFERS || !FINDHAP_PHASE_LM_RETAIN_CACHE
         buffer_.reset();
         buffer_capacity_ = 0;
+#endif
         first_ = end_ = 0;
         selected_.clear();
         if (sealed_) file_.discard(false);
