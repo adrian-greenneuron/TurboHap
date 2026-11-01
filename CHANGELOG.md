@@ -11,7 +11,9 @@
 - Adaptive row scheduling for requests spanning clearly separated core classes;
   the ordinary static path remains available. User thread counts, affinity and
   explicit OpenMP settings take precedence.
-- Updated seven-dataset DGX Spark benchmark tables, figures and raw checks.
+- Updated five-dataset DGX Spark benchmark tables, figures and raw checks;
+  each current benchmark has at least 10,000 loci.
+- Refreshed TurboHap logo.
   The existing GNU Fortran baseline is reused unchanged. See the
   [results and methodology](docs/turbohap_benchmarks_011126.md).
 - The bundled v1.0.0 manuscript, supplementary material and historical benchmark

@@ -1,15 +1,9 @@
 dataset,program,repeat,wall_seconds,peak_rss_kib,user_seconds,system_seconds,swaps,filesystem_inputs,filesystem_outputs,major_page_faults,output_check,wrapper_wall_seconds
-"10,000 × 1,000",Fortran baseline,1,10.23,316064,84.34,0.51,0,0,162808,0,pass; exact records; raw cross.overs order differs,10.28262002300471
 "10,000 × 10,000",Fortran baseline,1,72.31,1255280,309.89,10.05,0,0,852760,0,pass; exact records; raw cross.overs order differs,72.35796913603554
 "10,000 × 100,000",Fortran baseline,1,442.21,11162500,852.64,29.62,0,0,6949552,0,pass; exact records; raw cross.overs order differs,442.2165151190129
-"100,000 × 1,000",Fortran baseline,1,843.04,395568,3788.26,95.6,0,0,1392376,0,pass; exact records; raw cross.overs order differs,843.0816374110291
 "100,000 × 10,000",Fortran baseline,1,1144.89,1692816,4611.6,140.68,0,0,7992392,0,pass; exact records; raw cross.overs order differs,1144.934634395002
 "100,000 × 100,000",Fortran baseline,1,4627.65,15713332,10365.18,268.03,0,0,68246544,0,pass; exact records; raw cross.overs order differs,4627.704505386006
 "1,000,000 × 10,000",Fortran baseline,1,24245.51,16899336,80898.83,2123.73,0,0,77872176,0,pass; exact records; raw cross.overs order differs,24245.55896027398
-"10,000 × 1,000",TurboHap,1,0.48,55464,2.77,0.07,0,0,162784,0,pass; exact raw byte counts and SHA-256 including crossover order,
-"10,000 × 1,000",TurboHap LM,1,0.53,52328,2.88,0.11,0,48792,182368,0,pass; exact raw byte counts and SHA-256 including crossover order,
-"10,000 × 1,000",TurboHap LM,2,0.52,52164,2.83,0.13,0,54512,182368,0,pass; exact raw byte counts and SHA-256 including crossover order,
-"10,000 × 1,000",TurboHap,2,0.48,54800,2.77,0.07,0,0,162784,0,pass; exact raw byte counts and SHA-256 including crossover order,
 "10,000 × 10,000",TurboHap,1,1.66,241488,11.1,0.28,0,0,852704,0,pass; exact raw byte counts and SHA-256 including crossover order,
 "10,000 × 10,000",TurboHap LM,1,1.91,217856,11.42,0.43,0,462512,1046104,0,pass; exact raw byte counts and SHA-256 including crossover order,
 "10,000 × 10,000",TurboHap LM,2,1.91,217444,11.44,0.41,0,460504,1046104,0,pass; exact raw byte counts and SHA-256 including crossover order,
@@ -18,10 +12,6 @@ dataset,program,repeat,wall_seconds,peak_rss_kib,user_seconds,system_seconds,swa
 "10,000 × 100,000",TurboHap LM,1,19.78,1241748,76.2,4.28,0,5122584,9140840,0,pass; exact raw byte counts and SHA-256 including crossover order,
 "10,000 × 100,000",TurboHap LM,2,19.7,1241744,73.79,4.38,0,5149432,9140840,0,pass; exact raw byte counts and SHA-256 including crossover order,
 "10,000 × 100,000",TurboHap,2,11.16,1701408,73.51,2.12,0,0,6949360,0,pass; exact raw byte counts and SHA-256 including crossover order,
-"100,000 × 1,000",TurboHap,1,5.03,240772,34.05,0.51,0,0,1392304,0,pass; exact raw byte counts and SHA-256 including crossover order,
-"100,000 × 1,000",TurboHap LM,1,5.64,229188,36.4,0.69,0,754344,1588088,0,pass; exact raw byte counts and SHA-256 including crossover order,
-"100,000 × 1,000",TurboHap LM,2,5.64,228988,36.42,0.69,0,754176,1588088,0,pass; exact raw byte counts and SHA-256 including crossover order,
-"100,000 × 1,000",TurboHap,2,5.03,240912,34.18,0.46,0,0,1392304,0,pass; exact raw byte counts and SHA-256 including crossover order,
 "100,000 × 10,000",TurboHap,1,15.38,1031896,109.8,2.19,0,0,7992232,0,pass; exact raw byte counts and SHA-256 including crossover order,
 "100,000 × 10,000",TurboHap LM,1,18.65,589464,114.9,3.59,0,7547552,9953496,0,pass; exact raw byte counts and SHA-256 including crossover order,
 "100,000 × 10,000",TurboHap LM,2,18.66,589104,115.15,3.41,0,7555480,9953496,0,pass; exact raw byte counts and SHA-256 including crossover order,

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Render release tables and figures from the included aggregate measurements."""
-from release_summary import (measurement_dates_text, qualification_text,
+from release_summary import (benchmark_datasets, measurement_dates_text, qualification_text,
                              release_suffix, render_summary)
 
 import csv
@@ -37,8 +37,8 @@ def main():
     assert BASE == f'turbohap_benchmarks_{suffix}'
     validation = json.loads((ROOT / 'docs' / f'turbohap_validation_{suffix}.json').read_text())
     observations = data['observations']
-    datasets = list(dict.fromkeys(r['dataset'] for r in observations))
-    assert len(datasets) == 7 and len(observations) == 35
+    datasets = benchmark_datasets(data)
+    assert len(observations) == len(datasets) * sum(data['repeats'].values())
     repeats = data['repeats']
     assert repeats == {'Fortran baseline': 1, 'TurboHap': 2, 'TurboHap LM': 2}
     assert {r['program'] for r in observations} == set(PROGRAMS)
@@ -80,7 +80,7 @@ def main():
     readme.write_text(before + '<!-- BENCHMARK_TABLES_START -->\n\n' + '\n'.join(tables)
                       + '\n\n<!-- BENCHMARK_TABLES_END -->' + after)
     lines = [f'# TurboHap {version} benchmarks', '',
-             'Seven synthetic datasets; one Fortran measurement and two measurements per TurboHap mode and dataset. ' + measurement_dates_text(data), '',
+             f'{len(datasets)} synthetic datasets, each with at least 10,000 loci; one Fortran measurement and two measurements per TurboHap mode and dataset. ' + measurement_dates_text(data), '',
              f'The {len(observations)} selected observations combine the unchanged GNU Fortran baseline with the current TurboHap measurements. The GNU Fortran baseline uses expanded compiler flags with no taskset or added binding. It has one observation per dataset; no second replicate is included. Historical software-release results remain available separately.', '',
              'Fortran values are single observations; TurboHap values are medians of two technical runs per mode. Runtime and RSS medians are calculated independently. Bold marks the lowest recorded runtime or RSS and its corresponding ratio, not statistical significance. No Fortran variation estimate is available yet.', '', *tables]
     lines += ['', f'![Runtime and peak memory](assets/{BASE}.png)', '',
@@ -94,7 +94,7 @@ def main():
               f'- {data["threads"]} OpenMP threads for every measured program. ' + data['compiler'] + '.',
               '- Fortran flags: `'+data['fortran_flags']+'`. No fast-math or profile-guided optimisation.',
               '- C++ release flags: `' + data['cpp_flags'] + '`; GNU linking uses `' + data['cpp_link_flags'] + '`. No fast-math or profile-guided optimisation.',
-              '- The seven datasets were generated with genosimV4; dimensions are genotyped animals × map loci. Each pedigree also contains four ungenotyped founders. Chip membership and pedigree structure affect work; see the [generation recipe and input checksums](turbohap_benchmark_datasets_221026.md).',
+              '- The five selected datasets were generated with genosimV4 and each has at least 10,000 loci; dimensions are genotyped animals × map loci. The two 1,000-locus datasets are outside the current release comparison. Each pedigree also contains four ungenotyped founders. Chip membership and pedigree structure affect work; see the [generation recipe and input checksums](turbohap_benchmark_datasets_221026.md).',
               '- Wall time covers the complete executable, including reading inputs, computation, writing results and temporary-file I/O. Output validation is outside the timer.',
               '- Peak memory is process peak resident set size from GNU `time`, converted from KiB to GiB. It is not total system memory, filesystem cache or disk usage.',
               '- Measurement order: ' + data['measurement_order'],
@@ -102,7 +102,7 @@ def main():
               '- All primary elapsed times use GNU time (%e), excluding measurement-wrapper overhead. Fortran wrapper wall time is retained separately in the raw observations. Studies used different sessions and the placement policies above.',
               '- The measured source and executable identities are retained in the JSON metadata. The release packages the qualified implementation with the project-version metadata updated to ' + version + '. ' + qualification_text(data) + ' Every benchmark input matches its published SHA-256 and byte count, including the million-animal benchmark options.',
               '- Inputs were explicitly warmed and residency checked before each timed C++ run. There were no inference warmup runs or forced cache eviction. Outputs were fresh; post-exit checked file/directory fsync and hashing occurred outside the timer. Fortran inputs were verified before its study, with no forced cache eviction or inference warmups. No competing benchmark was intentionally run; unrelated background activity was not comprehensively traced. One Fortran observation and two C++ technical repeats do not establish confidence intervals, statistical equivalence or universal speedup.',
-              f'- All {validation["strict_raw_output_checks"]} C++ raw-file checks pass. Fortran passes {validation["fortran_raw_identical_files"]}/{validation["fortran_raw_files_checked"]} raw-file checks: only cross.overs record order differs. Its header and every complete record match after C-locale sorting with duplicates retained. These seven raw mismatches remain explicit; no other difference is accepted.', '',
+              f'- All {validation["strict_raw_output_checks"]} C++ raw-file checks pass. Fortran passes {validation["fortran_raw_identical_files"]}/{validation["fortran_raw_files_checked"]} raw-file checks: only cross.overs record order differs. Its header and every complete record match after C-locale sorting with duplicates retained. These {len(datasets)} raw mismatches remain explicit; no other difference is accepted.', '',
               f'[All observations (CSV)]({BASE}.csv) · [Metadata and observations (JSON)]({BASE}.json) · [Raw output checks](turbohap_validation_{suffix}.json) · [Compatibility](COMPATIBILITY.md)', '',
               '[Historical v1.2.0 benchmarks](turbohap_benchmarks_301026.md) · [Historical v1.1.0 benchmarks](turbohap_benchmarks_281026.md) · [Historical v1.0.0 benchmarks](turbohap_benchmarks_221026.md). The manuscript and supplementary files continue to describe v1.0.0; they have not been revised for this software release.', '',
               '## Regenerate the tables and figures', '',
@@ -175,7 +175,7 @@ def plot_runtime_memory(datasets, labels, summaries, observations, data):
                 all_memory.extend(memories)
             ax.plot([p[0] for p in points], [p[1] for p in points],
                     color='#8b97a5', linewidth=1.8, zorder=1)
-            offset = (8, -18) if label in ('10k × 1k', '10k × 100k', '100k × 100k') else (8, 10)
+            offset = (8, -18) if label in ('10k × 100k', '100k × 100k') else (8, 10)
             ax.annotate(label, points[0], xytext=offset, textcoords='offset points',
                         fontsize=10, color='#303840')
         ax.set_xlim(min(all_times) / 1.55, max(all_times) * 2.5)
@@ -202,7 +202,7 @@ def plot_runtime_memory(datasets, labels, summaries, observations, data):
                                   markeredgewidth=.8, label=p) for p in PROGRAMS],
                   loc='upper left', frameon=False, ncols=3)
         fig.suptitle(f'TurboHap {data["release_tag"]}: runtime and memory', fontsize=17, weight='bold')
-        ax.set_title('Seven simulated datasets · 10 CPU threads · Fortran: 1 run; each TurboHap mode: 2 runs', fontsize=11)
+        ax.set_title(f'{len(datasets)} simulated datasets · at least 10,000 loci · 10 CPU threads · Fortran: 1 run; each TurboHap mode: 2 runs', fontsize=10)
         fig.supxlabel('Further left is faster. Lower means less memory. Labels: animals × loci.\n'
                       'Log axes · Fortran: single observations; C++: medians and observed ranges\n' + measurement_dates_text(data), fontsize=10)
         save(fig, BASE)

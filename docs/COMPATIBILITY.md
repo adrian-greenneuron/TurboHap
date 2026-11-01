@@ -44,9 +44,9 @@ SHA-256 and byte-count checks**, including crossover order. See the
 passed all 19 packaged tests before timing, including output-error handling
 and CPU-policy checks. The historical Fortran observations remain unchanged.
 
-For v1.3.0, the seven synthetic datasets were checked in standard and LM modes
-with two observations per mode and dataset: **28 runs and 280 strict raw-file
-checks**, including crossover order. See the
+For v1.3.0, the five selected synthetic datasets, each with at least 10,000
+loci, were checked in standard and LM modes with two observations per mode and
+dataset: **20 runs and 200 strict raw-file checks**, including crossover order. See the
 [v1.3.0 validation record](turbohap_validation_011126.json). These observations
 use the normal Linux platform defaults; the separate optional allocation-policy
 experiments are not included in the public benchmark selection. The packaged

@@ -4,6 +4,24 @@ import json
 import re
 
 
+RELEASE_DATASETS = (
+    '10,000 × 10,000', '10,000 × 100,000', '100,000 × 10,000',
+    '100,000 × 100,000', '1,000,000 × 10,000',
+)
+
+
+def benchmark_datasets(data):
+    """Validate the declared current-release scope before generating any claims."""
+    selection = data['dataset_selection']
+    datasets = list(dict.fromkeys(row['dataset'] for row in data['observations']))
+    assert selection['minimum_loci'] == 10000
+    assert len(datasets) == len(selection['datasets']) == len(RELEASE_DATASETS)
+    assert set(datasets) == set(selection['datasets']) == set(RELEASE_DATASETS), 'Unexpected release benchmark dataset'
+    assert all(int(dataset.split(' × ')[1].replace(',', '')) >= selection['minimum_loci']
+               for dataset in datasets)
+    return datasets
+
+
 def release_suffix(data):
     return date.fromisoformat(data['date']).strftime('%d%m%y')
 
@@ -69,7 +87,7 @@ def render_summary(data, summaries, datasets, root):
         '- Automatic CPU placement respects user affinity and OpenMP settings; adaptive work scheduling is used when eligible heterogeneous cores require it.\n'
         '- Native NEON or AVX-512 paths are selected where supported, with portable fallbacks.\n'
         '- Checked output finalisation reports write, flush and close failures correctly.\n'
-        f'- Seven synthetic DGX Spark datasets: {len(data["observations"])} observations, with {repeats["Fortran baseline"]} Fortran and {repeats["TurboHap"]} per TurboHap mode/dataset. All {validation["strict_raw_output_checks"]} C++ raw-file checks pass. {qualification_text(data)}\n'
+        f'- {len(datasets)} synthetic DGX Spark datasets, each with at least 10,000 loci: {len(data["observations"])} observations, with {repeats["Fortran baseline"]} Fortran and {repeats["TurboHap"]} per TurboHap mode/dataset. All {validation["strict_raw_output_checks"]} C++ raw-file checks pass. {qualification_text(data)}\n'
         '- The unchanged GNU Fortran 13.3 baseline uses expanded flags, ten threads, no taskset or added binding. It has one observation per dataset. Fortran passes exact-record checks; only crossover record ordering differs in raw checksums.\n\n'
         f'On **{largest}**, Fortran took **{f:,.2f} s**. Median complete runtime is **{t:.2f} s standard** and **{lm:.2f} s LM**, giving **{f/t:.1f}×** and **{f/lm:.1f}×** speedup. The maximum is **{claims["maximum_standard_speedup"]:.1f}×**, on {fastest}. Fortran values are single observations; TurboHap values are medians of two technical runs. {measurement_dates_text(data)} These are separate measurement sessions.\n\n'
         'Standard is faster and LM uses less peak resident memory on every measured dataset.\n\n'

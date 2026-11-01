@@ -14,8 +14,8 @@
   "cpp_flags": "-O3 -march=native -funroll-loops -flto -ffp-contract=off -std=gnu++17 -fopenmp",
   "cpp_link_flags": "-flto-partition=1to1",
   "release_tag": "v1.3.0",
-  "method": "Seven corrected synthetic datasets. TurboHap measurements are from 1 November 2026; the unchanged GNU Fortran baseline is from 30 October 2026. Complete executable timing includes input, computation, buffered output and LM temporary I/O. Builds, input warming, post-exit fsync and verification are excluded.",
-  "selection": "All 28 normal-default development observations at ten threads, two per mode and dataset. No allocation-policy experimental variants, private cohorts or thread scans are included. The existing seven expanded-flag Fortran observations are reused unchanged.",
+  "method": "Five corrected synthetic datasets, each with at least 10,000 loci. TurboHap measurements are from 1 November 2026; the unchanged GNU Fortran baseline is from 30 October 2026. Complete executable timing includes input, computation, buffered output and LM temporary I/O. Builds, input warming, post-exit fsync and verification are excluded.",
+  "selection": "Five synthetic datasets with at least 10,000 loci: 20 normal-default TurboHap observations at ten threads, two per mode and dataset, plus five unchanged expanded-flag GNU Fortran observations. The two 1,000-locus datasets are outside the current release benchmark scope. No experimental variants, private cohorts or thread scans are included.",
   "measurement_dates": {
     "Fortran baseline": "30 October 2026",
     "TurboHap": "1 November 2026",
@@ -267,21 +267,6 @@
   },
   "observations": [
     {
-      "dataset": "10,000 \u00d7 1,000",
-      "program": "Fortran baseline",
-      "repeat": 1,
-      "wall_seconds": 10.23,
-      "peak_rss_kib": 316064,
-      "user_seconds": 84.34,
-      "system_seconds": 0.51,
-      "swaps": 0,
-      "filesystem_inputs": 0,
-      "filesystem_outputs": 162808,
-      "major_page_faults": 0,
-      "output_check": "pass; exact records; raw cross.overs order differs",
-      "wrapper_wall_seconds": 10.28262002300471
-    },
-    {
       "dataset": "10,000 \u00d7 10,000",
       "program": "Fortran baseline",
       "repeat": 1,
@@ -310,21 +295,6 @@
       "major_page_faults": 0,
       "output_check": "pass; exact records; raw cross.overs order differs",
       "wrapper_wall_seconds": 442.2165151190129
-    },
-    {
-      "dataset": "100,000 \u00d7 1,000",
-      "program": "Fortran baseline",
-      "repeat": 1,
-      "wall_seconds": 843.04,
-      "peak_rss_kib": 395568,
-      "user_seconds": 3788.26,
-      "system_seconds": 95.6,
-      "swaps": 0,
-      "filesystem_inputs": 0,
-      "filesystem_outputs": 1392376,
-      "major_page_faults": 0,
-      "output_check": "pass; exact records; raw cross.overs order differs",
-      "wrapper_wall_seconds": 843.0816374110291
     },
     {
       "dataset": "100,000 \u00d7 10,000",
@@ -370,62 +340,6 @@
       "major_page_faults": 0,
       "output_check": "pass; exact records; raw cross.overs order differs",
       "wrapper_wall_seconds": 24245.55896027398
-    },
-    {
-      "dataset": "10,000 \u00d7 1,000",
-      "program": "TurboHap",
-      "repeat": 1,
-      "wall_seconds": 0.48,
-      "peak_rss_kib": 55464,
-      "user_seconds": 2.77,
-      "system_seconds": 0.07,
-      "swaps": 0,
-      "filesystem_inputs": 0,
-      "filesystem_outputs": 162784,
-      "major_page_faults": 0,
-      "output_check": "pass; exact raw byte counts and SHA-256 including crossover order"
-    },
-    {
-      "dataset": "10,000 \u00d7 1,000",
-      "program": "TurboHap LM",
-      "repeat": 1,
-      "wall_seconds": 0.53,
-      "peak_rss_kib": 52328,
-      "user_seconds": 2.88,
-      "system_seconds": 0.11,
-      "swaps": 0,
-      "filesystem_inputs": 48792,
-      "filesystem_outputs": 182368,
-      "major_page_faults": 0,
-      "output_check": "pass; exact raw byte counts and SHA-256 including crossover order"
-    },
-    {
-      "dataset": "10,000 \u00d7 1,000",
-      "program": "TurboHap LM",
-      "repeat": 2,
-      "wall_seconds": 0.52,
-      "peak_rss_kib": 52164,
-      "user_seconds": 2.83,
-      "system_seconds": 0.13,
-      "swaps": 0,
-      "filesystem_inputs": 54512,
-      "filesystem_outputs": 182368,
-      "major_page_faults": 0,
-      "output_check": "pass; exact raw byte counts and SHA-256 including crossover order"
-    },
-    {
-      "dataset": "10,000 \u00d7 1,000",
-      "program": "TurboHap",
-      "repeat": 2,
-      "wall_seconds": 0.48,
-      "peak_rss_kib": 54800,
-      "user_seconds": 2.77,
-      "system_seconds": 0.07,
-      "swaps": 0,
-      "filesystem_inputs": 0,
-      "filesystem_outputs": 162784,
-      "major_page_faults": 0,
-      "output_check": "pass; exact raw byte counts and SHA-256 including crossover order"
     },
     {
       "dataset": "10,000 \u00d7 10,000",
@@ -536,62 +450,6 @@
       "swaps": 0,
       "filesystem_inputs": 0,
       "filesystem_outputs": 6949360,
-      "major_page_faults": 0,
-      "output_check": "pass; exact raw byte counts and SHA-256 including crossover order"
-    },
-    {
-      "dataset": "100,000 \u00d7 1,000",
-      "program": "TurboHap",
-      "repeat": 1,
-      "wall_seconds": 5.03,
-      "peak_rss_kib": 240772,
-      "user_seconds": 34.05,
-      "system_seconds": 0.51,
-      "swaps": 0,
-      "filesystem_inputs": 0,
-      "filesystem_outputs": 1392304,
-      "major_page_faults": 0,
-      "output_check": "pass; exact raw byte counts and SHA-256 including crossover order"
-    },
-    {
-      "dataset": "100,000 \u00d7 1,000",
-      "program": "TurboHap LM",
-      "repeat": 1,
-      "wall_seconds": 5.64,
-      "peak_rss_kib": 229188,
-      "user_seconds": 36.4,
-      "system_seconds": 0.69,
-      "swaps": 0,
-      "filesystem_inputs": 754344,
-      "filesystem_outputs": 1588088,
-      "major_page_faults": 0,
-      "output_check": "pass; exact raw byte counts and SHA-256 including crossover order"
-    },
-    {
-      "dataset": "100,000 \u00d7 1,000",
-      "program": "TurboHap LM",
-      "repeat": 2,
-      "wall_seconds": 5.64,
-      "peak_rss_kib": 228988,
-      "user_seconds": 36.42,
-      "system_seconds": 0.69,
-      "swaps": 0,
-      "filesystem_inputs": 754176,
-      "filesystem_outputs": 1588088,
-      "major_page_faults": 0,
-      "output_check": "pass; exact raw byte counts and SHA-256 including crossover order"
-    },
-    {
-      "dataset": "100,000 \u00d7 1,000",
-      "program": "TurboHap",
-      "repeat": 2,
-      "wall_seconds": 5.03,
-      "peak_rss_kib": 240912,
-      "user_seconds": 34.18,
-      "system_seconds": 0.46,
-      "swaps": 0,
-      "filesystem_inputs": 0,
-      "filesystem_outputs": 1392304,
       "major_page_faults": 0,
       "output_check": "pass; exact raw byte counts and SHA-256 including crossover order"
     },
@@ -771,7 +629,7 @@
     "compiler": "GCC 13.3.0",
     "archive_build_completed": true,
     "metadata_only_change_from_measured_source": true,
-    "strict_raw_output_checks": 280,
+    "strict_raw_output_checks": 200,
     "binary_sha256": "4d6fd65f8ade4ac4849ad32fab804a3458862cffb6147087decbf1b3784473a2",
     "source_archive_sha256": "7dbd2d5859f88dbcd2d4c80b7f5a1536827d534d29e0a41fdd74b424a0d36002",
     "installation_checked": true,
@@ -798,9 +656,9 @@
     "libstdc++6:arm64\t14.2.0-4ubuntu2~24.04.1"
   ],
   "fortran_validation": {
-    "observations": 7,
-    "raw_files_identical": 63,
-    "raw_files_checked": 70,
+    "observations": 5,
+    "raw_files_identical": 45,
+    "raw_files_checked": 50,
     "exact_record_equivalence": true,
     "raw_mismatches": [
       "cross.overs"
@@ -813,5 +671,16 @@
     "execution": "Native qualified host binary; C++ uses its recorded container runtime."
   },
   "qualified_source_commit": "d1c031c040bcb977887751c4e11024fb98baaeeb",
-  "source_version_during_measurement": "1.2.1"
+  "source_version_during_measurement": "1.2.1",
+  "dataset_selection": {
+    "minimum_loci": 10000,
+    "datasets": [
+      "10,000 \u00d7 10,000",
+      "10,000 \u00d7 100,000",
+      "100,000 \u00d7 10,000",
+      "100,000 \u00d7 100,000",
+      "1,000,000 \u00d7 10,000"
+    ],
+    "criterion": "Current-release performance comparisons use datasets with at least 10,000 loci."
+  }
 }

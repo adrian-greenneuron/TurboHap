@@ -5,7 +5,7 @@
 </p>
 
 **The FindHap algorithm, reimplemented in C++. Byte-for-byte compatible output.
-Up to 167.6× faster in DGX Spark benchmarks.**
+Up to 142.8× faster in DGX Spark benchmarks.**
 
 TurboHap is a drop-in replacement for FindHap v3 for haplotype phasing and
 genotype imputation. Keep your existing input files and options, and replace
@@ -41,8 +41,10 @@ dated 22 October 2026. This author manuscript has not been peer reviewed.
 - [Supplementary File 2 (ZIP)](docs/paper/turbohap_supplementary_archive_221026.zip?raw=true):
   measurements, source/build manifests, output checks, reference Fortran code,
   reproduction tools and figures.
-- [Seven synthetic datasets and simulation truth (Zenodo)](https://doi.org/10.5281/zenodo.23566926),
-  available under CC BY 4.0.
+- [Synthetic datasets and simulation truth (Zenodo)](https://doi.org/10.5281/zenodo.23566926),
+  available under CC BY 4.0. The archive retains all seven datasets from the
+  manuscript; the current software comparison uses the five with at least
+  10,000 loci.
 
 The manuscript describes v1.0.0; the v1.3.0 software benchmarks below are newer.
 The manuscript and figures are also available under CC BY 4.0. See the
@@ -69,7 +71,7 @@ depends on the dataset, options, storage, hardware and competing load.
 TurboHap works on **Apple Silicon Macs, Linux ARM64, and Intel/AMD x86-64
 systems**. Detailed benchmarking on these systems is ongoing.
 
-![Runtime and peak memory on seven synthetic datasets](docs/assets/turbohap_benchmarks_011126.png)
+![Runtime and peak memory on five synthetic datasets with at least 10,000 loci](docs/assets/turbohap_benchmarks_011126.png)
 
 See [all results and methodology](docs/turbohap_benchmarks_011126.md), including
 individual measurements, runtime, peak resident memory and output checks.
@@ -82,10 +84,8 @@ Speedup uses the unchanged single expanded-flag Fortran measurement and the medi
 
 | Animals × loci | Fortran baseline | TurboHap | Speedup | TurboHap LM | Speedup |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 10,000 × 1,000 | 10.23s | **0.48s** | **21.3×** | 0.53s | 19.5× |
 | 10,000 × 10,000 | 1m 12s | **1.65s** | **44.0×** | 1.91s | 37.9× |
 | 10,000 × 100,000 | 7m 22s | **11.18s** | **39.6×** | 19.74s | 22.4× |
-| 100,000 × 1,000 | 14m 03s | **5.03s** | **167.6×** | 5.64s | 149.5× |
 | 100,000 × 10,000 | 19m 05s | **15.39s** | **74.4×** | 18.66s | 61.4× |
 | 100,000 × 100,000 | 1h 17m 08s | **1m 49s** | **42.6×** | 3m 12s | 24.1× |
 | 1,000,000 × 10,000 | 6h 44m 06s | **2m 50s** | **142.8×** | 3m 36s | 112.4× |
@@ -96,10 +96,8 @@ Negative percentages mean less memory than Fortran.
 
 | Animals × loci | Fortran baseline | TurboHap | Memory change | TurboHap LM | Memory change |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 10,000 × 1,000 | 0.301 GiB | 0.053 GiB | -82.6% | **0.050 GiB** | **-83.5%** |
 | 10,000 × 10,000 | 1.197 GiB | 0.230 GiB | -80.8% | **0.208 GiB** | **-82.7%** |
 | 10,000 × 100,000 | 10.645 GiB | 1.623 GiB | -84.8% | **1.184 GiB** | **-88.9%** |
-| 100,000 × 1,000 | 0.377 GiB | 0.230 GiB | -39.1% | **0.218 GiB** | **-42.1%** |
 | 100,000 × 10,000 | 1.614 GiB | 0.984 GiB | -39.0% | **0.562 GiB** | **-65.2%** |
 | 100,000 × 100,000 | 14.985 GiB | 8.431 GiB | -43.7% | **3.943 GiB** | **-73.7%** |
 | 1,000,000 × 10,000 | 16.116 GiB | 11.084 GiB | -31.2% | **6.677 GiB** | **-58.6%** |

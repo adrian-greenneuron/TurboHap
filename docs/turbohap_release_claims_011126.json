@@ -12,8 +12,8 @@
     "TurboHap": 2,
     "TurboHap LM": 2
   },
-  "maximum_speedup_dataset": "100,000 \u00d7 1,000",
-  "maximum_standard_speedup": 167.60238568588468,
+  "maximum_speedup_dataset": "1,000,000 \u00d7 10,000",
+  "maximum_standard_speedup": 142.78863368669022,
   "largest_dataset": "1,000,000 \u00d7 10,000",
   "fortran_seconds": 24245.51,
   "standard_seconds": 169.8,

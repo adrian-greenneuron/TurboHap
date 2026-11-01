@@ -1,10 +1,13 @@
 # Preparing a public release
 
 Freeze the scientific source, required build inputs and selected observations
-before packaging. The current v1.3.0 seven-dataset comparison uses two TurboHap
-observations per mode/dataset from 1 November 2026 and reuses the seven unchanged
+before packaging. The current v1.3.0 five-dataset comparison uses two TurboHap
+observations per mode/dataset from 1 November 2026 and reuses the five unchanged
 GNU Fortran observations from 30 October 2026. The manuscript and supplementary
-material remain a v1.0.0 record.
+material remain a v1.0.0 record. Current performance comparisons include
+only datasets with at least 10,000 loci; both 1,000-locus datasets are excluded
+from current JSON/CSV observations, validation summaries, tables, figures and
+release claims. Historical release records and the manuscript remain intact.
 
 Use Python 3.11 or newer. Install the versions in
 `tools/requirements-reporting.txt` in an isolated environment. These are reporting
@@ -54,8 +57,8 @@ isolated copy and confirm rejection. The manifest covers the Git-tracked
 package, excluding itself, so stage every intended new file first. It contains
 no commit hash, avoiding a self-referential hash dependency.
 
-All 28 selected C++ observations must pass their ten raw output checks: 280
-checks in total. Keep the Fortran exception explicit: 63 of 70 raw file hashes
+All 20 selected C++ observations must pass their ten raw output checks: 200
+checks in total. Keep the Fortran exception explicit: 45 of 50 raw file hashes
 match, and only `cross.overs` record order differs; its header and complete
 records match after C-locale sorting with duplicates retained. No other output
 difference is accepted.

@@ -14,7 +14,7 @@ import sys
 import tempfile
 from urllib.parse import unquote, urlsplit
 
-from release_summary import release_suffix
+from release_summary import benchmark_datasets, release_suffix
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE = 'turbohap_benchmarks_011126'
@@ -47,8 +47,7 @@ def check_validation(data, checked):
     """Join every public timed observation to its retained output evidence."""
     assert checked['version'] == data['release_tag'].removeprefix('v')
     observations = data['observations']
-    datasets = {r['dataset'] for r in observations}
-    assert len(datasets) == 7
+    datasets = set(benchmark_datasets(data))
     assert data['repeats'] == {'Fortran baseline': 1, 'TurboHap': 2, 'TurboHap LM': 2}
     expected = Counter((d, p, r) for d in datasets for p, n in data['repeats'].items()
                        for r in range(1, n + 1))
@@ -58,7 +57,7 @@ def check_validation(data, checked):
     cpp_expected = Counter({key: count for key, count in expected.items() if key[1] != 'Fortran baseline'})
     assert Counter(map(observation_key, checked['checks'])) == cpp_expected
     assert all(r['raw_passed'] and len(r['outputs']) == 10 for r in checked['checks'])
-    assert checked['strict_raw_output_checks'] == sum(len(r['outputs']) for r in checked['checks']) == 280
+    assert checked['strict_raw_output_checks'] == sum(len(r['outputs']) for r in checked['checks']) == 10 * len(cpp_expected)
     reference_outputs = {}
     for row in checked['checks']:
         outputs = row['outputs']
@@ -85,8 +84,8 @@ def check_validation(data, checked):
                 assert identity == reference_outputs[row['dataset']][name]
     raw_identical = sum(result['raw_match'] for row in fortran for result in row['files'].values())
     raw_checked = sum(len(row['files']) for row in fortran)
-    assert checked['fortran_raw_identical_files'] == raw_identical == 63
-    assert checked['fortran_raw_files_checked'] == raw_checked == 70
+    assert checked['fortran_raw_identical_files'] == raw_identical == 9 * len(datasets)
+    assert checked['fortran_raw_files_checked'] == raw_checked == 10 * len(datasets)
     return len(cpp_expected)
 
 

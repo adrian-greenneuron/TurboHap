@@ -1,5 +1,7 @@
 # Reproducing the synthetic benchmark datasets
 
+**Current release scope:** v1.3.0 benchmarks use the five datasets with at least 10,000 loci. This original generation recipe and the Zenodo archive retain all seven datasets for manuscript reproducibility.
+
 22 October 2026. This recipe describes the seven corrected synthetic datasets
 used in the [benchmark measurements](turbohap_benchmarks_221026.md).
 The [input and truth manifest](turbohap_benchmark_datasets_221026.json) records

@@ -19,8 +19,9 @@ For the scientific method, please cite:
   [doi:10.3168/jds.2012-5702](https://doi.org/10.3168/jds.2012-5702).
 
 The performance datasets were generated with the USDA genosimV4 simulation
-pipeline. They are synthetic; the benchmark tables describe only those seven
-datasets. The separate small installation example comes from the original
+pipeline. They are synthetic; the current benchmark tables describe five
+datasets with at least 10,000 loci. The publication archive also retains the
+original 1,000-locus datasets for historical reproducibility. The separate small installation example comes from the original
 FindHap v3 distribution and is credited in [its README](../examples/README.md).
 
 For software citation metadata, see [CITATION.cff](../CITATION.cff).
