@@ -21,11 +21,11 @@ systems**. Detailed platform benchmarking is ongoing.
 
 ## Get the source
 
-Download the [v1.3.0 source ZIP](https://github.com/adrian-greenneuron/TurboHap/archive/refs/tags/v1.3.0.zip)
+Download the [v1.4.0 source ZIP](https://github.com/adrian-greenneuron/TurboHap/archive/refs/tags/v1.4.0.zip)
 and extract it, or select the release with Git:
 
 ```sh
-git clone --branch v1.3.0 --depth 1 https://github.com/adrian-greenneuron/TurboHap.git
+git clone --branch v1.4.0 --depth 1 https://github.com/adrian-greenneuron/TurboHap.git
 cd TurboHap
 ```
 
@@ -52,7 +52,7 @@ cmake --build build --parallel 2
 ```
 
 The executable is `build/findhap`. Compilation parallelism does not set the
-runtime thread count. To build only the executable, add `-DBUILD_TESTING=OFF`
+runtime thread count. To build the three programs without the regression targets, add `-DBUILD_TESTING=OFF`
 at configure time. Native CPU tuning is selected automatically; build on the
 machine that will run the program.
 
@@ -180,3 +180,9 @@ architecture or OpenMP runtime. Existing CMake directories retain cached
 settings; they are not forcibly migrated to new defaults. If OpenMP discovery
 fails, check the selected compiler and its runtime installation before adding
 manual flags.
+
+## Input audit and build identity
+
+The normal build includes `findhap`, `turbohap-validate-inputs` and `turbohap-build-info`. None needs Python at runtime. After building, run the input auditor with `--directory /path/to/inputs` and `turbohap-build-info --build-info` to record the compiled inference identity. On macOS use the corresponding executables in `build-macos/`. See the [input-validation guide](INPUT_VALIDATION.md) for reports, coverage, privacy and exit codes.
+
+The regression suite has optional tests requiring an independent reference executable or a Fortran compiler. CTest explicitly marks unavailable optional tests as skipped; a skipped test is not a pass.

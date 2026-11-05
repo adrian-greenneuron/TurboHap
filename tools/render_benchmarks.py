@@ -17,7 +17,7 @@ from matplotlib.ticker import FixedLocator, FuncFormatter, LogLocator, NullLocat
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = 'turbohap_benchmarks_011126'
+BASE = 'turbohap_benchmarks_051126'
 PROGRAMS = ('Fortran baseline', 'TurboHap', 'TurboHap LM')
 
 

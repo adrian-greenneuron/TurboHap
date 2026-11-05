@@ -14,11 +14,14 @@ def benchmark_datasets(data):
     """Validate the declared current-release scope before generating any claims."""
     selection = data['dataset_selection']
     datasets = list(dict.fromkeys(row['dataset'] for row in data['observations']))
-    assert selection['minimum_loci'] == 10000
-    assert len(datasets) == len(selection['datasets']) == len(RELEASE_DATASETS)
-    assert set(datasets) == set(selection['datasets']) == set(RELEASE_DATASETS), 'Unexpected release benchmark dataset'
-    assert all(int(dataset.split(' × ')[1].replace(',', '')) >= selection['minimum_loci']
-               for dataset in datasets)
+    if not (selection['minimum_loci'] == 10000):
+        raise ValueError("Validation failed: selection['minimum_loci'] == 10000")
+    if not (len(datasets) == len(selection['datasets']) == len(RELEASE_DATASETS)):
+        raise ValueError("Validation failed: len(datasets) == len(selection['datasets']) == len(RELEASE_DATASETS)")
+    if not (set(datasets) == set(selection['datasets']) == set(RELEASE_DATASETS)):
+        raise ValueError('Unexpected release benchmark dataset')
+    if not (all((int(dataset.split(' × ')[1].replace(',', '')) >= selection['minimum_loci'] for dataset in datasets))):
+        raise ValueError("Validation failed: all((int(dataset.split(' × ')[1].replace(',', '')) >= selection['minimum_loci'] for dataset in datasets))")
     return datasets
 
 
@@ -28,7 +31,8 @@ def release_suffix(data):
 
 def measurement_dates_text(data):
     dates = data['measurement_dates']
-    assert dates['TurboHap'] == dates['TurboHap LM']
+    if not (dates['TurboHap'] == dates['TurboHap LM']):
+        raise ValueError("Validation failed: dates['TurboHap'] == dates['TurboHap LM']")
     return (f"GNU Fortran measurements: {dates['Fortran baseline']}; "
             f"TurboHap measurements: {dates['TurboHap']}.")
 
@@ -37,7 +41,11 @@ def qualification_text(data):
     build = data['release_build_validation']
     if (build['archive_build_completed'] and isinstance(build['ctest_total'], int)
             and build['ctest_total'] > 0 and build['ctest_passed'] == build['ctest_total']):
-        return f"The packaged release built successfully and passed all {build['ctest_total']} packaged regression tests."
+        text = f"The packaged release built successfully and passed all {build['ctest_total']} executed regression tests."
+        skipped = build.get('skipped_tests', [])
+        if skipped:
+            text += f" {len(skipped)} optional tests were explicitly skipped; see the qualification metadata for their scope."
+        return text
     return 'Packaged release build and regression-test qualification is pending.'
 
 
@@ -61,7 +69,8 @@ def render_summary(data, summaries, datasets, root):
     readme = root / 'README.md'
     text, count = re.subn(r'Up to [0-9.]+× faster in DGX Spark benchmarks\.',
         f'Up to {claims["maximum_standard_speedup"]:.1f}× faster in DGX Spark benchmarks.', readme.read_text())
-    assert count == 1, 'Expected one performance headline'
+    if not (count == 1):
+        raise ValueError('Expected one performance headline')
 
     def words(seconds):
         hours, remainder = divmod(round(seconds), 3600)
@@ -82,7 +91,10 @@ def render_summary(data, summaries, datasets, root):
         + 'All benchmarks used' + after)
     repeats = data['repeats']
     validation = json.loads((root / f'docs/turbohap_validation_{suffix}.json').read_text())
-    notes = (f'TurboHap v{version} reduces working memory and improves genotype processing, matching and output generation while preserving the existing commands, options and result-file formats.\n\n'
+    description = data.get('release_description',
+        f'TurboHap v{version} reduces working memory and improves genotype processing, matching and output generation while preserving the existing commands, options and result-file formats.')
+    features = data.get('release_features', [])
+    notes = (description + '\n\n' + ''.join('- ' + feature + '\n' for feature in features) +
         '- Native installation support for Apple Silicon Macs, Linux ARM64, and Intel and AMD x86-64 systems. Detailed benchmarking on these systems is ongoing.\n'
         '- Automatic CPU placement respects user affinity and OpenMP settings; adaptive work scheduling is used when eligible heterogeneous cores require it.\n'
         '- Native NEON or AVX-512 paths are selected where supported, with portable fallbacks.\n'

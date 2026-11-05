@@ -8,6 +8,7 @@
 #include "macos_policy.hpp"
 #include "cpu_policy.hpp"
 #include "row_schedule.hpp"
+#include "input_validation.hpp"
 
 namespace findhap_standard { int run(int argc, char* argv[]); }
 namespace findhap_low_memory { int run(int argc, char* argv[]); }
@@ -20,6 +21,7 @@ int main(int argc, char* argv[]) {
     Policy policy = Policy::automatic;
     findhap::rows::Policy row_policy = findhap::rows::Policy::automatic;
     bool row_policy_seen = false;
+    bool validation_seen = false;
     std::vector<char*> original(argv, argv + argc);
     original.push_back(nullptr);
     int count = 1;
@@ -27,6 +29,13 @@ int main(int argc, char* argv[]) {
         for (int i = 1; i < argc; ++i) {
             if (std::strcmp(argv[i], "--low-memory") == 0) low_memory = true;
             else if (std::strcmp(argv[i], "--cpu-info") == 0) cpu_info = true;
+            else if (std::strncmp(argv[i], "--input-validation=", 19) == 0) {
+                const auto value = findhap::input::parse_policy(argv[i] + 19);
+                if (validation_seen && value != findhap::input::policy)
+                    throw std::runtime_error("conflicting --input-validation values");
+                findhap::input::policy = value; validation_seen = true;
+            } else if (std::strncmp(argv[i], "--input-validation", 18) == 0)
+                throw std::runtime_error("use --input-validation=strict or --input-validation=warn");
             else if (std::strncmp(argv[i], "--row-schedule=", 15) == 0) {
                 const auto value = findhap::rows::parse(argv[i] + 15);
                 if (row_policy_seen && value != row_policy) throw std::runtime_error("conflicting --row-schedule values");
@@ -57,8 +66,15 @@ int main(int argc, char* argv[]) {
                 "auto uses dynamic chunks of four when the request spans reliably ranked core types.\n"
                 "Otherwise retain static rows; explicit OpenMP settings and dynamic teams keep static.\n"
                 "--cpu-info: show the proposed CPU policy as JSON without applying it or reading inputs.\n"
+                "--input-validation=strict|warn: validate genotype layout before inference (default strict).\n"
+                "warn permits safe legacy layout ambiguities for diagnostics; results may be misaligned.\n"
+                "Unsafe headers, sizes, truncated records and unsupported genotype codes always fail.\n"
                 "Original findhap.options fields and input/output filenames are unchanged.\n"
                 "Other arguments after the thread count are ignored, as in findhapV3.");
+
+
+
+
             return 0;
         }
         findhap::macos::configure(policy == Policy::automatic);

@@ -41,6 +41,8 @@
 #include "genotype_workspace.hpp"
 #include "genotype_cache.hpp"
 #include "genotype_text.hpp"
+#include "input_validation.hpp"
+#include "map_validation.hpp"
 #ifdef FINDHAP_LOW_MEMORY_PLUS
 #include "external_genotype_cache.hpp"
 #include "bounded_genotype_workspace.hpp"
@@ -62,6 +64,7 @@ using ActiveGenotypeCache = GenotypeCache;
 #define FINDHAP_POP_INDEX_LENGTH FINDHAP_INDEX_MIN_LENGTH
 #endif
 #include "profiling.hpp"
+#include "report_events.hpp"
 #include "library_profile.hpp"
 #include "integer_output.hpp"
 #include "library_output.hpp"
@@ -136,7 +139,6 @@ namespace FINDHAP_ENGINE_NAMESPACE {
 // Buffered input and output
 // ============================================================================
 
-static char* read_buf = nullptr;
 static char* haplist_buf_io = nullptr;
 static char* hapfound_buf_io = nullptr;
 static size_t hapfound_buf_capacity = 0;
@@ -223,51 +225,11 @@ static void skip_prior_headers(FILE* file) {
 }
 
 static void fast_io_init(int max_loci) {
-    delete[] read_buf;
     delete[] haplist_buf_io;
     delete[] hapfound_buf_io;
-    read_buf = new char[(size_t)2 * max_loci + 33];
     haplist_buf_io = new char[(size_t)(max_loci + 61)];
     hapfound_buf_capacity = (size_t)max_loci + 31;
     hapfound_buf_io = new char[hapfound_buf_capacity];
-}
-
-// Read one genotype line: 3i10,1x,<loc>i1
-static int fast_read_genoline(FILE* fp, int& idnum, int& chipn, int& loc,
-                              int8_t* genovec, int maxloci) {
-    if (!fgets(read_buf, 2 * maxloci + 32, fp)) return -1;
-
-    idnum = 0;
-    for (int i = 0; i < 10; i++) {
-        if (read_buf[i] >= '0' && read_buf[i] <= '9') {
-            idnum = idnum * 10 + (read_buf[i] - '0');
-        }
-    }
-    chipn = 0;
-    for (int i = 10; i < 20; i++) {
-        if (read_buf[i] >= '0' && read_buf[i] <= '9') {
-            chipn = chipn * 10 + (read_buf[i] - '0');
-        }
-    }
-    loc = 0;
-    for (int i = 20; i < 30; i++) {
-        if (read_buf[i] >= '0' && read_buf[i] <= '9') {
-            loc = loc * 10 + (read_buf[i] - '0');
-        }
-    }
-
-    // Position 30 is space, digits start at position 31 (0-based)
-#if FINDHAP_NEON_TEXT
-    findhap_text::decode(read_buf + 31, genovec, loc);
-#else
-    for (int l = 0; l < loc; l++) {
-        // Fortran I1 input treats an all-blank field as zero. Do not skip
-        // it: it occupies a locus, including when followed by extra digits.
-        const char field = read_buf[31 + l];
-        genovec[l] = field == ' ' ? 0 : static_cast<int8_t>(field - '0');
-    }
-#endif
-    return 0;
 }
 
 // Write one hap.list line: 2f10.5,i10,2i3,i7,i8,i6,1x,<nhapdata>i1
@@ -808,7 +770,6 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     char newpatmat[2][3];
     const char* matchcode[7] = {" 1", " 2", "X2", "X1", "-1", "-2", " H"};
     char sex;
-    char markername[51];
     int64_t location, totlngth, maxlngth;
     int mosthap[4], mosthaps[4], search, usable;
     int maxped, loci, nloci, maxped2, mismatch, haps, maxhap;
@@ -830,6 +791,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     int gencode[6][6];
     int64_t genfreq[10];
     int threads, nthr;
+    turbohap_reporting::Events report_events;
     FINDHAP_PHASE(setup_trace, "setup");
 
     int* fields[] = {&iters, &XChrom, &maxlen, &minlen, &steps, &maxhap,
@@ -852,6 +814,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     FILE* fp10 = fopen("pedigree.file", "r");
     FILE* fp13 = fopen("genotypes.txt", "r");
     FILE* fp14 = fopen("chromosome.data", "r");
+    if (!fp10 || !fp13 || !fp14) input_error("cannot open pedigree.file, genotypes.txt or chromosome.data for reading");
     configure_io_buffer(fp10); configure_io_buffer(fp13); configure_io_buffer(fp14);
 
     // Haplotype priors
@@ -872,18 +835,6 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             input_error("invalid prior hap.Xseg");
         fclose(previous);
     }
-
-    // ----------------------------------------------------- Output data files
-    FILE* fp22 = open_output("hap.Xseg");
-    FILE* fp23 = open_output("do_not_distrib");
-    FILE* fp24 = open_output("hap.filled");
-    FILE* fp25 = (listout != 0) ? open_output("hap.list") : nullptr;
-    FILE* fp26 = (listout != 0) ? open_output("hap.found") : nullptr;
-    FILE* fp27 = open_output("cross.overs");
-    FILE* fp28 = open_output("hap.inherit");
-    FILE* fp30 = open_output("allele.frequency");
-    FILE* fp29 = (hapout > 0) ? open_output("haplotypes.txt") : nullptr;
-    FILE* fp31 = (genout > 0) ? open_output("genotypes.filled") : nullptr;
 
     // ---------------------------------------------------- Initialize variables
     baseyr = 19900101;
@@ -908,19 +859,6 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         for (int b = 0; b < 6; ++b) output_gencode[6*a+b] = static_cast<uint8_t>(gencode[a][b]);
 #endif
 
-    // match codes header lines for hap.inherit
-    fprintf(fp28, " Codes  1 and  2 indicate  progeny hap matches 1st or 2nd parent hap\n");
-    fprintf(fp28, " Codes -1 and -2 indicate  progeny and parent match except for 1 SNP\n");
-    fprintf(fp28, " Codes X1 and X2 indicate  crossovers from 2 to 1 or from 1 to 2\n");
-    fprintf(fp28, " Code   0        indicates progeny hap matches neither hap of parent\n");
-    fprintf(fp28, " Code   H        indicates progeny hap matches both (parent is homozygous)\n");
-    fprintf(fp28, " Code  ??        indicates progeny and parents each heterozygous for both haps\n");
-    fprintf(fp28, " Code  ?1 and ?2 indicate  progeny, parents all heterozygous, set from neighbor segments\n");
-    fprintf(fp28, " Codes  m and  p indicate  parents known, not genotyped, no match\n");
-    fprintf(fp28, " Code   .        indicates parent  not known\n");
-    fprintf(fp28, "\n");
-    fprintf(fp28, "  progeny chro pnt haplotype_inheritance_codes\n");
-
     // Default number of threads
     // Resolve once in the launcher before changing affinity. Standalone
     // engines retain the original OpenMP/argument semantics.
@@ -932,6 +870,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     if (argc > 1) printf("\n");
 
     printf(" Maximum number of processors set to    %d\n", threads);
+    report_events.emit("run_start", 0, 0, 0, nullptr, 1, threads);
     printf(" Or set threads by command line argument: findhap 8\n");
     printf("\n");
     printf(" Number of processors available =       %d\n", nthr);
@@ -939,21 +878,18 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     printf("\n");
 
     // ------------------------------------------- Get loci, chromes from chromosome.data
-    auto skip_line = [](FILE* f) {
-        int ch;
-        while ((ch = fgetc(f)) != '\n' && ch != EOF);
-    };
-
     loci = 0;
     chromes = 0;
     chrome1 = 99999;
-    skip_line(fp14); // skip header
-    while (fscanf(fp14, "%50s %d %d %d %" SCNd64 " %d", markername, &chrome, &nloci, &loc, &location, &chips) == 6) {
-        loci++;
-        chrome1 = std::min(chrome, chrome1);
-        chromes = std::max(chrome, chromes);
-        // consume rest of line
-        skip_line(fp14);
+    {
+        findhap::input::MapReader map(fp14);
+        findhap::input::MapRecord record;
+        while (map.read(record)) {
+            loci++;
+            chrome1 = std::min(record.chromosome, chrome1);
+            chromes = std::max(record.chromosome, chromes);
+            chips = record.chips;
+        }
     }
     printf(" %d loci on %d chromosomes read from chromosome.data\n", loci, chromes);
     rewind(fp14);
@@ -984,17 +920,19 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     loci = 0;
 
     // --------------------------------------------------- Read chromosome.data
-    skip_line(fp14); // skip header
-    while (true) {
-        int nread = fscanf(fp14, "%50s %d %d %d %" SCNd64 " %d", markername, &chrome, &nloci, &loc, &location, &chips);
-        if (nread < 6) break;
+    {
+    findhap::input::MapReader map(fp14);
+    findhap::input::MapRecord record;
+    const int expected_chips = chips;
+    while (map.read(record)) {
+        if (record.chips != expected_chips || record.chromosome > chromes || loci >= total_loci)
+            input_error("chromosome.data changed while loading the map");
+        chrome = record.chromosome; nloci = record.within;
+        loc = record.overall; location = record.position;
         loci++;
         for (chipn = 1; chipn <= chips; chipn++) {
-            int val;
-            fscanf(fp14, "%d", &val);
-            loclist[chipn - 1] = val;
+            loclist[chipn - 1] = record.chip_loci[chipn - 1];
         }
-        skip_line(fp14); // consume rest of line
         for (chipn = 1; chipn <= chips; chipn++) {
             if (loclist[chipn - 1] > 0) {
                 // chiplist(loclist(chipn), chipn) = loci
@@ -1019,6 +957,8 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         maxl = 0;
         for (int c = 1; c <= chips; c++) maxl = std::max(maxl, chiplen[c - 1]);
     }
+    if (loci != total_loci) input_error("chromosome.data changed while loading the map");
+    }
     printf("\n");
     printf(" %d missing genotype code\n", missing);
 
@@ -1035,10 +975,12 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     size_t genotype_cache_bytes = 0;
     fast_io_init(maxl);
     {
-        // Count genotype records using fast_read_genoline (handles long lines correctly)
+        // Validate in the existing counting pass; no extra full genotype scan.
         int tmp_id, tmp_chipn, tmp_loc;
         auto tmp_geno = std::make_unique<int8_t[]>(maxl);
-        while (fast_read_genoline(fp13, tmp_id, tmp_chipn, tmp_loc, tmp_geno.get(), maxl) == 0) {
+        findhap::input::Validator input(fp13, maxl, chiplen.get(), chips, findhap::input::policy);
+        while (input.read(tmp_id, tmp_chipn, tmp_loc, tmp_geno.get())) {
+            if (ngen == std::numeric_limits<int>::max()) input_error("too many genotype records");
             ngen++;
             if ((size_t)tmp_loc > std::numeric_limits<size_t>::max() - genotype_entries)
                 input_error("genotype cache is too large");
@@ -1048,6 +990,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 input_error("genotype cache is too large");
             genotype_cache_bytes += bytes;
         }
+        input.finish();
     }
     printf(" %d animals in genotypes.txt (ngen)\n", ngen);
     rewind(fp13);
@@ -1182,7 +1125,12 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 
     rewind(fp13);
     size_t cache_next = 0;
-    while (fast_read_genoline(fp13, idnum, chipn, loc, genovec.get(), maxl) == 0) {
+    {
+    findhap::input::Validator input(fp13, maxl, chiplen.get(), chips, findhap::input::policy, false);
+
+
+
+    while (input.read(idnum, chipn, loc, genovec.get())) {
         if (cache_ngen >= ngen || (size_t)loc > genotype_entries - cache_next)
             input_error("genotypes.txt changed while loading the cache");
         cache_ngen++;
@@ -1194,6 +1142,8 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         nn = nhash(idnum, 0, ids.get(), maxped2, maxn);
         if (nn > 0 && eqns[nn] > 0) cache_anml_idx[eqns[nn]] = cache_ngen;
     }
+    input.finish();
+    }
     if (cache_ngen != ngen || cache_next != genotype_entries || !genotype_cache->complete())
         input_error("genotypes.txt changed while loading the cache");
 #ifdef FINDHAP_LOW_MEMORY_PLUS
@@ -1202,6 +1152,33 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 #else
     printf("  %d genotype records cached in memory\n", cache_ngen);
 #endif
+
+    // Validation and both genotype reads completed before any legacy output
+    // is opened. A rejected file cannot overwrite results or hap.Xseg priors.
+    // ----------------------------------------------------- Output data files
+    FILE* fp22 = open_output("hap.Xseg");
+    FILE* fp23 = open_output("do_not_distrib");
+    FILE* fp24 = open_output("hap.filled");
+    FILE* fp25 = (listout != 0) ? open_output("hap.list") : nullptr;
+    FILE* fp26 = (listout != 0) ? open_output("hap.found") : nullptr;
+    FILE* fp27 = open_output("cross.overs");
+    FILE* fp28 = open_output("hap.inherit");
+    FILE* fp30 = open_output("allele.frequency");
+    FILE* fp29 = (hapout > 0) ? open_output("haplotypes.txt") : nullptr;
+    FILE* fp31 = (genout > 0) ? open_output("genotypes.filled") : nullptr;
+
+    // match codes header lines for hap.inherit
+    fprintf(fp28, " Codes  1 and  2 indicate  progeny hap matches 1st or 2nd parent hap\n");
+    fprintf(fp28, " Codes -1 and -2 indicate  progeny and parent match except for 1 SNP\n");
+    fprintf(fp28, " Codes X1 and X2 indicate  crossovers from 2 to 1 or from 1 to 2\n");
+    fprintf(fp28, " Code   0        indicates progeny hap matches neither hap of parent\n");
+    fprintf(fp28, " Code   H        indicates progeny hap matches both (parent is homozygous)\n");
+    fprintf(fp28, " Code  ??        indicates progeny and parents each heterozygous for both haps\n");
+    fprintf(fp28, " Code  ?1 and ?2 indicate  progeny, parents all heterozygous, set from neighbor segments\n");
+    fprintf(fp28, " Codes  m and  p indicate  parents known, not genotyped, no match\n");
+    fprintf(fp28, " Code   .        indicates parent  not known\n");
+    fprintf(fp28, "\n");
+    fprintf(fp28, "  progeny chro pnt haplotype_inheritance_codes\n");
 
     // Use the actual rounded schedule: repeated rounding may finish below
     // minlen, and the reference accepts increasing schedules as well.
@@ -1261,6 +1238,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
 #endif
     for (step = 1; step <= steps; step++) {
         FINDHAP_PHASE(step_trace, "step", step);
+        report_events.emit("step_start", step);
         if (step == 1) {
             printf("\n");
             printf(" Begin with maxlen  %d\n", maxlen);
@@ -1695,6 +1673,7 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
         FINDHAP_END(expansion_trace);
 
         for (iter = iter1; iter <= iters; iter++) {
+            report_events.emit("iteration_start", step, iter);
             printf(" Step  %d   Haplotype iteration  %d\n", step, iter);
             if (iter >= iters / 2) switch_val = 0;
             notfound = 0;
@@ -2709,6 +2688,8 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                 if (called[i - 1] > 0.4f * loci) nhigh++;
             }
 
+            report_events.emit("iteration_end", step, iter, maxseg, nhap_arr.get(),
+                FINDHAP_NHAP_STRIDE, threads, n13, nped, loci, nhigh, nmed);
         } // end iter loop
 
 #ifdef FINDHAP_LOW_MEMORY
@@ -3222,6 +3203,8 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
             fprintf(fp25, "%10.5f%10.5f%10d%3d%3d%7d%8d%6d\n", 0.0, 0.0, 0, 0, step + 1, 0, 0, 0);
             fprintf(fp26, "%10d%2d%3d%6d\n", 0, 0, step + 1, 0);
         }
+        report_events.emit("step_end", step, 0, maxseg, nhap_arr.get(),
+            FINDHAP_NHAP_STRIDE, threads, n13, nped, loci);
     } // end step loop
     FINDHAP_LIBRARY_SAVE();
 
@@ -3313,9 +3296,10 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
     close_outputs();
     FINDHAP_END(close_trace);
     printf(" Program findhap completed normally\n");
+    report_events.emit("run_complete", steps, iters, maxseg, nhap_arr.get(),
+        FINDHAP_NHAP_STRIDE, threads, n31, nped, loci);
 
     // Clean up I/O buffers
-    delete[] read_buf;
     delete[] haplist_buf_io;
     delete[] hapfound_buf_io;
 
@@ -3345,9 +3329,11 @@ int FINDHAP_ENTRY_POINT(int argc, char* argv[]) {
 
     // Select once from the user's unchanged capacity limit. No width branch
     // is needed in the hot loops, and larger libraries retain full-width IDs.
-    if (options.controls[5] <= std::numeric_limits<uint16_t>::max())
-        return run_findhap<uint16_t>(argc, argv, options);
-    return run_findhap<int>(argc, argv, options);
+    try {
+        if (options.controls[5] <= std::numeric_limits<uint16_t>::max())
+            return run_findhap<uint16_t>(argc, argv, options);
+        return run_findhap<int>(argc, argv, options);
+    } catch (const std::exception& error) { input_error(error.what()); }
 }
 
 #ifdef FINDHAP_ENGINE_NAMESPACE

@@ -1,6 +1,6 @@
 # TurboHap on macOS
 
-TurboHap v1.3.0 supports native Apple Silicon Macs using the same source tree,
+TurboHap v1.4.0 supports native Apple Silicon Macs using the same source tree,
 input files and commands as the Linux release. Detailed platform benchmarking
 is ongoing. No GPU or Fortran compiler is required.
 
@@ -13,7 +13,7 @@ the applicable CPU profile and OpenMP runtime. The native executable-validated
 route uses GCC 16.2 with libomp. Apple Clang configuration and Intel Mac
 builds have not received the same native executable validation.
 
-Keep the complete source package, including all three modules in `cmake/`.
+Keep the complete source package, including the modules in `cmake/`.
 They select the Mac defaults, configure temporary-buffer ownership and carry
 the chosen compiler/runtime into the test fixtures. Build with
 `cmake --build build-macos --parallel 2`, then run the installation checks:
@@ -92,3 +92,9 @@ flag.
 Build on the Mac that will run TurboHap. A natively tuned executable must not
 be assumed portable to another Apple CPU or a different installed runtime.
 Keep GCC and its selected OpenMP runtime installed after building.
+
+## Input audit and build identity
+
+The normal build includes `findhap`, `turbohap-validate-inputs` and `turbohap-build-info`. None needs Python at runtime. After building, run the input auditor with `--directory /path/to/inputs` and `turbohap-build-info --build-info` to record the compiled inference identity. On macOS use the corresponding executables in `build-macos/`. See the [input-validation guide](docs/INPUT_VALIDATION.md) for reports, coverage, privacy and exit codes.
+
+The regression suite has optional tests requiring an independent reference executable or a Fortran compiler. CTest explicitly marks unavailable optional tests as skipped; a skipped test is not a pass.

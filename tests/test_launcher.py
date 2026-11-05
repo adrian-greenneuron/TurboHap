@@ -105,6 +105,19 @@ int run(int argc, char* argv[]) { return check("dynamic-low-memory", 24, argc, a
         self.check(['10', '--low-memory-extra', '--help'], 'standard',
                    ['10', '--low-memory-extra', '--help'])
 
+    def test_input_validation_flags(self):
+        for value in ('strict', 'warn'):
+            for args in ([f'--input-validation={value}', '10'],
+                         ['10', f'--input-validation={value}']):
+                self.check(args, 'standard', ['10'])
+        for args in (['--input-validation'], ['--input-validation=off'],
+                     ['--input-validation=strict', '--input-validation=warn']):
+            result = subprocess.run([str(self.binary), *args], cwd=self.root,
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 2)
+            self.assertEqual(result.stdout, '')
+            self.assertIn('input-validation', result.stderr)
+
 
 if __name__ == '__main__':
     unittest.main()

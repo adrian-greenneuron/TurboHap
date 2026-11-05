@@ -1,0 +1,8 @@
+file(SHA256 "${FINDHAP_BINARY}" identity)
+set(content "#pragma once\nnamespace turbohap_build { inline constexpr const char* executable_sha256 = \"${identity}\"; }\n")
+if(EXISTS "${OUTPUT}")
+    file(READ "${OUTPUT}" previous)
+endif()
+if(NOT content STREQUAL previous)
+    file(WRITE "${OUTPUT}" "${content}")
+endif()

@@ -7,6 +7,7 @@
 #include <cassert>
 using namespace findhap_simd;
 
+#if defined(__x86_64__) || defined(__i386__)
 template<int B> void test() {
     if (!supported(B)) return;
     constexpr int width=B==3?64:B==2?32:16;
@@ -34,4 +35,16 @@ template<int B> void test() {
     munmap(p,3*page);munmap(q,3*page);
     std::cout<<"PASS backend "<<B<<": 65536 pairs, unaligned vectors, guarded tails, thresholds\n";
 }
-int main(){test<1>();test<2>();test<3>();}
+#endif
+int main(){
+#if defined(__x86_64__) || defined(__i386__)
+    test<1>();test<2>();test<3>();
+#else
+    // The vector backends are x86-specific; keep a real portable test on ARM.
+    const int8_t a[] = {0, 1, 2, 5, 0};
+    const int8_t b[] = {2, 1, 0, 0, 1};
+    assert((scan<0,0>(a,b,5,100.f)==3));
+    assert((scan<1,0>(a,b,5,100.f)==3));
+    std::cout << "PASS portable conflict scan\n";
+#endif
+}

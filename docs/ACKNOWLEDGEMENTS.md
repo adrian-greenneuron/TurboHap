@@ -1,7 +1,6 @@
 # Credits and references
 
-TurboHap is maintained by Adrian Carr at Green Neuron AI, the trading name
-of Green Neuron Ltd.
+TurboHap is maintained by Adrian Carr at Green Neuron AI.
 
 The original FindHap algorithm and Fortran program were written by
 Paul M. VanRaden at the USDA Agricultural Research Service, Animal Improvement

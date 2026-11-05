@@ -10,7 +10,7 @@ The reference is the original FindHap v3 Fortran source adapted to build with
 gfortran on ARM64. Original qualification used GCC/gfortran 13.3 with
 `-O3 -fopenmp -fno-underscoring`. The current performance tables retain the
 expanded-flag GNU Fortran 13.3 observations published with v1.2.0; their complete
-flags and method are recorded in the [current benchmark report](turbohap_benchmarks_011126.md).
+flags and method are recorded in the [current benchmark report](turbohap_benchmarks_051126.md).
 Reference result-file identities are retained across releases. Qualification
 uses the C locale and matching inputs, options and thread counts.
 
@@ -53,6 +53,20 @@ experiments are not included in the public benchmark selection. The packaged
 regression suite covers the integrated storage, scheduling, launcher and
 output-error paths. Native Mac installation checks also validate the integrated
 source with its selected compiler and OpenMP runtime.
+
+For v1.4.0, all five selected datasets were rerun at ten threads with two
+observations per mode: **20 runs and 200 raw SHA-256/size checks passed**,
+including crossover order. See the [v1.4.0 validation record](turbohap_validation_051126.json).
+The five historical Fortran observations and their existing crossover-order
+exception are retained unchanged.
+
+Strict validation now rejects malformed or ambiguous layouts instead of
+silently accepting shifted calls. Exact-output compatibility applies to
+qualified valid inputs. An explicit diagnostic warning mode preserves safe
+legacy interpretations; reproducing unsafe reads or crashes is not a
+compatibility requirement. The separate exhaustive input auditor writes only
+requested reports and never edits inference inputs or result files. See
+[input validation](INPUT_VALIDATION.md).
 
 Console progress, diagnostics and elapsed-time text are not result-file
 compatibility targets. Use an explicit thread count when comparing programs;

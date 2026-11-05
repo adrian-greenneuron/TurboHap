@@ -14,10 +14,8 @@ cd run-example
 ../build/findhap 4
 ```
 
-On macOS use `../build-macos/findhap` if you followed the Mac installation
-instructions. To run TurboHap LM, add `--low-memory`. Each mode writes the
-ordinary FindHap output filenames. Use another run directory when keeping both
-sets of results.
+To run TurboHap LM, add `--low-memory`. Each mode writes the ordinary FindHap
+output filenames. Use another run directory when keeping both sets of results.
 
 Return to the source directory after the manual run:
 
@@ -32,9 +30,6 @@ and verifies every output against the saved original-Fortran hashes in
 ```sh
 python3 tests/check_example.py --binary build/findhap
 ```
-
-Use `--binary build-macos/findhap` on macOS. Python 3 is sufficient for this
-example check; a Fortran compiler is not required.
 
 The original options-file comment describes `hapout=2` as writing all animals.
 TurboHap preserves the original program's actual empty-write behaviour for

@@ -35,7 +35,8 @@ def generate(directory, levels, coverage, seed):
     rng = random.Random(seed)
     n, chromosomes, per_chromosome = 612, 20, 120
     loci = chromosomes * per_chromosome
-    assert n % levels == 0 and (n // levels) % 2 == 0
+    if not (n % levels == 0 and n // levels % 2 == 0):
+        raise ValueError('Validation failed: n % levels == 0 and n // levels % 2 == 0')
     width = n // levels
     pedigree, truth = [], []
     for animal in range(n):
@@ -115,14 +116,16 @@ def main():
                 result=subprocess.run([str(binary.resolve()),str(threads),*flags],cwd=directory,env=env,
                                       capture_output=True,timeout=180)
                 (base/f'{label}-{threads}.log').write_bytes(result.stdout+result.stderr)
-                assert result.returncode==0 and b'Program findhap completed normally' in result.stdout,(case,label,threads,result.returncode)
+                if not (result.returncode == 0 and b'Program findhap completed normally' in result.stdout):
+                    raise ValueError((case, label, threads, result.returncode))
                 actual=identities(directory,inputs)
                 if reference is None:reference=actual
                 passed=actual==reference
                 records.append(dict(case=case,label=label,threads=threads,passed=passed,metadata=meta,
                                     outputs=actual,inputs={n:identity(base/n) for n in inputs+['simulation-truth.bin']}))
                 a.record.write_text(json.dumps(records,indent=2)+'\n')
-                assert passed,(case,label,threads,[k for k in actual if actual[k]!=reference.get(k)])
+                if not (passed):
+                    raise ValueError((case, label, threads, [k for k in actual if actual[k] != reference.get(k)]))
                 shutil.rmtree(directory)
             print('PASS',case,'every file byte identical to '+('one-thread Fortran reference' if a.reference else 'frozen one-thread TurboHap control'),flush=True)
 

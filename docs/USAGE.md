@@ -3,6 +3,7 @@
 ```text
 findhap [threads] [--low-memory] [--cpu-policy=auto|inherit|performance]
         [--row-schedule=auto|static|dynamic] [--cpu-info]
+        [--input-validation=strict|warn]
 ```
 
 The default is TurboHap. Add `--low-memory` to select TurboHap LM. Both modes
@@ -98,8 +99,10 @@ Run in the directory containing these files:
 | `genotypes.txt` | Ascending numeric animal ID; three 10-character integer fields (animal, chip, locus count), one separator, then one genotype character per locus. Codes 0, 1, 2 and 5 denote BB, AB, AA and missing. |
 | `chromosome.data` | Marker map and chip membership, ordered by chromosome and position; the X-specific chromosome is last. |
 
-Fixed-width fields matter: keep blank genotype fields and chip-specific marker
-counts in their original positions. Do not trim records or reorder markers.
+Fixed-width fields matter: retain the three header fields, one separator and
+chip-specific marker count. Use explicit supported genotype codes; strict mode
+rejects blank calls because they can indicate shifted columns. Do not trim
+records or reorder markers.
 The [bundled example](../examples/README.md) illustrates the complete formats.
 
 Optional `hap.listpriors`, `hap.foundpriors` and `hap.Xseg` contain compatible
@@ -181,9 +184,15 @@ TurboHap prioritises speed with resident genotype storage and indexed haplotype
 search. TurboHap LM reduces resident storage using chromosome processing,
 packed data, bounded working buffers and temporary disk files. It retains the
 same output decisions and bytes, at the cost of more I/O and some additional
-computation. See the [measured trade-offs](turbohap_benchmarks_011126.md).
+computation. See the [measured trade-offs](turbohap_benchmarks_051126.md).
 
 Peak memory depends on pedigree size, marker counts, chromosome lengths,
 haplotype diversity, options and threads. TurboHap LM also uses temporary disk
 space. Allow room for both output and temporary files, and use disk-backed
 storage when reducing RAM use is the objective.
+
+## Input validation
+
+Strict exhaustive genotype-layout and marker-map checks run by default before inference opens legacy output files. The separate `turbohap-validate-inputs --directory DIR` auditor collects structural and cross-file issues across every ordinary input and active prior file. See [input validation](INPUT_VALIDATION.md) for report examples, error counts, line/byte locations, optional JSON/TSV and privacy guidance.
+
+Use `--input-validation=warn` only to investigate safe legacy layout ambiguities. It retains the old blank/trailing-digit interpretation and can leave misaligned calls; unsafe inputs still fail. Warning detail is capped at five examples, followed by counts. Normal runs should retain the strict default.

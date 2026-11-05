@@ -5,7 +5,7 @@
 </p>
 
 **The FindHap algorithm, reimplemented in C++. Byte-for-byte compatible output.
-Up to 142.8× faster in DGX Spark benchmarks.**
+Up to 149.4× faster in DGX Spark benchmarks.**
 
 TurboHap is a drop-in replacement for FindHap v3 for haplotype phasing and
 genotype imputation. Keep your existing input files and options, and replace
@@ -19,7 +19,7 @@ except that multithreaded Fortran may write records in `cross.overs` in a
 different order. The crossover records themselves match exactly. See the
 [compatibility details](docs/COMPATIBILITY.md).
 
-**Version 1.3.0.** One executable provides two modes:
+**Version 1.4.0.** One executable provides two modes:
 
 | Mode | Command | Purpose |
 | --- | --- | --- |
@@ -46,7 +46,7 @@ dated 22 October 2026. This author manuscript has not been peer reviewed.
   manuscript; the current software comparison uses the five with at least
   10,000 loci.
 
-The manuscript describes v1.0.0; the v1.3.0 software benchmarks below are newer.
+The manuscript describes v1.0.0; the v1.4.0 software benchmarks below are newer.
 The manuscript and figures are also available under CC BY 4.0. See the
 [paper download page](docs/paper/README.md) for file details and checksums.
 
@@ -54,41 +54,41 @@ The manuscript and figures are also available under CC BY 4.0. See the
 
 On a simulated dataset of **1,000,000 animals × 10,000 loci**, GNU Fortran
 FindHap took **6 hours 44 minutes 6 seconds**.
-TurboHap v1.3.0 finished in **2 minutes 50 seconds**: **142.8× faster**, with
-**31.2% less peak memory**. TurboHap LM finished in **3 minutes 36 seconds**:
-**112.4× faster**, with **58.6% less peak memory**.
+TurboHap v1.4.0 finished in **2 minutes 42 seconds**: **149.4× faster**, with
+**31.2% less peak memory**. TurboHap LM finished in **3 minutes 28 seconds**:
+**116.8× faster**, with **58.6% less peak memory**.
 
 All benchmarks used **ten CPU threads** and **GCC/gfortran 13.3** on the same
 NVIDIA DGX Spark. The GPU was not used. TurboHap measurements were collected on
-1 November 2026; the existing Fortran measurements from 30 October are reused.
+5 November 2026; the existing Fortran measurements from 30 October are reused.
 They were collected in separate studies. Fortran uses expanded optimisation flags,
 all 20 CPUs eligible, no taskset and no added binding. Its values are
 **single observations**; TurboHap and LM use **medians of two runs per mode**.
 The second Fortran replicate is deferred. Complete executable times include
-input, computation, buffered output and temporary-file I/O. Performance
+strict input validation, input, computation, buffered output and temporary-file I/O. Performance
 depends on the dataset, options, storage, hardware and competing load.
 
 TurboHap works on **Apple Silicon Macs, Linux ARM64, and Intel/AMD x86-64
 systems**. Detailed benchmarking on these systems is ongoing.
 
-![Runtime and peak memory on five synthetic datasets with at least 10,000 loci](docs/assets/turbohap_benchmarks_011126.png)
+![Runtime and peak memory on five synthetic datasets with at least 10,000 loci](docs/assets/turbohap_benchmarks_051126.png)
 
-See [all results and methodology](docs/turbohap_benchmarks_011126.md), including
+See [all results and methodology](docs/turbohap_benchmarks_051126.md), including
 individual measurements, runtime, peak resident memory and output checks.
 
 <!-- BENCHMARK_TABLES_START -->
 
 ### Runtime
 
-Speedup uses the unchanged single expanded-flag Fortran measurement and the median of two TurboHap measurements per mode. GNU Fortran measurements: 30 October 2026; TurboHap measurements: 1 November 2026.
+Speedup uses the unchanged single expanded-flag Fortran measurement and the median of two TurboHap measurements per mode. GNU Fortran measurements: 30 October 2026; TurboHap measurements: 5 November 2026.
 
 | Animals × loci | Fortran baseline | TurboHap | Speedup | TurboHap LM | Speedup |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| 10,000 × 10,000 | 1m 12s | **1.65s** | **44.0×** | 1.91s | 37.9× |
-| 10,000 × 100,000 | 7m 22s | **11.18s** | **39.6×** | 19.74s | 22.4× |
-| 100,000 × 10,000 | 19m 05s | **15.39s** | **74.4×** | 18.66s | 61.4× |
-| 100,000 × 100,000 | 1h 17m 08s | **1m 49s** | **42.6×** | 3m 12s | 24.1× |
-| 1,000,000 × 10,000 | 6h 44m 06s | **2m 50s** | **142.8×** | 3m 36s | 112.4× |
+| 10,000 × 10,000 | 1m 12s | **1.57s** | **46.1×** | 1.83s | 39.4× |
+| 10,000 × 100,000 | 7m 22s | **10.46s** | **42.3×** | 19.25s | 23.0× |
+| 100,000 × 10,000 | 19m 05s | **14.71s** | **77.8×** | 18.07s | 63.4× |
+| 100,000 × 100,000 | 1h 17m 08s | **1m 42s** | **45.5×** | 3m 05s | 25.0× |
+| 1,000,000 × 10,000 | 6h 44m 06s | **2m 42s** | **149.4×** | 3m 28s | 116.8× |
 
 ### Peak memory
 
@@ -97,18 +97,18 @@ Negative percentages mean less memory than Fortran.
 | Animals × loci | Fortran baseline | TurboHap | Memory change | TurboHap LM | Memory change |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | 10,000 × 10,000 | 1.197 GiB | 0.230 GiB | -80.8% | **0.208 GiB** | **-82.7%** |
-| 10,000 × 100,000 | 10.645 GiB | 1.623 GiB | -84.8% | **1.184 GiB** | **-88.9%** |
+| 10,000 × 100,000 | 10.645 GiB | 1.622 GiB | -84.8% | **1.184 GiB** | **-88.9%** |
 | 100,000 × 10,000 | 1.614 GiB | 0.984 GiB | -39.0% | **0.562 GiB** | **-65.2%** |
-| 100,000 × 100,000 | 14.985 GiB | 8.431 GiB | -43.7% | **3.943 GiB** | **-73.7%** |
-| 1,000,000 × 10,000 | 16.116 GiB | 11.084 GiB | -31.2% | **6.677 GiB** | **-58.6%** |
+| 100,000 × 100,000 | 14.985 GiB | 8.431 GiB | -43.7% | **3.942 GiB** | **-73.7%** |
+| 1,000,000 × 10,000 | 16.116 GiB | 11.084 GiB | -31.2% | **6.676 GiB** | **-58.6%** |
 
 <!-- BENCHMARK_TABLES_END -->
 
 ## Build and run
 
 A C++17 compiler with OpenMP and CMake 3.16 or newer are required.
-Download the [v1.3.0 source release](https://github.com/adrian-greenneuron/TurboHap/releases/tag/v1.3.0)
-and extract it, or check out the `v1.3.0` tag.
+Download the [v1.4.0 source release](https://github.com/adrian-greenneuron/TurboHap/releases/tag/v1.4.0)
+and extract it, or check out the `v1.4.0` tag.
 
 On Linux, install your distribution’s C++/OpenMP compiler and CMake, then run
 these commands from the extracted source directory:
@@ -146,6 +146,25 @@ platform support and test requirements.
 - [Inputs, outputs and every original option](docs/USAGE.md)
 - [Output compatibility and validation](docs/COMPATIBILITY.md)
 - [Small example](examples/README.md)
+
+## Check your inputs before inference
+
+v1.4.0 includes a separate exhaustive input auditor. It checks all ordinary
+input files and active prior files, including cross-file references, without
+running inference or modifying inputs and results:
+
+```sh
+./build/turbohap-validate-inputs --directory /path/to/inputs
+```
+
+The report counts errors and review warnings, explains suggested fixes and
+gives example line/byte locations. Save Markdown/JSON reports or an optional
+complete issue TSV when needed. Ordinary inference retains strict checks by
+default in both modes. See the [input-validation guide](docs/INPUT_VALIDATION.md)
+for coverage, exit codes and diagnostic warning mode.
+
+`./build/turbohap-build-info --build-info` reports build details and the SHA-256
+of the compiled `findhap` executable without reading a dataset.
 
 ## Licence and commercial use
 

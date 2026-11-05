@@ -1,0 +1,11 @@
+#pragma once
+namespace turbohap_build {
+inline constexpr const char* version = "@TURBOHAP_VERSION_LABEL@";
+inline constexpr const char* source_commit = "@TURBOHAP_SOURCE_COMMIT@";
+inline constexpr const char* source_sha256 = "@TURBOHAP_SOURCE_SHA256@";
+inline constexpr const char* compiler = "@CMAKE_CXX_COMPILER_ID@ @CMAKE_CXX_COMPILER_VERSION@";
+inline constexpr const char* openmp_libraries = "@TURBOHAP_OPENMP_NAMES@";
+inline constexpr const char* flags = "@TURBOHAP_BUILD_FLAGS@";
+inline constexpr const char* features = "@TURBOHAP_COMPILE_DEFINITIONS@";
+inline constexpr bool source_is_dirty = @TURBOHAP_SOURCE_DIRTY@;
+}

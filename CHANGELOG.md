@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.0 — 5 November 2026
+
+- A separate exhaustive `turbohap-validate-inputs` auditor checks all ordinary inputs and active prior files, including cross-file references.
+- Informative reports provide exact issue counts, bounded location examples, suggested fixes, Markdown/JSON output and an optional complete issue TSV.
+- Strict exhaustive genotype/map validation is enabled by default in both inference modes. Explicit warning mode supports diagnosis of safe legacy layout ambiguities.
+- `turbohap-build-info` records source, compiler, OpenMP runtime and inference executable identity.
+- Fresh ten-thread, five-dataset Spark benchmarks: two runs per mode and all 200 raw output checks passed. The five Fortran observations remain unchanged. See [results and methodology](docs/turbohap_benchmarks_051126.md).
+- Existing native CPU policies and result-file formats are retained. The manuscript and supplementary material are unchanged.
+
 ## 1.3.0 — 1 November 2026
 
 - A unified implementation for Apple Silicon macOS, Linux ARM64 and Intel/AMD
