@@ -166,6 +166,8 @@ public:
             return first;
 #if (FINDHAP_ORDERED_SCAN_ORDER || FINDHAP_ORDERED_SCAN_NEON) && !FINDHAP_ORDERED_LAYOUT
         return findhap_ordered_scan::next(first,last,active_.size(),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
+#elif FINDHAP_ORDERED_LAYOUT && FINDHAP_ORDERED_SCAN_ORDER
+        return findhap_ordered_scan::next_word_major(first,last,size_t(width_),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
 #else
         const size_t words = active_.size();
         for (size_t word = size_t(first - 1) / 64; word <= size_t(last - 1) / 64; ++word) {

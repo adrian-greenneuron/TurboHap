@@ -1,0 +1,11 @@
+{
+  "max_speedup": 116.43294984720475,
+  "max_speedup_dataset": "n100000_m20000",
+  "max_speedup_program": "TurboHap",
+  "max_memory_reduction_percent": 92.19062981424358,
+  "TurboHap_observations": 36,
+  "GNU_observations": 14,
+  "TurboHap_raw_file_checks": 360,
+  "GNU_raw_identical_files": 126,
+  "GNU_record_order_exceptions": 14
+}

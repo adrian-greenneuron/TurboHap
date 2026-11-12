@@ -26,7 +26,10 @@ from its top-level directory to verify its internal checksums and recalculate
 the published summaries. This checks the supplied observations; instructions
 for new inference runs are in Section S2 of Supplementary File 1.
 
-## Synthetic datasets and simulation truth
+## Historical synthetic datasets and simulation truth
+
+These historical datasets are separate from the new v1.5.0 benchmark suite.
+The new datasets and generation code are not part of this release.
 
 All **seven synthetic input datasets and their simulation truth** are publicly
 archived on Zenodo:

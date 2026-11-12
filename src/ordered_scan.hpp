@@ -21,6 +21,34 @@ inline __attribute__((always_inline)) Block filter(Block candidates, uint64_t fi
 #endif
     return candidates;
 }
+// Word-major planes retain adjacent loci for each 64-candidate word. Only
+// rejection-predicate order changes; candidate positions remain increasing.
+#if FINDHAP_ORDERED_SCAN_ORDER
+inline int next_word_major(int first,int last,size_t width,const uint64_t* active,
+        const uint64_t* zero,const uint64_t* two,uint64_t query_zero,uint64_t query_two) {
+    const uint64_t* p0=two;const uint64_t* p1=zero;
+    uint64_t q0=query_zero,q1=query_two;
+#if FINDHAP_ORDERED_SCAN_ORDER == 1
+    const bool swap=true;
+#elif FINDHAP_ORDERED_SCAN_ORDER == 2
+    const bool swap=q1 && (!q0 || __builtin_popcountll(q1)<__builtin_popcountll(q0));
+#else
+    const bool swap=false;
+#endif
+    if(swap){std::swap(p0,p1);std::swap(q0,q1);}
+    const size_t initial=size_t(first-1)/64, final=size_t(last-1)/64;
+    for(size_t word=initial;word<=final;++word) {
+        uint64_t candidates=active[word];
+        if(word==initial)candidates&=UINT64_MAX<<((first-1)%64);
+        candidates=filter(candidates,q0,q1,p0+word*width,p1+word*width,1,0,
+            [](uint64_t value){return value!=0;},
+            [](uint64_t value,const uint64_t* plane){return value&~*plane;});
+        if(candidates)return std::min(last+1,int(word*64+__builtin_ctzll(candidates)+1));
+    }
+    return last+1;
+}
+#endif
+
 // These are independent Boolean rejection filters. Their evaluation order and
 // word width cannot change the earliest surviving original order position.
 inline int next(int first,int last,size_t words,const uint64_t* active,

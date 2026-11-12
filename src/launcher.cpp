@@ -9,6 +9,7 @@
 #include "cpu_policy.hpp"
 #include "row_schedule.hpp"
 #include "input_validation.hpp"
+#include "stdout_policy.hpp"
 
 namespace findhap_standard { int run(int argc, char* argv[]); }
 namespace findhap_low_memory { int run(int argc, char* argv[]); }
@@ -22,6 +23,7 @@ int main(int argc, char* argv[]) {
     findhap::rows::Policy row_policy = findhap::rows::Policy::automatic;
     bool row_policy_seen = false;
     bool validation_seen = false;
+    bool stdout_seen = false;
     std::vector<char*> original(argv, argv + argc);
     original.push_back(nullptr);
     int count = 1;
@@ -29,6 +31,14 @@ int main(int argc, char* argv[]) {
         for (int i = 1; i < argc; ++i) {
             if (std::strcmp(argv[i], "--low-memory") == 0) low_memory = true;
             else if (std::strcmp(argv[i], "--cpu-info") == 0) cpu_info = true;
+            else if (std::strncmp(argv[i], "--stdout=", 9) == 0) {
+                const auto value = turbohap_reporting::parse_stdout_mode(argv[i] + 9);
+                if (stdout_seen && value != turbohap_reporting::stdout_mode)
+                    throw std::runtime_error("conflicting --stdout values");
+                turbohap_reporting::stdout_mode = value;
+                stdout_seen = true;
+            } else if (std::strncmp(argv[i], "--stdout", 8) == 0)
+                throw std::runtime_error("use --stdout=legacy or --stdout=modern");
             else if (std::strncmp(argv[i], "--input-validation=", 19) == 0) {
                 const auto value = findhap::input::parse_policy(argv[i] + 19);
                 if (validation_seen && value != findhap::input::policy)
@@ -69,6 +79,12 @@ int main(int argc, char* argv[]) {
                 "--input-validation=strict|warn: validate genotype layout before inference (default strict).\n"
                 "warn permits safe legacy layout ambiguities for diagnostics; results may be misaligned.\n"
                 "Unsafe headers, sizes, truncated records and unsupported genotype codes always fail.\n"
+                "--stdout=legacy|modern: choose console presentation; result files are unchanged.\n"
+#if FINDHAP_MODERN_STDOUT_DEFAULT
+                "Default STDOUT: modern (UTC/elapsed progress and live library-capacity summaries).\n"
+#else
+                "Default STDOUT: legacy (FindHap-style messages and numerical summaries).\n"
+#endif
                 "Original findhap.options fields and input/output filenames are unchanged.\n"
                 "Other arguments after the thread count are ignored, as in findhapV3.");
 

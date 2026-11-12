@@ -1,100 +1,52 @@
-# TurboHap on macOS
+# TurboHap on Apple Silicon
 
-TurboHap v1.4.0 supports native Apple Silicon Macs using the same source tree,
-input files and commands as the Linux release. Detailed platform benchmarking
-is ongoing. No GPU or Fortran compiler is required.
+TurboHap v1.5.0 uses the same source, input files and commands on Apple Silicon and Linux. Build natively on the Mac that will run it. TurboHap uses the CPU; it does not require a GPU or a Fortran compiler.
 
-## Build a native executable
+## Ordinary build for any Apple Silicon Mac
 
-Follow the [Apple Silicon installation instructions](docs/INSTALL.md#macos-apple-silicon).
-Use native ARM64 Homebrew, install `gcc`, `libomp` and `cmake`, then configure
-a fresh build with Homebrew's versioned GNU C++ executable. CMake discovers
-the applicable CPU profile and OpenMP runtime. The native executable-validated
-route uses GCC 16.2 with libomp. Apple Clang configuration and Intel Mac
-builds have not received the same native executable validation.
+Start with the [Apple Silicon installation instructions](docs/INSTALL.md#macos-apple-silicon). They use native Homebrew GCC, CMake and OpenMP. Use a fresh `build-macos` directory and keep the selected OpenMP runtime installed after building. No compiler profile or extra training step is needed.
 
-Keep the complete source package, including the modules in `cmake/`.
-They select the Mac defaults, configure temporary-buffer ownership and carry
-the chosen compiler/runtime into the test fixtures. Build with
-`cmake --build build-macos --parallel 2`, then run the installation checks:
+Fresh native ARM64 macOS builds use the Apple Silicon memory policy and the ARM64 NEON final matching scan automatically. Both apply across Apple Silicon families. The build also detects the existing M4 Pro CPU profile where applicable; that profile and the optional build below are separate from the shared ARM64 features. Do not copy a natively tuned executable to another Mac without rebuilding and checking it there.
 
-```sh
-cd build-macos
-ctest --output-on-failure --parallel 1
-cd ..
-```
+## Run standard or low-memory mode
 
-The included example checks both standard and LM outputs against saved
-Fortran hashes. Linux-only tests are reported as skipped on macOS where
-appropriate. Ordinary builds need no training data or profile-guided
-optimization step.
-
-## Run standard or LM mode
-
-From the directory containing the four normal FindHap input files:
+Run from a writable directory containing `findhap.options`, `pedigree.file`, `chromosome.data` and `genotypes.txt`:
 
 ```sh
 /absolute/path/to/build-macos/findhap 8
+# Or use TurboHap LM in a separate run directory:
 /absolute/path/to/build-macos/findhap 8 --low-memory
 ```
 
-The example count of eight is not a requirement or a compiled-in Mac limit.
-Choose a thread count for your machine, or omit it to let automatic mode use
-the discovered performance-core count. `OMP_NUM_THREADS` and an explicit
-positional count take precedence over that default.
+Eight threads is an example. If neither the positional count nor `OMP_NUM_THREADS` is set, automatic mode uses the discovered performance-core count. TurboHap can request higher scheduling priority, but macOS decides where the threads run. It does not pin threads to specific cores or reserve them from other processes. Explicit thread counts and caller settings take precedence. Use `findhap --cpu-info` to inspect the proposed policy without loading data; see [CPU placement and row scheduling](docs/USAGE.md#cpu-placement).
 
-TurboHap requests user-initiated quality of service for its workers when
-automatic mode is active and caller placement settings are absent. This is
-a scheduling hint: macOS decides which physical cores execute the work.
-Workers are not pinned to named performance cores, and the program does not
-reserve cores against other applications. Explicit OpenMP placement and wait
-settings are respected. `--cpu-policy=inherit` leaves scheduling intent and
-the default thread count to the caller and OpenMP runtime.
+Legacy console messages are the release default. Add `--stdout=modern` for timestamped progress and live haplotype library capacity summaries. This choice does not change the result files. LM also needs temporary storage on the run directory's filesystem, so use a disk-backed location with sufficient free space.
 
-`findhap --cpu-info` reports the discovered topology and proposed settings as
-JSON without loading inputs or writing result files. The Linux strict-affinity
-`--cpu-policy=performance` option is unavailable on macOS. See
-[CPU placement and row scheduling](docs/USAGE.md#cpu-placement) for all options.
+## Optional M4 Pro profile with Apple Clang
 
-## Memory and storage defaults
+The ordinary build is the starting point. The optional M4 Pro profile uses an Apple Clang toolchain that recognises the `apple-m4` CPU target and Homebrew `libomp`. This build is specifically for native Apple Silicon M4 Pro, and it does not automatically activate on any Mac. Use a separate build directory:
 
-Fresh native ARM64 macOS builds use the Apple Silicon temporary-buffer policy
-automatically across M-series families. It does not depend on identifying the
-machine as an M4 Pro. The native CPU instruction profile is selected separately.
-Cross/universal builds and Intel Macs retain their existing allocation defaults.
+```sh
+brew install cmake libomp
+cmake -S . -B build-macos-m4 -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_CXX_COMPILER=/usr/bin/clang++ \
+  -DCMAKE_OSX_SYSROOT="$(xcrun --sdk macosx --show-sdk-path)" \
+  -DOpenMP_ROOT="$(brew --prefix libomp)" \
+  -DFINDHAP_MAC_COHORT_PROFILE=ON
+cmake --build build-macos-m4 --parallel 2
+./build-macos-m4/turbohap-build-info --build-info
+otool -L ./build-macos-m4/findhap
+```
 
-Standard mode retains its hot working genotypes in native memory and reuses
-bounded storage across processing steps. LM uses bounded buffers and temporary
-disk storage. Large temporary phase mappings are released at their existing
-processing boundaries; normal output writing, error checks and LM scratch
-synchronization remain enabled. Both modes preserve the same result-file
-contract described in [output compatibility](docs/COMPATIBILITY.md).
+The optional profile links `libomp` as its only OpenMP runtime and needs no training step. Use `--row-schedule=dynamic` explicitly to select the matching runtime schedule; this is independent of the build option. Check the bundled example before using the new build on your data. Use the ordinary build on other Apple Silicon processors.
 
-The run directory must have space for all enabled outputs and LM temporary
-files. Temporary files are created on the run directory's filesystem, not
-the filesystem named by `TMPDIR`. They are unlinked after creation and released
-when closed. Use a separate directory for each result set.
+```sh
+# From a directory containing the four input files:
+/absolute/path/to/build-macos-m4/findhap 8 --row-schedule=dynamic
+```
 
-## Existing builds and optional overrides
+Add `--low-memory` for LM and `--stdout=modern` if you want timestamped progress. Neither switch is required to build the profile.
 
-Use a fresh build directory when moving to this release. Existing CMake
-directories preserve cached settings, including an explicit allocation-policy
-OFF. They are not automatically migrated.
+## Input audit and build checks
 
-To deliberately retain the earlier allocation policy, append
-`-DFINDHAP_MMAP_PHASE_BUFFERS=OFF` to the configure command in the installation
-guide and use a new build directory. If reusing a directory that already cached
-the newer GNU link-time partition, also set
-`-DFINDHAP_GNU_LTO_PARTITION=1to1`. Fresh default native Apple Silicon builds
-select their applicable GNU partition automatically. Normal use needs neither
-flag.
-
-Build on the Mac that will run TurboHap. A natively tuned executable must not
-be assumed portable to another Apple CPU or a different installed runtime.
-Keep GCC and its selected OpenMP runtime installed after building.
-
-## Input audit and build identity
-
-The normal build includes `findhap`, `turbohap-validate-inputs` and `turbohap-build-info`. None needs Python at runtime. After building, run the input auditor with `--directory /path/to/inputs` and `turbohap-build-info --build-info` to record the compiled inference identity. On macOS use the corresponding executables in `build-macos/`. See the [input-validation guide](docs/INPUT_VALIDATION.md) for reports, coverage, privacy and exit codes.
-
-The regression suite has optional tests requiring an independent reference executable or a Fortran compiler. CTest explicitly marks unavailable optional tests as skipped; a skipped test is not a pass.
+`build-macos/turbohap-validate-inputs --directory /path/to/inputs` checks the input files without running imputation. See [input validation](docs/INPUT_VALIDATION.md) for reports and exit status. To check a build, run `ctest --output-on-failure --parallel 1` from its build directory, or use the [bundled example check](docs/INSTALL.md#check-the-build). Optional reference tests may be skipped when their tools are absent.

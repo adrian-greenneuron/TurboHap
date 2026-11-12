@@ -1,114 +1,65 @@
 # Output compatibility
 
-TurboHap implements the FindHap v3 algorithm with the original input formats,
-options and output filenames. TurboHap and TurboHap LM use the same inference
-decisions and produce identical result-file bytes for the qualified inputs.
+TurboHap implements the FindHap v3 input formats, inference method, options and
+ten legacy output filenames. Standard and LM modes must match their qualified
+reference outputs byte for byte, checked using raw file sizes and SHA-256.
+No sorting, rounding or whitespace normalization is used for TurboHap checks.
 
-## What the comparisons establish
+The nine v1.5.0 benchmark datasets supplied 36 successful TurboHap measurements
+and 360 raw output-file checks. Every check passed. The completed GNU FindHap
+controls use identical data, options and thread counts. There is one established
+Fortran exception: multithreaded `cross.overs` output can contain the same
+records in a different order. Its header and all complete records are checked,
+with duplicates retained. That comparison does not claim the unsorted file is
+byte-identical. No other difference is accepted.
 
-The reference is the original FindHap v3 Fortran source adapted to build with
-gfortran on ARM64. Original qualification used GCC/gfortran 13.3 with
-`-O3 -fopenmp -fno-underscoring`. The current performance tables retain the
-expanded-flag GNU Fortran 13.3 observations published with v1.2.0; their complete
-flags and method are recorded in the [current benchmark report](turbohap_benchmarks_051126.md).
-Reference result-file identities are retained across releases. Qualification
-uses the C locale and matching inputs, options and thread counts.
+All eight planned FindHap control datasets are complete. The 1M × 80k case
+has no FindHap control. Its TurboHap runs were checked against retained
+qualified TurboHap references; a direct GNU comparison is not implied.
+See the [benchmark report](turbohap_benchmarks_111126.md) for individual
+verification statuses, counts and methods.
 
-For the synthetic benchmark datasets, every result file must match byte for
-byte except `cross.overs`. Multithreaded Fortran can emit the same crossover
-records in a different order. That file is checked by sorting complete records
-and comparing every byte, retaining duplicate records. No values are rounded,
-records dropped or genetic calls normalised. This is an ordering exception,
-not a strict byte-for-byte comparison of the unsorted crossover file.
+## What is preserved
 
-The two C++ modes are compared strictly, including crossover order. Original
-v1.0.0 qualification also checked 17 example configurations per mode against the
-Fortran reference, covering thread counts, priors, incremental animals, segment
-lengths, output selectors, fixed-width blank fields and capacities on both sides
-of 65,535 haplotypes. Those checks are broader than the bundled installation
-check: the included checker runs one original example in both modes at one and
-four threads (four runs), comparing every output against saved Fortran hashes.
-The complete qualification matrix is not included in this source release.
+- Existing filenames, positional options, genotype encodings and enabled outputs.
+- Standard/LM inference decisions and result-file ordering for qualified inputs.
+- Exact numerical decisions in native vector paths and their fallbacks.
+- The original capacity-failure behaviour when a segment exceeds maxhap.
 
-For v1.1.0, all 28 timed runs across the seven synthetic datasets and both modes
-matched the retained C++ reference files exactly: 280 SHA-256 and byte-count
-checks, including raw crossover order. The [validation record](turbohap_validation_281026.json)
-contains the observed and expected hashes. Additional option/mode comparisons
-at one, four and ten threads passed against the qualified serial control.
-These checks supplement the original qualification; they do not claim that
-every possible input has been tested.
+Strict validation rejects malformed or ambiguous layouts instead of silently
+accepting shifted calls. Diagnostic `--input-validation=warn` retains documented
+safe legacy interpretations; reproducing unsafe reads or crashes is not a
+compatibility requirement. The [standalone validator](INPUT_VALIDATION.md)
+does not alter inputs or inference outputs.
 
-For v1.2.0, all 28 fresh Spark benchmark runs also passed **280 strict raw
-SHA-256 and byte-count checks**, including crossover order. See the
-[v1.2.0 validation record](turbohap_validation_301026.json). The release layout
-passed all 19 packaged tests before timing, including output-error handling
-and CPU-policy checks. The historical Fortran observations remain unchanged.
+Console progress, timestamps and elapsed-time diagnostics are separate from
+result-file compatibility. Release builds default to `--stdout=legacy` for
+FindHap-style console output. `--stdout=modern` adds clearer progress and
+capacity summaries. No exact identity is claimed for elapsed timings or console
+formatting.
 
-For v1.3.0, the five selected synthetic datasets, each with at least 10,000
-loci, were checked in standard and LM modes with two observations per mode and
-dataset: **20 runs and 200 strict raw-file checks**, including crossover order. See the
-[v1.3.0 validation record](turbohap_validation_011126.json). These observations
-use the normal Linux platform defaults; the separate optional allocation-policy
-experiments are not included in the public benchmark selection. The packaged
-regression suite covers the integrated storage, scheduling, launcher and
-output-error paths. Native Mac installation checks also validate the integrated
-source with its selected compiler and OpenMP runtime.
+The positional thread argument retains the original two-character
+interpretation: `100` selects 10 and `010` selects 1. Use a positive one- or
+two-digit count. Recognized launcher flags may precede or follow it.
+Explicit OpenMP/CPU restrictions take precedence over automatic placement.
 
-For v1.4.0, all five selected datasets were rerun at ten threads with two
-observations per mode: **20 runs and 200 raw SHA-256/size checks passed**,
-including crossover order. See the [v1.4.0 validation record](turbohap_validation_051126.json).
-The five historical Fortran observations and their existing crossover-order
-exception are retained unchanged.
+Use a fresh output directory for comparisons. Legacy file-opening semantics can
+leave an existing output untouched when the selected options write no records.
+Only compare outputs enabled by the options. `hapout=2` preserves the actual
+legacy behaviour; it does not produce the all-animal output advertised by one
+original options comment.
 
-Strict validation now rejects malformed or ambiguous layouts instead of
-silently accepting shifted calls. Exact-output compatibility applies to
-qualified valid inputs. An explicit diagnostic warning mode preserves safe
-legacy interpretations; reproducing unsafe reads or crashes is not a
-compatibility requirement. The separate exhaustive input auditor writes only
-requested reports and never edits inference inputs or result files. See
-[input validation](INPUT_VALIDATION.md).
-
-Console progress, diagnostics and elapsed-time text are not result-file
-compatibility targets. Use an explicit thread count when comparing programs;
-Apple Silicon's automatic default can differ from the OpenMP runtime maximum.
-The included example is a reproducible installation check, not a universal
-proof for every possible dataset, compiler or option combination.
-
-## Existing workflows
-
-Keep `findhap.options`, data files and optional priors unchanged. The executable
-name is still `findhap`. The positional thread argument keeps the original
-two-character interpretation; `100` selects 10 and `010` selects 1.
-`--low-memory`, CPU-policy and row-schedule options are consumed by the launcher
-and may appear before or after that argument. Other arguments after the thread
-count retain their original ignored behaviour. The same result-file contract
-applies to the available row schedules and allocation defaults.
-
-The original file-opening behaviour is retained: an existing output file can
-remain untouched when the selected options cause no records to be written.
-Use clean run directories for comparisons, and compare only outputs enabled
-by the supplied options. `hapout=2` retains the original implementation's
-behaviour; it does not write the all-animal haplotypes advertised by the original
-options-file comment.
-
-## Validation commands
+## Installation checks
 
 ```sh
-cd build
-ctest --output-on-failure --parallel 1
-cd ..
-```
-
-Use `build-macos` in place of `build` on macOS. The full Linux suite requires
-Python 3.11 or newer; Python 3 is sufficient for the example check. Tests that
-require another operating system are reported separately as skipped.
-
-To run only the example check, from the source directory:
-
-```sh
+(cd build && ctest --output-on-failure --parallel 1)
 python3 tests/check_example.py --binary build/findhap
 ```
 
-The example checker uses saved Fortran result hashes, checks the exact set of
-output files, and runs both modes with one and four threads. It never runs
-Fortran and does not require a Fortran compiler.
+Use `build-macos` for the Mac recipe. The example checker runs both modes at
+one and four threads and checks the saved original Fortran reference identities;
+it needs neither Fortran nor the benchmark datasets. The broader suite covers
+parsing, priors, output order, CPU policies, lookup widths, allocation and vector
+paths. Platform-dependent skips are reported, not counted as successful tests.
+Passing qualification is evidence for the tested configurations, not a proof for
+every possible dataset or compiler. See [release qualification](RELEASE_CHECKS.md).

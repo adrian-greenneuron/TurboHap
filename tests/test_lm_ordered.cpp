@@ -31,13 +31,21 @@ int main() {
             assert(index.next(first,last,zero,two)==next);
         }
     }
-    // A library beyond the 16-bit position range must fall back before any
-    // position is truncated or an index allocation is made.
+    // The control must reject unrepresentable positions; the adaptive candidate
+    // must widen before any position is truncated.
     std::vector<int> large_order(65537), large_frequencies(65536, 0);
     std::vector<Entry> large_entries(65536, Entry{0,0});
     std::iota(large_order.begin(), large_order.end(), 0);
     LowMemoryCandidateLookup fallback(64);
+#if FINDHAP_LM_ADAPTIVE_POSITIONS
+    assert(fallback.prepare(large_order.data(), large_frequencies.data(),
+                            65536, large_entries));
+    assert(fallback.position_bits() == 32);
+    assert(fallback.next(65536, 65536, 0, 0) == 65536);
+    assert(fallback.resident_bytes() <= LowMemoryCandidateLookup::storage_bound(64, 65536));
+#else
     assert(!fallback.prepare(large_order.data(), large_frequencies.data(),
                              65536, large_entries));
     assert(fallback.resident_bytes() == 0);
+#endif
 }

@@ -3,7 +3,7 @@
 ```text
 findhap [threads] [--low-memory] [--cpu-policy=auto|inherit|performance]
         [--row-schedule=auto|static|dynamic] [--cpu-info]
-        [--input-validation=strict|warn]
+        [--input-validation=strict|warn] [--stdout=legacy|modern]
 ```
 
 The default is TurboHap. Add `--low-memory` to select TurboHap LM. Both modes
@@ -131,8 +131,8 @@ repeat counts such as `4*1`, and real exponents such as `4D-3`.
 | --- | --- |
 | `iters` | Maximum iterations; values below 3 become 3. Prior-assisted runs begin at the final iteration. |
 | `Xchrom` | Final chromosome number for X-specific handling; 0 disables it. |
-| `maxlen` | Initial haplotype segment length. |
-| `minlen` | Target final length; successive rounded lengths retain original behaviour. |
+| `maxlen` | Initial maximum haplotype segment length, in loci (not base pairs). |
+| `minlen` | Target final length, in loci; successive rounded lengths retain original behaviour. |
 | `steps` | Number of segment-length stages; equal minimum and maximum lengths force one stage. |
 | `maxhap` | Maximum distinct haplotypes per segment. Capacity exhaustion exits with status 100 and requests a larger value. |
 | `hapout` | 0 suppresses `haplotypes.txt`; 1 writes eligible genotyped/imputed animals. Value 2 retains the original empty-write behaviour, despite the original comment advertising all animals. |
@@ -150,15 +150,15 @@ provides approximately **31.1% more haplotype capacity** while retaining
 IDs, based on the requested capacity even if fewer haplotypes are ultimately
 found. The identifiers and output formats remain unchanged.
 
-The extra capacity uses more memory even below the 32-bit threshold: the
-haplotype library and several other buffers are sized using `maxhap`.
-Increasing it from 50,000 to 65,535 makes those capacity-dependent allocations
-approximately **31.1% larger**, while the arrays storing haplotype IDs retain
-their size. The percentage change in total peak memory depends on the dataset
-and mode. Crossing the threshold doubles storage for the affected ID arrays,
-in addition to increasing the capacity-dependent buffers; it does not double
-all program memory. Higher capacities also increase some initialization and
-scanning work, so keep 50,000 when it is sufficient and raise it when needed.
+In v1.5.0, supported native profiles avoid eagerly committing all unused
+frequency/order metadata to physical RAM. This weakens the relationship between
+maxhap and peak resident memory; it does not remove every capacity-dependent
+allocation. Other buffers and the genotype data still need memory. Crossing the
+65,535 boundary doubles the affected per-animal ID storage, not all process
+memory. The separate accelerated LM lookup widens its candidate positions based
+on live indexed entries, within its memory budget. Neither extra headroom nor a
+larger maxhap is a promise of faster inference. Set adequate capacity and use
+the modern completion summary to inform later runs with comparable inputs.
 
 ## Output files
 
@@ -184,7 +184,7 @@ TurboHap prioritises speed with resident genotype storage and indexed haplotype
 search. TurboHap LM reduces resident storage using chromosome processing,
 packed data, bounded working buffers and temporary disk files. It retains the
 same output decisions and bytes, at the cost of more I/O and some additional
-computation. See the [measured trade-offs](turbohap_benchmarks_051126.md).
+computation. See the [measured trade-offs](turbohap_benchmarks_111126.md).
 
 Peak memory depends on pedigree size, marker counts, chromosome lengths,
 haplotype diversity, options and threads. TurboHap LM also uses temporary disk
@@ -196,3 +196,37 @@ storage when reducing RAM use is the objective.
 Strict exhaustive genotype-layout and marker-map checks run by default before inference opens legacy output files. The separate `turbohap-validate-inputs --directory DIR` auditor collects structural and cross-file issues across every ordinary input and active prior file. See [input validation](INPUT_VALIDATION.md) for report examples, error counts, line/byte locations, optional JSON/TSV and privacy guidance.
 
 Use `--input-validation=warn` only to investigate safe legacy layout ambiguities. It retains the old blank/trailing-digit interpretation and can leave misaligned calls; unsafe inputs still fail. Warning detail is capped at five examples, followed by counts. Normal runs should retain the strict default.
+
+## Console output and run logs
+
+**Legacy is the default in release builds.** It keeps console progress close to
+FindHap's familiar format. Result-file compatibility is a separate contract;
+elapsed timings and launcher diagnostics are not expected to be identical.
+
+Choose modern output for clearer phase progress, UTC date/time stamps, elapsed
+step timings and a peak live-haplotype capacity summary:
+
+```sh
+/path/to/findhap 20 --stdout=modern > run.log 2> diagnostics.log
+/path/to/findhap 20 --low-memory --stdout=modern > lm-run.log 2> lm-diagnostics.log
+```
+
+These are ordinary shell redirects; TurboHap does not silently create an extra
+log file. `--stdout=legacy` explicitly selects the default style. Modern output
+is useful for checking phase durations and choosing maxhap on future runs.
+The peak live count can exceed the retained library count printed after pruning.
+The previous peak describes that completed dataset/options combination; it is
+not a guarantee for newly added animals or different options. Capacity summaries
+are diagnostic and do not change any of the ten legacy output-file formats.
+
+## Haplotype capacity and memory
+
+v1.5.0 uses demand-zero library metadata on qualified Spark, Granite Rapids
+and Turin profiles, reducing resident memory for unused capacity. maxhap remains a hard per-segment
+capacity limit: exceeding it still stops the run. Other buffers and the data
+itself still need memory, so allocation growth does not make memory unlimited
+or completely independent of maxhap. LM preserves its lower-memory processing
+path. Qualified native workload profiles support a wider lookup when a 16-bit
+position cannot represent the live indexed entry count; other paths retain a
+compatible fallback. This is distinct from configured-capacity haplotype IDs. Do not choose 65,535 as a universal safe
+limit: necessary capacity depends on the dataset and options.

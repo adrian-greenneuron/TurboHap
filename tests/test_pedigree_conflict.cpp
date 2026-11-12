@@ -14,6 +14,12 @@ int main() {
     // Includes signed-byte extremes as well as all valid missing/allele codes.
     for (int a=-128; a<=127; ++a)
         for (int b=-128; b<=127; ++b) check({int8_t(a)}, {int8_t(b)});
+    for (int width : {16,32,64}) for (int a=-128; a<=127; ++a)
+        for (int b=-128; b<=127; ++b) {
+            std::vector<int8_t> x(width,int8_t(a)), y(width,int8_t(a));
+            y.back()=int8_t(b); check(x,y);
+            y.front()=int8_t(b); check(x,y);
+        }
     std::mt19937 rng(271026);
     for (int n=0; n<=256; ++n) {
         if (n>65 && n!=127 && n!=128 && n!=129 && n!=255 && n!=256) continue;

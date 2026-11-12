@@ -17,10 +17,14 @@ class LauncherTests(unittest.TestCase):
         cls.addClassCleanup(cls.temp.cleanup)
         cls.root = Path(cls.temp.name)
         stub = cls.root / 'engines.cpp'
-        stub.write_text(r'''
+        stub.write_text('#include "' + str(ROOT/'src/stdout_policy.hpp') + '"\n' + r'''
 #include <cstdio>
 static int check(const char* mode, int code, int argc, char* argv[]) {
     if (argv[argc] != nullptr) return 99;
+    if (argc > 2 && std::strcmp(argv[2], "report-stdout") == 0) {
+        std::puts(turbohap_reporting::modern_stdout() ? "modern" : "legacy");
+        return 0;
+    }
     std::puts(mode);
     for (int i = 1; i < argc; ++i) std::puts(argv[i]);
     return code;
@@ -117,6 +121,23 @@ int run(int argc, char* argv[]) { return check("dynamic-low-memory", 24, argc, a
             self.assertEqual(result.returncode, 2)
             self.assertEqual(result.stdout, '')
             self.assertIn('input-validation', result.stderr)
+
+    def test_stdout_selection_and_validation(self):
+        for value in ('legacy', 'modern'):
+            for args in ([f'--stdout={value}', '2', 'report-stdout'],
+                         ['2', 'report-stdout', f'--stdout={value}']):
+                result = subprocess.run([str(self.binary), *args], cwd=self.root,
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0)
+                self.assertEqual(result.stdout.strip(), value)
+            self.check(['2', f'--stdout={value}', f'--stdout={value}'], 'standard', ['2'])
+        for args in (['--stdout'], ['--stdout='], ['--stdout=bad'],
+                     ['--stdout=legacy', '--stdout=modern']):
+            result = subprocess.run([str(self.binary), *args], cwd=self.root,
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 2)
+            self.assertEqual(result.stdout, '')
+            self.assertIn('stdout', result.stderr)
 
 
 if __name__ == '__main__':

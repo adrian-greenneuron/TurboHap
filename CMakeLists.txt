@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(TurboHap VERSION 1.4.0 LANGUAGES CXX)
+project(TurboHap VERSION 1.5.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -8,6 +8,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 endif()
 
 include(cmake/MacOSDefaults.cmake)
+include(cmake/MacCohortProfile.cmake)
 
 # Preserve published compiler settings on all other platforms.
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -16,6 +17,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     set(CMAKE_CXX_FLAGS_RELEASE "${FINDHAP_RELEASE_FLAGS}")
 endif()
 find_package(OpenMP REQUIRED)
+if(FINDHAP_MAC_COHORT_PROFILE)
+    findhap_check_mac_cohort_runtime()
+endif()
 if(APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm64|aarch64)$")
     include(CMakePushCheckState)
     include(CheckCXXSourceCompiles)
@@ -30,6 +34,11 @@ if(APPLE AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm64|aarch64)$")
     endif()
 endif()
 include(cmake/PhaseBufferDefaults.cmake)
+if(FINDHAP_MAC_COHORT_PROFILE AND NOT FINDHAP_MAC_MEMORY_DEFAULTS)
+    message(FATAL_ERROR "The M4 Pro cohort profile requires the normal Apple Silicon memory policy")
+endif()
+option(FINDHAP_MODERN_STDOUT_DEFAULT "Use modern STDOUT by default; public source packages must set this OFF" OFF)
+add_compile_definitions(FINDHAP_MODERN_STDOUT_DEFAULT=$<BOOL:${FINDHAP_MODERN_STDOUT_DEFAULT}>)
 if(FINDHAP_MMAP_PHASE_BUFFERS)
     if(NOT UNIX)
         message(FATAL_ERROR "FINDHAP_MMAP_PHASE_BUFFERS requires POSIX anonymous mappings")
@@ -43,6 +52,7 @@ if(FINDHAP_MAC_MEMORY_DEFAULTS)
     message(STATUS "TurboHap: native Apple Silicon memory defaults")
 endif()
 option(FINDHAP_LIGHT_PROFILE "Build coarse phase diagnostics (not for benchmark timing)" OFF)
+option(FINDHAP_WORKLOAD_OPTIMISATIONS "Use the qualified workload profile on native Linux DGX Spark" ON)
 set(FINDHAP_ENGINE_SOURCE src/findhap.cpp)
 if(FINDHAP_LIGHT_PROFILE)
     add_compile_definitions(FINDHAP_PROFILE=1 FINDHAP_LIGHT_PROFILE=1)
@@ -66,6 +76,11 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$" AND CMAKE_CXX_COMPILER_ID 
             add_compile_definitions(FINDHAP_NATIVE_GB10=1)
         endif()
     endif()
+endif()
+get_directory_property(turbohap_native_definitions COMPILE_DEFINITIONS)
+if(FINDHAP_WORKLOAD_OPTIMISATIONS AND NOT CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_NAME STREQUAL "Linux"
+        AND "FINDHAP_NATIVE_GB10=1" IN_LIST turbohap_native_definitions)
+    add_compile_definitions(FINDHAP_WORKLOAD_OPTIMISATIONS=1)
 endif()
 set(FINDHAP_INDEX_MIN_LENGTH 16 CACHE STRING "Minimum exact-index segment length")
 add_compile_definitions(FINDHAP_INDEX_MIN_LENGTH=${FINDHAP_INDEX_MIN_LENGTH})
@@ -103,7 +118,7 @@ add_executable(findhap src/launcher.cpp
     $<TARGET_OBJECTS:findhap-dynamic-standard-engine>
     $<TARGET_OBJECTS:findhap-dynamic-low-memory-engine>)
 target_link_libraries(findhap PRIVATE OpenMP::OpenMP_CXX)
-set(TURBOHAP_VERSION_LABEL "${PROJECT_VERSION}" CACHE STRING "Version label recorded by turbohap-build-info")
+set(TURBOHAP_VERSION_LABEL "${PROJECT_VERSION}" CACHE STRING "Version label displayed by turbohap-build-info")
 execute_process(COMMAND git rev-parse HEAD WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE TURBOHAP_SOURCE_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
 if(NOT TURBOHAP_SOURCE_COMMIT)
@@ -159,14 +174,13 @@ target_link_libraries(turbohap-validate-inputs PRIVATE OpenMP::OpenMP_CXX)
 install(TARGETS turbohap-validate-inputs RUNTIME DESTINATION bin)
 install(FILES LICENSE README.md MACOS.md CITATION.cff CHANGELOG.md SHA256SUMS
     PUBLIC_PACKAGE_FILES.json DESTINATION share/doc/turbohap)
-install(DIRECTORY docs examples DESTINATION share/doc/turbohap
-    PATTERN "__pycache__" EXCLUDE)
+install(DIRECTORY docs examples DESTINATION share/doc/turbohap PATTERN "__pycache__" EXCLUDE)
 
 include(cmake/PythonFixtureBuild.cmake)
 
 include(CTest)
 if(BUILD_TESTING)
-    foreach(test_name input_validation map_validation conflict_scan phase_buffer genotype_cache packed_genotypes genotype_workspace low_memory_storage pedigree_conflict pedigree_crossovers ordered_crossovers pedigree_rematch population_signature population_minimum ordered_scan lm_ordered integer_output library_output output_streams cpu_policy row_schedule)
+    foreach(test_name input_validation map_validation conflict_scan phase_buffer genotype_cache packed_genotypes genotype_workspace low_memory_storage pedigree_conflict pedigree_crossovers ordered_crossovers pedigree_rematch population_signature predicate_order population_minimum ordered_scan lm_ordered integer_output library_output output_streams cpu_policy row_schedule workload_vectors bit_extract haplotype_metadata haplotype_metadata_order library_peaks progress_clock)
         add_executable(test_${test_name} tests/test_${test_name}.cpp)
         target_link_libraries(test_${test_name} PRIVATE OpenMP::OpenMP_CXX)
         # Release builds must retain checks, including cache/storage assertions.
@@ -203,13 +217,34 @@ if(BUILD_TESTING)
     endif()
     findhap_kernel_test(word_major_standard population_minimum FINDHAP_ORDERED_LAYOUT=1)
     findhap_kernel_test(word_major_lm lm_ordered FINDHAP_ORDERED_LAYOUT=1)
+    findhap_kernel_test(lm_adaptive lm_adaptive FINDHAP_LM_ADAPTIVE_POSITIONS=1
+        FINDHAP_LOW_MEMORY=1 FINDHAP_LM_ORDERED_BYTES=4194304)
+    findhap_kernel_test(word_major_lm_adaptive lm_adaptive FINDHAP_LM_ADAPTIVE_POSITIONS=1
+        FINDHAP_LOW_MEMORY=1 FINDHAP_LM_ORDERED_BYTES=4194304 FINDHAP_ORDERED_LAYOUT=1)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm64|aarch64)$")
+        findhap_kernel_test(pop_final_scan population_final_scan FINDHAP_TEST_POP_FINAL_SCAN_NEON=1)
+        target_compile_options(test_pop_final_scan PRIVATE
+            -UFINDHAP_POP_FINAL_SCAN_NEON -DFINDHAP_POP_FINAL_SCAN_NEON=1)
         findhap_kernel_test(neon_sampled_full population_signature FINDHAP_POP_ENCODE=5 FINDHAP_POP_FULL=2)
+        findhap_kernel_test(neon_reused_signature population_signature
+            FINDHAP_POP_ENCODE=5 FINDHAP_POP_FULL=2
+            FINDHAP_POP_COMPRESS_SIGNATURE=1 FINDHAP_POP_FUSED_VALIDITY=1)
         findhap_kernel_test(neon_packed_text packed_genotypes FINDHAP_NEON_PACK=2 FINDHAP_NEON_TEXT=1)
         findhap_kernel_test(neon_ordered_scan ordered_scan FINDHAP_ORDERED_SCAN_NEON=1 FINDHAP_ORDERED_SCAN_ORDER=1)
     endif()
     find_package(Python3 3.11 COMPONENTS Interpreter QUIET)
     if(Python3_Interpreter_FOUND)
+        add_test(NAME workload_policy COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_SOURCE_DIR}/tests/test_workload_policy.py --compiler ${CMAKE_CXX_COMPILER})
+        add_test(NAME amd_workload_policy COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_SOURCE_DIR}/tests/test_amd_workload_policy.py --compiler ${CMAKE_CXX_COMPILER})
+        set(stdout_default legacy)
+        if(FINDHAP_MODERN_STDOUT_DEFAULT)
+            set(stdout_default modern)
+        endif()
+        add_test(NAME stdout_modes COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_SOURCE_DIR}/tests/test_stdout_modes.py --binary $<TARGET_FILE:findhap>
+            --default ${stdout_default})
         foreach(suite pedigree deep_pedigree)
             add_test(NAME ${suite}_differential COMMAND ${Python3_EXECUTABLE}
                 ${CMAKE_SOURCE_DIR}/tests/run_reference_tests.py --suite ${suite}

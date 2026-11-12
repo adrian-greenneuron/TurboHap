@@ -187,9 +187,38 @@ def main():
         actual = {key: int(policy.get(policy[key], policy[key])) for key in expected}
         assert actual == expected, (name, actual, expected)
         records.append(dict(case=name, definitions=definitions, selected=actual))
+    # This exact closing scan follows the architecture independently of the
+    # earlier CPU-specific bundles and the workload-profile opt-in.
+    final_scan_cases = [
+        ('final_scan_portable', [], 0),
+        ('final_scan_x86', linux_x86 + avx, 0),
+        ('final_scan_ARM32_NEON', ['__arm__=1', '__ARM_NEON=1'], 0),
+        ('final_scan_NEON_without_ARM64', ['__ARM_NEON=1'], 0),
+        ('final_scan_ARM64_without_NEON', ['__aarch64__=1'], 0),
+        ('final_scan_generic_ARM64_NEON', ['__aarch64__=1', '__ARM_NEON=1'], 1),
+        ('final_scan_ARM64_alias', ['__arm64__=1', '__ARM_NEON=1'], 1),
+        ('final_scan_Spark', gb10_defs, 1),
+        ('final_scan_ARM_C4A', v2_defs, 1),
+        ('final_scan_Apple_without_model',
+         ['__APPLE__=1', '__aarch64__=1', '__ARM_NEON=1'], 1),
+        ('final_scan_Apple_M4_Pro', apple_defs, 1),
+        ('final_scan_no_workload_profile', linux_arm + ['FINDHAP_WORKLOAD_OPTIMISATIONS=0'], 1),
+        ('final_scan_Spark_explicit_disable', gb10_defs + ['FINDHAP_POP_FINAL_SCAN_NEON=0'], 0),
+        ('final_scan_C4A_explicit_disable', v2_defs + ['FINDHAP_POP_FINAL_SCAN_NEON=0'], 0),
+        ('final_scan_Apple_explicit_disable', apple_defs + ['FINDHAP_POP_FINAL_SCAN_NEON=0'], 0),
+        ('final_scan_explicit_enable', linux_arm + ['FINDHAP_POP_FINAL_SCAN_NEON=1'], 1),
+    ]
+    for name, definitions, expected in final_scan_cases:
+        policy = preprocess(a.compiler, header, definitions)
+        actual = int(policy['FINDHAP_POP_FINAL_SCAN_NEON'])
+        if actual != expected:
+            raise RuntimeError(f'{name}: final scan {actual}, expected {expected}')
+        records.append(dict(case=name, definitions=definitions,
+                            selected=dict(FINDHAP_POP_FINAL_SCAN_NEON=actual)))
     if a.record:
         a.record.write_text(json.dumps(records, indent=2) + '\n')
-    print(f'PASS: {len(cases)} native profiles/overrides; tested Linux bundle GB10/V2/Granite/Turin; native NEON/AVX retained')
+    print(f'PASS: {len(cases)} native profiles/overrides and {len(final_scan_cases)} '
+          'ARM64 final-scan policies; native NEON/AVX retained')
 
 
 if __name__ == '__main__':

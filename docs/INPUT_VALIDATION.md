@@ -1,6 +1,6 @@
 # Checking TurboHap input files
 
-Green Neuron AI · TurboHap v1.4.0
+Green Neuron AI · TurboHap v1.5.0
 
 `turbohap-validate-inputs` examines the complete supported input set before
 inference. It collects structural errors and cross-file inconsistencies into
@@ -11,11 +11,13 @@ It does not repair data or open inference result files.
 The tool is separate from `findhap`: the ordinary exhaustive inference checks,
 standard/LM implementations and native CPU policies are unchanged. Running the
 audit is an additional preparation step; it does not disable inference checks.
-The audit is supplied with TurboHap v1.4.0.
+The audit was introduced in v1.4.0 and is retained in v1.5.0.
 
 ## Build and run
 
-From the extracted source directory, using the normal build:
+From the extracted source directory, using the normal Linux build below.
+On macOS, first follow [installation](INSTALL.md#macos-apple-silicon) and use
+`build-macos` in place of `build`:
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++

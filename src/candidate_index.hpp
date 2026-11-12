@@ -7,6 +7,7 @@
 #include <vector>
 #include "platform_policy.hpp"
 #include "neon_bits.hpp"
+#include "bit_extract.hpp"
 #ifndef FINDHAP_LM_ORDERED_BYTES
 #define FINDHAP_LM_ORDERED_BYTES 0
 #endif
@@ -68,6 +69,15 @@ private:
     std::array<uint8_t, 64> byte_positions_{};
 #endif
     std::array<int, 64> positions_{};
+#if FINDHAP_POP_COMPRESS_SIGNATURE && FINDHAP_POP_FULL && !FINDHAP_POP_COMPLETE
+    findhap_bit_extract::Selector selectors_[2];
+#endif
+#if FINDHAP_POP_X86_PEXT && FINDHAP_POP_FULL && !FINDHAP_POP_COMPLETE
+    uint64_t selected_masks_[2] = {};
+#endif
+#if (FINDHAP_POP_COMPRESS_SIGNATURE || FINDHAP_POP_X86_PEXT) && FINDHAP_POP_FULL && !FINDHAP_POP_COMPLETE
+    unsigned low_selected_ = 0;
+#endif
 #if FINDHAP_POP_FULL && FINDHAP_POP_COMPACT
     struct StoredSignature {
         uint64_t zero=0, two=0;
@@ -95,6 +105,25 @@ public:
 #if FINDHAP_POP_ENCODE >= 2
         length_ = length;
 #endif
+#if (FINDHAP_POP_COMPRESS_SIGNATURE || FINDHAP_POP_X86_PEXT) && FINDHAP_POP_FULL && !FINDHAP_POP_COMPLETE
+        if (length > 64 && length <= 128) {
+            uint64_t low = 0, high = 0;
+            for (int k = 0; k < width_; ++k) {
+                if (positions_[k] < 64) {
+                    low |= uint64_t(1) << positions_[k];
+                    ++low_selected_;
+                } else {
+                    high |= uint64_t(1) << (positions_[k] - 64);
+                }
+            }
+#if FINDHAP_POP_COMPRESS_SIGNATURE
+            selectors_[0].prepare(low); selectors_[1].prepare(high);
+#endif
+#if FINDHAP_POP_X86_PEXT
+            selected_masks_[0] = low; selected_masks_[1] = high;
+#endif
+        }
+#endif
 #if FINDHAP_POP_ENCODE == 2
         for (int k=0; k<width_; ++k) {
             gather_positions_[k] = std::min(positions_[k], std::max(0,length-4));
@@ -121,19 +150,34 @@ public:
         if (length_ <= 128) {
             result.full_valid = true;
             int q = 0;
+#if FINDHAP_POP_FUSED_VALIDITY && !FINDHAP_POP_COMPLETE
+            uint8x16_t invalid_seen = vdupq_n_u8(0);
+#endif
             for (; q + 16 <= length_; q += 16) {
                 const auto values = vld1q_s8(alleles + q);
                 const auto zero = findhap_neon::lane_mask(vceqq_s8(values, vdupq_n_s8(0)));
                 const auto two = findhap_neon::lane_mask(vceqq_s8(values, vdupq_n_s8(2)));
+#if FINDHAP_POP_FUSED_VALIDITY && !FINDHAP_POP_COMPLETE
+                // Reinterpreting signed invalid bytes as unsigned also rejects
+                // negative alleles. Reduce once after all full vector loads.
+                invalid_seen = vorrq_u8(invalid_seen, vcgtq_u8(
+                    vreinterpretq_u8_s8(values), vdupq_n_u8(2)));
+#else
                 const auto invalid = findhap_neon::lane_mask(vorrq_u8(
                     vcltq_s8(values, vdupq_n_s8(0)), vcgtq_s8(values, vdupq_n_s8(2))));
+#endif
                 result.full_zero[q / 64] |= uint64_t(zero) << (q % 64);
                 result.full_two[q / 64] |= uint64_t(two) << (q % 64);
+#if !FINDHAP_POP_FUSED_VALIDITY || FINDHAP_POP_COMPLETE
                 result.full_valid = result.full_valid && !invalid;
+#endif
 #if FINDHAP_POP_COMPLETE
                 if (contiguous_) result.invalid |= uint64_t(invalid) << q;
 #endif
             }
+#if FINDHAP_POP_FUSED_VALIDITY && !FINDHAP_POP_COMPLETE
+            result.full_valid = vmaxvq_u8(invalid_seen) == 0;
+#endif
             for (; q < length_; ++q) {
                 const int value = alleles[q];
                 result.full_zero[q / 64] |= uint64_t(value == 0) << (q % 64);
@@ -147,6 +191,15 @@ public:
                 result.zero = result.full_zero[0]; result.two = result.full_two[0];
                 return result;
             }
+#if FINDHAP_POP_COMPRESS_SIGNATURE && !FINDHAP_POP_COMPLETE
+            // The exact planes already contain all original sampled alleles.
+            // Reuse them instead of loading and gathering those bytes again.
+            result.zero = selectors_[0].extract(result.full_zero[0]) |
+                (selectors_[1].extract(result.full_zero[1]) << low_selected_);
+            result.two = selectors_[0].extract(result.full_two[0]) |
+                (selectors_[1].extract(result.full_two[1]) << low_selected_);
+            return result;
+#endif
         }
 #endif
 #if FINDHAP_POP_ENCODE == 5 && defined(__ARM_NEON)
@@ -191,8 +244,12 @@ public:
 #if FINDHAP_POP_FULL
             result.full_zero[0] = uint64_t(_mm512_cmpeq_epi8_mask(values,_mm512_setzero_si512())) & first_mask;
             result.full_two[0] = uint64_t(_mm512_cmpeq_epi8_mask(values,_mm512_set1_epi8(2))) & first_mask;
+#if FINDHAP_POP_FUSED_VALIDITY
+            result.full_valid = !_mm512_cmp_epu8_mask(values,_mm512_set1_epi8(2),_MM_CMPINT_GT);
+#else
             result.full_valid = !(_mm512_cmpgt_epi8_mask(values,_mm512_set1_epi8(2)) |
                                   _mm512_cmpgt_epi8_mask(_mm512_setzero_si512(),values));
+#endif
 #endif
             if (length_ > 64) {
                 const uint64_t second_mask = length_ == 128 ? UINT64_MAX : (uint64_t(1)<<(length_-64))-1;
@@ -200,8 +257,28 @@ public:
 #if FINDHAP_POP_FULL
                 result.full_zero[1] = uint64_t(_mm512_cmpeq_epi8_mask(second,_mm512_setzero_si512())) & second_mask;
                 result.full_two[1] = uint64_t(_mm512_cmpeq_epi8_mask(second,_mm512_set1_epi8(2))) & second_mask;
+#if FINDHAP_POP_FUSED_VALIDITY
+                result.full_valid = result.full_valid && !_mm512_cmp_epu8_mask(second,_mm512_set1_epi8(2),_MM_CMPINT_GT);
+#else
                 result.full_valid = result.full_valid && !(_mm512_cmpgt_epi8_mask(second,_mm512_set1_epi8(2)) |
                                   _mm512_cmpgt_epi8_mask(_mm512_setzero_si512(),second));
+#endif
+#endif
+#if FINDHAP_POP_FULL && !FINDHAP_POP_COMPLETE && (FINDHAP_POP_X86_PEXT || FINDHAP_POP_COMPRESS_SIGNATURE)
+                // Both paths select exactly the existing sampled positions
+                // from full bitplanes, preserving their increasing bit order.
+#if FINDHAP_POP_X86_PEXT
+                result.zero = _pext_u64(result.full_zero[0],selected_masks_[0]) |
+                    (_pext_u64(result.full_zero[1],selected_masks_[1]) << low_selected_);
+                result.two = _pext_u64(result.full_two[0],selected_masks_[0]) |
+                    (_pext_u64(result.full_two[1],selected_masks_[1]) << low_selected_);
+#else
+                result.zero = selectors_[0].extract(result.full_zero[0]) |
+                    (selectors_[1].extract(result.full_zero[1]) << low_selected_);
+                result.two = selectors_[0].extract(result.full_two[0]) |
+                    (selectors_[1].extract(result.full_two[1]) << low_selected_);
+#endif
+                return result;
 #endif
                 values = _mm512_permutex2var_epi8(values, _mm512_loadu_si512(byte_positions_.data()), second);
             }

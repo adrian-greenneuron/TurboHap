@@ -1,5 +1,149 @@
 #pragma once
 #include "macos_build_profile.hpp"
+#ifndef FINDHAP_WORKLOAD_OPTIMISATIONS
+#define FINDHAP_WORKLOAD_OPTIMISATIONS 0
+#endif
+// Keep the existing Spark opt-in independent of the qualified Intel profile.
+#if FINDHAP_WORKLOAD_OPTIMISATIONS && defined(__linux__) && defined(__ARM_NEON) && defined(FINDHAP_NATIVE_GB10) && FINDHAP_NATIVE_GB10
+#define TURBOHAP_NEON_WORKLOAD_PROFILE 1
+#else
+#define TURBOHAP_NEON_WORKLOAD_PROFILE 0
+#endif
+// 9 November: native Granite Rapids qualification. Require every ISA used by
+// this profile; generic targets and other processor families retain defaults.
+#if defined(__linux__) && defined(__x86_64__) && defined(__graniterapids__) && defined(__AVX2__) && defined(__AVX512BW__) && defined(__AVX512VBMI__) && defined(__BMI2__)
+#define TURBOHAP_NATIVE_INTEL_WORKLOAD_PROFILE 1
+#else
+#define TURBOHAP_NATIVE_INTEL_WORKLOAD_PROFILE 0
+#endif
+// Native Turin, including GCC13's znver4 identification. Require the
+// established VP2INTERSECT discriminator and every ISA in the tested bundle.
+#if defined(__linux__) && defined(__x86_64__) && (defined(__znver4__) || defined(__znver5__)) && defined(__AVX512VP2INTERSECT__) && defined(__AVX2__) && defined(__AVX512F__) && defined(__AVX512BW__) && defined(__AVX512VBMI__) && defined(__BMI2__)
+#define TURBOHAP_NATIVE_AMD_WORKLOAD_PROFILE 1
+#else
+#define TURBOHAP_NATIVE_AMD_WORKLOAD_PROFILE 0
+#endif
+#if TURBOHAP_NATIVE_INTEL_WORKLOAD_PROFILE || TURBOHAP_NATIVE_AMD_WORKLOAD_PROFILE
+#define TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE 1
+#else
+#define TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE 0
+#endif
+#if TURBOHAP_NEON_WORKLOAD_PROFILE || TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE
+#define TURBOHAP_WORKLOAD_PROFILE 1
+#else
+#define TURBOHAP_WORKLOAD_PROFILE 0
+#endif
+// 8 November: use the qualified demand-zero library metadata on native Linux
+// Spark and qualified Intel/AMD in both engines, at every maxhap.
+#ifndef FINDHAP_LIBRARY_METADATA
+#if (defined(__linux__) && defined(__ARM_NEON) && defined(FINDHAP_NATIVE_GB10) && FINDHAP_NATIVE_GB10) || TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE
+#define FINDHAP_LIBRARY_METADATA 1
+#else
+#define FINDHAP_LIBRARY_METADATA 0
+#endif
+#endif
+#ifndef FINDHAP_METADATA_CALLOC
+#define FINDHAP_METADATA_CALLOC 1
+#endif
+#ifndef FINDHAP_METADATA_CHUNK
+#define FINDHAP_METADATA_CHUNK 1
+#endif
+#ifndef FINDHAP_PEDIGREE_VECTOR_BASE
+#define FINDHAP_PEDIGREE_VECTOR_BASE TURBOHAP_WORKLOAD_PROFILE
+#endif
+#ifndef FINDHAP_POP_FINAL_SCAN_NEON
+// The exact final validation/fill scan needs ARM64 NEON, not a CPU model or OS.
+// An explicit zero retains the scalar scan for differential qualification.
+#if (defined(__aarch64__) || defined(__arm64__)) && defined(__ARM_NEON)
+#define FINDHAP_POP_FINAL_SCAN_NEON 1
+#else
+#define FINDHAP_POP_FINAL_SCAN_NEON 0
+#endif
+#endif
+#ifndef FINDHAP_POP_VECTOR_SEGMENT
+#define FINDHAP_POP_VECTOR_SEGMENT TURBOHAP_WORKLOAD_PROFILE
+#endif
+#ifndef FINDHAP_POP_COMPRESS_SIGNATURE
+#define FINDHAP_POP_COMPRESS_SIGNATURE TURBOHAP_NEON_WORKLOAD_PROFILE
+#endif
+#ifndef FINDHAP_POP_FUSED_VALIDITY
+#if TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE
+#define FINDHAP_POP_FUSED_VALIDITY 1
+#else
+#define FINDHAP_POP_FUSED_VALIDITY TURBOHAP_NEON_WORKLOAD_PROFILE
+#endif
+#endif
+#ifndef FINDHAP_PROGENY_SEGMENT_OWNED
+#define FINDHAP_PROGENY_SEGMENT_OWNED TURBOHAP_WORKLOAD_PROFILE
+#endif
+#ifndef FINDHAP_LIBRARY_ACTIVE_BOUND
+#define FINDHAP_LIBRARY_ACTIVE_BOUND TURBOHAP_WORKLOAD_PROFILE
+#endif
+#ifndef FINDHAP_PEDIGREE_NEON_NEAR
+#define FINDHAP_PEDIGREE_NEON_NEAR TURBOHAP_NEON_WORKLOAD_PROFILE
+#endif
+// Native qualified x86 backends; explicit zero retains the earlier implementation.
+// 2 selects the existing AVX2 conflict predicate, 3 selects AVX-512BW.
+#ifndef FINDHAP_POP_CONFLICT_BACKEND
+#if TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE
+#define FINDHAP_POP_CONFLICT_BACKEND 2
+#else
+#define FINDHAP_POP_CONFLICT_BACKEND 0
+#endif
+#endif
+#if FINDHAP_POP_CONFLICT_BACKEND != 0 && FINDHAP_POP_CONFLICT_BACKEND != 2 && FINDHAP_POP_CONFLICT_BACKEND != 3
+#error "FINDHAP_POP_CONFLICT_BACKEND must be 0, 2 or 3"
+#endif
+#if FINDHAP_POP_CONFLICT_BACKEND == 2 && !defined(__AVX2__)
+#error "AVX2 population conflicts require an AVX2 native target"
+#endif
+#if FINDHAP_POP_CONFLICT_BACKEND == 3 && !defined(__AVX512BW__)
+#error "AVX-512 population conflicts require an AVX-512BW native target"
+#endif
+// Independently measured x86 ports. Other native profiles retain zero.
+#ifndef FINDHAP_PEDIGREE_CONFLICT_BACKEND
+#if TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE
+#define FINDHAP_PEDIGREE_CONFLICT_BACKEND 3
+#else
+#define FINDHAP_PEDIGREE_CONFLICT_BACKEND 0
+#endif
+#endif
+#ifndef FINDHAP_POP_SEGMENT_BACKEND
+#if TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE
+#define FINDHAP_POP_SEGMENT_BACKEND 2
+#else
+#define FINDHAP_POP_SEGMENT_BACKEND 0
+#endif
+#endif
+#ifndef FINDHAP_PEDIGREE_FREQUENCY_BACKEND
+#if TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE
+#define FINDHAP_PEDIGREE_FREQUENCY_BACKEND 2
+#else
+#define FINDHAP_PEDIGREE_FREQUENCY_BACKEND 0
+#endif
+#endif
+#if (FINDHAP_PEDIGREE_CONFLICT_BACKEND != 0 && FINDHAP_PEDIGREE_CONFLICT_BACKEND != 2 && FINDHAP_PEDIGREE_CONFLICT_BACKEND != 3) || (FINDHAP_POP_SEGMENT_BACKEND != 0 && FINDHAP_POP_SEGMENT_BACKEND != 2 && FINDHAP_POP_SEGMENT_BACKEND != 3) || (FINDHAP_PEDIGREE_FREQUENCY_BACKEND != 0 && FINDHAP_PEDIGREE_FREQUENCY_BACKEND != 2 && FINDHAP_PEDIGREE_FREQUENCY_BACKEND != 3)
+#error "x86 workload backends must be 0, 2 or 3"
+#endif
+#if (FINDHAP_PEDIGREE_CONFLICT_BACKEND == 2 || FINDHAP_POP_SEGMENT_BACKEND == 2 || FINDHAP_PEDIGREE_FREQUENCY_BACKEND == 2) && !defined(__AVX2__)
+#error "AVX2 workload backends require an AVX2 native target"
+#endif
+#if (FINDHAP_PEDIGREE_CONFLICT_BACKEND == 3 || FINDHAP_POP_SEGMENT_BACKEND == 3 || FINDHAP_PEDIGREE_FREQUENCY_BACKEND == 3) && !defined(__AVX512BW__)
+#error "AVX-512 workload backends require an AVX-512BW native target"
+#endif
+#ifndef FINDHAP_POP_X86_PEXT
+#if TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE
+#define FINDHAP_POP_X86_PEXT 1
+#else
+#define FINDHAP_POP_X86_PEXT 0
+#endif
+#endif
+#if FINDHAP_POP_X86_PEXT && !defined(__BMI2__)
+#error "PEXT signature extraction requires a BMI2 native target"
+#endif
+#ifndef FINDHAP_LM_ADAPTIVE_POSITIONS
+#define FINDHAP_LM_ADAPTIVE_POSITIONS TURBOHAP_WORKLOAD_PROFILE
+#endif
 // One source tree, native compile-time selection. Build on the target CPU.
 // Keep unqualified instruction sets out of portable targets. This does not
 // make a -march=native executable portable to less capable processors.
@@ -74,11 +218,13 @@
 #define FINDHAP_PEDIGREE_CHROMOSOMES 1
 #endif
 #ifndef FINDHAP_PEDIGREE_EARLY_REJECT
-#define FINDHAP_PEDIGREE_EARLY_REJECT 0
+#define FINDHAP_PEDIGREE_EARLY_REJECT TURBOHAP_WORKLOAD_PROFILE
 #endif
 #ifndef FINDHAP_PEDIGREE_MASK_BACKEND
 #if defined(__AVX2__)
 #define FINDHAP_PEDIGREE_MASK_BACKEND 2
+#elif TURBOHAP_WORKLOAD_PROFILE
+#define FINDHAP_PEDIGREE_MASK_BACKEND (TURBOHAP_WORKLOAD_PROFILE ? 4 : 0)
 #else
 #define FINDHAP_PEDIGREE_MASK_BACKEND 0
 #endif
@@ -90,7 +236,11 @@
 #define FINDHAP_PEDIGREE_SERIAL_FINAL 0
 #endif
 
-#if TURBOHAP_APPLE_M4_PROFILE
+#if TURBOHAP_NATIVE_INTEL_WORKLOAD_PROFILE
+#define TURBOHAP_PLATFORM_POLICY "Intel Granite Rapids / native byte matching and demand-zero library"
+#elif TURBOHAP_NATIVE_AMD_WORKLOAD_PROFILE
+#define TURBOHAP_PLATFORM_POLICY "AMD Turin / native byte matching and demand-zero library"
+#elif TURBOHAP_APPLE_M4_PROFILE
 #define TURBOHAP_PLATFORM_POLICY "Apple M4 Pro / bounded ordered pedigree and active library"
 #elif defined(__znver3__) && defined(__AVX2__)
 #define TURBOHAP_PLATFORM_POLICY "AMD Zen 3 / AVX2 gather"
@@ -206,7 +356,11 @@
 #endif
 
 #ifndef FINDHAP_ORDERED_SCAN_ORDER
+#if TURBOHAP_WORKLOAD_PROFILE
+#define FINDHAP_ORDERED_SCAN_ORDER (TURBOHAP_WORKLOAD_PROFILE ? 2 : 0)
+#else
 #define FINDHAP_ORDERED_SCAN_ORDER 0
+#endif
 #endif
 #ifndef FINDHAP_ORDERED_SCAN_NEON
 #define FINDHAP_ORDERED_SCAN_NEON 0
