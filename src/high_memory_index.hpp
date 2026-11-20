@@ -9,6 +9,20 @@
 #ifndef FINDHAP_POP_MINIMUM
 #define FINDHAP_POP_MINIMUM 0
 #endif
+// Modified build: AVX2 scan of 256 candidates per step, with the filtered
+// block kept between calls of one search (see MODIFICATIONS.md). The filters
+// are independent Boolean rejections, so the earliest surviving position is
+// unchanged.
+#ifndef FINDHAP_MOD_SCAN
+#if defined(__linux__) && defined(__AVX2__) && !FINDHAP_ORDERED_LAYOUT && !FINDHAP_ORDERED_SCAN_ORDER && !FINDHAP_ORDERED_SCAN_NEON
+#define FINDHAP_MOD_SCAN 1
+#else
+#define FINDHAP_MOD_SCAN 0
+#endif
+#endif
+#if FINDHAP_MOD_SCAN
+#include <immintrin.h>
+#endif
 
 // Population-pass-local lookup in the original order positions. Allele planes
 // reject only known opposite alleles. A range-minimum tree retains the earliest
@@ -20,6 +34,14 @@ class OrderedCandidateLookup {
     const int* frequencies_ = nullptr;
     std::vector<int> positions_;
     std::vector<uint64_t> zero_, two_, active_, minima_, slot_zero_, slot_two_;
+
+#if FINDHAP_MOD_SCAN
+    // Filtered candidates of one 256-position block for one query. Any change
+    // of a signature or of the active set clears it.
+    mutable uint64_t cache_zero_ = 0, cache_two_ = 0;
+    mutable long cache_block_ = -1;
+    mutable uint64_t cache_bits_[4] = {};
+#endif
 
     static uint64_t frequency_key(int frequency, int position) {
         return (uint64_t(uint32_t(frequency) ^ 0x80000000u) << 32) | uint32_t(position);
@@ -48,6 +70,9 @@ class OrderedCandidateLookup {
     }
 
     void set_signature(int position, uint64_t zero, uint64_t two) {
+#if FINDHAP_MOD_SCAN
+        cache_block_ = -1;
+#endif
         const size_t word = size_t(position - 1) / 64;
         const uint64_t bit = uint64_t(1) << ((position - 1) % 64);
         const size_t words = active_.size();
@@ -102,6 +127,9 @@ public:
                 minima_[node] = std::min(minima_[node * 2], minima_[node * 2 + 1]);
         }
         if (count == count_) return true;
+#if FINDHAP_MOD_SCAN
+        cache_block_ = -1;
+#endif
         if (count > capacity_) {
             capacity_ = 64;
             while (capacity_ < count) capacity_ *= 2;
@@ -164,6 +192,49 @@ public:
         if (order_[first] &&
             !((query_zero & slot_two_[first - 1]) | (query_two & slot_zero_[first - 1])))
             return first;
+#if FINDHAP_MOD_SCAN
+        if (active_.size() >= 4) {
+            const size_t words = active_.size();
+            const long final_block = long(last - 1) / 256;
+            for (long block = long(first - 1) / 256; block <= final_block; ++block) {
+                uint64_t bits[4];
+                if (block == cache_block_ && query_zero == cache_zero_ && query_two == cache_two_) {
+                    bits[0] = cache_bits_[0]; bits[1] = cache_bits_[1];
+                    bits[2] = cache_bits_[2]; bits[3] = cache_bits_[3];
+                } else {
+                    const size_t word = size_t(block) * 4;
+                    __m256i candidates = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(&active_[word]));
+                    uint64_t zero_sites = query_zero, two_sites = query_two;
+                    while ((zero_sites | two_sites) && !_mm256_testz_si256(candidates, candidates)) {
+                        if (zero_sites) {
+                            candidates = _mm256_andnot_si256(_mm256_loadu_si256(reinterpret_cast<const __m256i*>(
+                                &two_[size_t(__builtin_ctzll(zero_sites)) * words + word])), candidates);
+                            zero_sites &= zero_sites - 1;
+                        }
+                        if (two_sites) {
+                            candidates = _mm256_andnot_si256(_mm256_loadu_si256(reinterpret_cast<const __m256i*>(
+                                &zero_[size_t(__builtin_ctzll(two_sites)) * words + word])), candidates);
+                            two_sites &= two_sites - 1;
+                        }
+                    }
+                    _mm256_storeu_si256(reinterpret_cast<__m256i*>(bits), candidates);
+                    if (!(bits[0] | bits[1] | bits[2] | bits[3])) continue;
+                    cache_block_ = block; cache_zero_ = query_zero; cache_two_ = query_two;
+                    cache_bits_[0] = bits[0]; cache_bits_[1] = bits[1];
+                    cache_bits_[2] = bits[2]; cache_bits_[3] = bits[3];
+                }
+                const long base = block * 256;
+                for (int lane = 0; lane < 4; ++lane) {
+                    uint64_t value = bits[lane];
+                    const long lane_base = base + lane * 64;
+                    if (long(first - 1) >= lane_base + 64) continue;
+                    if (long(first - 1) > lane_base) value &= UINT64_MAX << (long(first - 1) - lane_base);
+                    if (value) return std::min(last + 1, int(lane_base + __builtin_ctzll(value) + 1));
+                }
+            }
+            return last + 1;
+        }
+#endif
 #if (FINDHAP_ORDERED_SCAN_ORDER || FINDHAP_ORDERED_SCAN_NEON) && !FINDHAP_ORDERED_LAYOUT
         return findhap_ordered_scan::next(first,last,active_.size(),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
 #elif FINDHAP_ORDERED_LAYOUT && FINDHAP_ORDERED_SCAN_ORDER

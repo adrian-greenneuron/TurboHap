@@ -1,5 +1,28 @@
 # TurboHap
 
+> **Unofficial modified build: TurboHap 1.5.0-modified.2.** This package is
+> the official TurboHap 1.5.0 by Adrian Carr (Green Neuron AI) with speed and
+> memory changes for generic Linux clusters. Result files are byte-for-byte
+> identical to the official 1.5.0 on every dataset tested. It is not a
+> release by the TurboHap author, and the TurboHap licence applies in full.
+>
+> - What changed and how it was checked: [MODIFICATIONS.md](MODIFICATIONS.md)
+> - Version history: [CHANGELOG.md](CHANGELOG.md)
+> - Containers, environment variables and HPC use:
+>   [hpc/README.en.md](hpc/README.en.md) (English),
+>   [hpc/README.md](hpc/README.md) (Italian)
+>
+> Quick start with the container image:
+>
+> ```sh
+> gunzip -c turbohap-1.5.0-modified.2-docker.tar.gz | docker load
+> docker run --rm -v "$RUNNING_DIR":/data -e FINDHAP_DIR=/data \
+>     -e OMP_NUM_THREADS=16 turbohap:1.5.0-modified.2
+> ```
+>
+> The rest of this README, including its benchmarks, is the author's and
+> describes the official TurboHap 1.5.0.
+
 <p align="center">
   <img src="docs/assets/turbohap-logo.png" alt="TurboHap" width="820">
 </p>

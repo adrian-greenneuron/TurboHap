@@ -32,8 +32,18 @@ public:
     void allocate(size_t bytes) {
         release();
         if (!bytes) return;
-        void* memory = mmap(nullptr, bytes, PROT_READ | PROT_WRITE,
-                            MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        // Rows are written only when a haplotype is added, so only the pages
+        // in use become resident. MAP_NORESERVE keeps a large maxhap (most of
+        // the reservation is never touched) from being refused up front by
+        // the kernel's overcommit heuristic. Without the flag it is retried.
+        void* memory = MAP_FAILED;
+#ifdef MAP_NORESERVE
+        memory = mmap(nullptr, bytes, PROT_READ | PROT_WRITE,
+                      MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
+#endif
+        if (memory == MAP_FAILED)
+            memory = mmap(nullptr, bytes, PROT_READ | PROT_WRITE,
+                          MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
         if (memory == MAP_FAILED) throw std::bad_alloc();
         data_ = static_cast<int8_t*>(memory); bytes_ = bytes;
     }

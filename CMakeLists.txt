@@ -118,7 +118,7 @@ add_executable(findhap src/launcher.cpp
     $<TARGET_OBJECTS:findhap-dynamic-standard-engine>
     $<TARGET_OBJECTS:findhap-dynamic-low-memory-engine>)
 target_link_libraries(findhap PRIVATE OpenMP::OpenMP_CXX)
-set(TURBOHAP_VERSION_LABEL "${PROJECT_VERSION}" CACHE STRING "Version label displayed by turbohap-build-info")
+set(TURBOHAP_VERSION_LABEL "${PROJECT_VERSION}-modified.2" CACHE STRING "Version label displayed by turbohap-build-info")
 execute_process(COMMAND git rev-parse HEAD WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     OUTPUT_VARIABLE TURBOHAP_SOURCE_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
 if(NOT TURBOHAP_SOURCE_COMMIT)

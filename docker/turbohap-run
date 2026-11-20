@@ -1,0 +1,177 @@
+#!/bin/bash
+# turbohap-run: start TurboHap with settings taken from environment variables.
+#
+# Folder and threads
+#   FINDHAP_DIR        data folder with inputs; outputs are written here
+#                      (default: current directory)
+#   FINDHAP_THREADS    number of threads; if unset OMP_NUM_THREADS is used,
+#                      and if that is unset too, every CPU available
+#   FINDHAP_LOW_MEMORY 1 = TurboHap LM (less RAM, temporary disk files)
+#
+# TurboHap 1.4+ options (unset = TurboHap's default)
+#   FINDHAP_INPUT_VALIDATION  strict (default) | warn   -> --input-validation=
+#   FINDHAP_CPU_POLICY        auto (default) | inherit | performance -> --cpu-policy=
+#   FINDHAP_ROW_SCHEDULE      auto (default) | static | dynamic -> --row-schedule=
+#   FINDHAP_VALIDATE_ONLY     1 = only check the inputs with turbohap-validate-inputs
+#                             (no inference); FINDHAP_VALIDATE_ARGS adds its
+#                             options, e.g. "--report-prefix /data/audit_chr7"
+#
+# File names (same variables as the original findhap_v3 container). Each may
+# be a name or a path; relative paths are taken from FINDHAP_DIR. Unset
+# variables mean the standard FindHap name.
+#   inputs : fparams (findhap.options)  fped (pedigree.file)
+#            fgeno (genotypes.txt)      fxhsome (chromosome.data)
+#            fhappriors (hap.listpriors) fhapfoundpriors (hap.foundpriors)
+#            fhap (hap.Xseg; read as a prior when priors are given, then
+#                  rewritten as an output, as in FindHap)
+#   outputs: fgenout (genotypes.filled) fhapout (haplotypes.txt)
+#            fhapfill (hap.filled)      fhapinh (hap.inherit)
+#            fhaplist (hap.list)        fhapfd (hap.found)
+#            fcross (cross.overs)       fnotdist (do_not_distrib)
+#            fallele (allele.frequency)
+#
+# Arguments, if given, are passed to findhap unchanged and replace
+# FINDHAP_THREADS / FINDHAP_LOW_MEMORY (e.g. "turbohap-run 16 --low-memory").
+# "turbohap-run --help" prints this text and the findhap help.
+set -euo pipefail
+
+FINDHAP="${FINDHAP_BINARY:-findhap}"
+
+if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
+    sed -n '2,/^set -euo/p' "$0" | sed '$d' | sed 's/^# \{0,1\}//'
+    echo
+    exec "$FINDHAP" --help
+fi
+
+DIR="${FINDHAP_DIR:-$PWD}"
+[ -d "$DIR" ] || { echo "turbohap-run: FINDHAP_DIR=$DIR is not a folder" >&2; exit 2; }
+DIR="$(cd "$DIR" && pwd -P)"
+
+# ---- threads and mode -----------------------------------------------------
+if [ $# -gt 0 ]; then
+    args=("$@")
+    threads="${1}"
+else
+    threads="${FINDHAP_THREADS:-${OMP_NUM_THREADS:-$(nproc)}}"
+    case "$threads" in
+        ''|*[!0-9]*|0) echo "turbohap-run: invalid thread count '$threads'" >&2; exit 2 ;;
+    esac
+    [ "$threads" -gt 99 ] && threads=99   # findhap reads at most two digits
+    args=("$threads")
+    case "${FINDHAP_LOW_MEMORY:-0}" in
+        1|yes|true|TRUE) args+=("--low-memory") ;;
+        0|no|false|FALSE|'') ;;
+        *) echo "turbohap-run: FINDHAP_LOW_MEMORY must be 0 or 1" >&2; exit 2 ;;
+    esac
+    [ -n "${FINDHAP_INPUT_VALIDATION:-}" ] && args+=("--input-validation=$FINDHAP_INPUT_VALIDATION")
+    [ -n "${FINDHAP_CPU_POLICY:-}" ] && args+=("--cpu-policy=$FINDHAP_CPU_POLICY")
+    [ -n "${FINDHAP_ROW_SCHEDULE:-}" ] && args+=("--row-schedule=$FINDHAP_ROW_SCHEDULE")
+fi
+VALIDATE=0
+case "${FINDHAP_VALIDATE_ONLY:-0}" in
+    1|yes|true|TRUE) VALIDATE=1 ;;
+    0|no|false|FALSE|'') ;;
+    *) echo "turbohap-run: FINDHAP_VALIDATE_ONLY must be 0 or 1" >&2; exit 2 ;;
+esac
+VALIDATOR="${FINDHAP_VALIDATOR:-turbohap-validate-inputs}"
+read -r -a validate_args <<<"${FINDHAP_VALIDATE_ARGS:-}"
+# findhap uses the smaller of OMP_NUM_THREADS and its thread argument.
+case "$threads" in ''|*[!0-9]*) ;; *) export OMP_NUM_THREADS="$threads" ;; esac
+export OMP_DYNAMIC="${OMP_DYNAMIC:-FALSE}" LC_ALL="${LC_ALL:-C}"
+
+# ---- file names --------------------------------------------------------------
+# variable : standard name : kind (in = required input, opt = optional input,
+#                                  xseg = prior input and output, out = output)
+MAP="fparams:findhap.options:in fped:pedigree.file:in fgeno:genotypes.txt:in
+fxhsome:chromosome.data:in fhappriors:hap.listpriors:opt fhapfoundpriors:hap.foundpriors:opt
+fhap:hap.Xseg:xseg fgenout:genotypes.filled:out fhapout:haplotypes.txt:out
+fhapfill:hap.filled:out fhapinh:hap.inherit:out fhaplist:hap.list:out fhapfd:hap.found:out
+fcross:cross.overs:out fnotdist:do_not_distrib:out fallele:allele.frequency:out"
+
+resolve() {   # path relative to DIR -> absolute path
+    case "$1" in /*) printf '%s\n' "$1" ;; *) printf '%s\n' "$DIR/$1" ;; esac
+}
+
+all_standard=1
+for entry in $MAP; do
+    IFS=: read -r var std kind <<<"$entry"
+    value="${!var:-}"
+    if [ -n "$value" ] && [ "$(resolve "$value")" != "$DIR/$std" ]; then all_standard=0; fi
+done
+
+if [ "$VALIDATE" = 1 ]; then
+    echo "turbohap-run: folder $DIR, input check only ($VALIDATOR ${validate_args[*]:-})" >&2
+else
+    echo "turbohap-run: folder $DIR, findhap ${args[*]}" >&2
+fi
+
+if [ "$all_standard" = 1 ]; then
+    # Standard names: run in place, exactly like running findhap there.
+    cd "$DIR"
+    if [ "$VALIDATE" = 1 ]; then
+        exec "$VALIDATOR" --directory "$DIR" "${validate_args[@]}"
+    fi
+    exec "$FINDHAP" "${args[@]}"
+fi
+
+# ---- custom names: private run folder on the same filesystem ------------------
+WORK="$(mktemp -d "$DIR/.turbohap-run-XXXXXX")"
+cleanup() { rm -rf "$WORK"; }
+trap cleanup EXIT
+
+priors=0
+for entry in $MAP; do
+    IFS=: read -r var std kind <<<"$entry"
+    [ "$kind" = opt ] || continue
+    src="$(resolve "${!var:-$std}")"
+    if [ -e "$src" ]; then ln -s "$(readlink -f "$src")" "$WORK/$std"; priors=1; fi
+done
+for entry in $MAP; do
+    IFS=: read -r var std kind <<<"$entry"
+    src="$(resolve "${!var:-$std}")"
+    case "$kind" in
+        in)
+            [ -e "$src" ] || { echo "turbohap-run: input $var=${!var:-$std} not found ($src)" >&2; exit 2; }
+            ln -s "$(readlink -f "$src")" "$WORK/$std" ;;
+        xseg)
+            # Read as a prior only with prior haplotypes; findhap rewrites it.
+            if [ "$priors" = 1 ] && [ -e "$src" ]; then cp "$src" "$WORK/$std"; fi ;;
+    esac
+done
+
+if [ "$VALIDATE" = 1 ]; then
+    # Check the inputs under their standard names; relative report paths are
+    # taken from FINDHAP_DIR. No inference, nothing to move afterwards.
+    set +e
+    ( cd "$DIR" && "$VALIDATOR" --directory "$WORK" "${validate_args[@]}" )
+    status=$?
+    set -e
+    exit "$status"
+fi
+
+set +e
+( cd "$WORK" && "$FINDHAP" "${args[@]}" )
+status=$?
+set -e
+
+# Move every file findhap wrote to its requested name (same filesystem: a
+# rename, no copy). Files without a variable keep their standard name.
+moved=0
+for f in "$WORK"/* "$WORK"/.[!.]*; do
+    [ -e "$f" ] || continue
+    [ -L "$f" ] && continue                       # input links
+    name="$(basename "$f")"
+    case "$name" in .findhap-*) continue ;; esac  # LM scratch (already unlinked)
+    target="$DIR/$name"
+    for entry in $MAP; do
+        IFS=: read -r var std kind <<<"$entry"
+        if [ "$std" = "$name" ] && { [ "$kind" = out ] || [ "$kind" = xseg ]; }; then
+            target="$(resolve "${!var:-$std}")"
+        fi
+    done
+    mkdir -p "$(dirname "$target")"
+    mv -f "$f" "$target"
+    moved=$((moved + 1))
+done
+echo "turbohap-run: findhap exit status $status, $moved output files written" >&2
+exit "$status"
