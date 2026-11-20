@@ -21,6 +21,7 @@ struct Request {
     bool dynamic_teams;
     bool explicit_placement;
     bool explicit_schedule;
+    bool automatic_binding = false;
 };
 struct Decision {
     Policy policy = Policy::automatic;
@@ -49,6 +50,10 @@ inline Decision decide(Policy policy, const Request& request, const placement::T
     }
     if (request.explicit_placement || request.explicit_schedule) {
         d.reason = "explicit OpenMP settings; retain static rows";
+        return d;
+    }
+    if (request.automatic_binding) {
+        d.reason = "automatic OpenMP binding; retain static rows";
         return d;
     }
     auto fallback = [&](const char* reason) {
@@ -153,7 +158,7 @@ inline Decision resolve(Policy policy, const Request& request, const std::vector
     if (request.threads < 1 || request.thread_limit < 1)
         throw std::runtime_error("row scheduling requires positive thread limits");
     if (policy != Policy::automatic || request.dynamic_teams ||
-        request.explicit_placement || request.explicit_schedule)
+        request.explicit_placement || request.explicit_schedule || request.automatic_binding)
         return decide(policy, request, placement::Topology{{}, allowed, {}, false});
 #if defined(__APPLE__) && defined(__aarch64__)
     if (findhap::macos::enabled && findhap::macos::topology.performance > 0) {

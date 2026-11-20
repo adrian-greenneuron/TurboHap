@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include "packed_genotypes.hpp"
 #include "platform_policy.hpp"
+#include "scratch_file.hpp"
 
 namespace low_memory_plus {
 
@@ -78,15 +79,7 @@ public:
         if (bytes > static_cast<uint64_t>(std::numeric_limits<off_t>::max()))
             throw std::length_error("TurboHap LM scratch file is too large");
         char name[] = ".findhap-lmp-XXXXXX";
-        fd_ = mkstemp(name);
-        if (fd_ < 0) fail("create");
-        if (unlink(name) != 0 || ftruncate(fd_, bytes) != 0) {
-            const int error = errno;
-            close(fd_);
-            fd_ = -1;
-            errno = error;
-            fail("prepare");
-        }
+        fd_ = findhap::open_scratch_file(name, bytes, "TurboHap LM scratch");
 #if defined(__APPLE__) && FINDHAP_DARWIN_NOCACHE
         if (fcntl(fd_, F_NOCACHE, 1) != 0) {
             const int error = errno; close(fd_); fd_ = -1; errno = error; fail("disable file cache");

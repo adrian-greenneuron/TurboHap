@@ -22,6 +22,15 @@ class ExternalGenotypeCache {
 #endif
     low_memory_plus::BackingFile file_;
     size_t buffer_capacity_ = 0, append_bytes_ = 0, append_start_ = 0;
+#if FINDHAP_LM_WRITEBACK_BATCH_BYTES > 0
+    size_t pending_append_bytes_ = 0;
+
+    void sync_append() {
+        if (!pending_append_bytes_) return;
+        file_.discard(true, append_start_ - pending_append_bytes_, pending_append_bytes_);
+        pending_append_bytes_ = 0;
+    }
+#endif
     size_t first_ = 0, end_ = 0;
     bool sealed_ = false, gathered_ = false;
     std::vector<SelectedRow> selected_;
@@ -54,8 +63,14 @@ class ExternalGenotypeCache {
         if (!append_bytes_) return;
         file_.transfer(true, buffer_.get(), append_bytes_, append_start_);
         write_bytes_ += append_bytes_;
+#if FINDHAP_LM_WRITEBACK_BATCH_BYTES > 0
+        pending_append_bytes_ += append_bytes_;
+        append_start_ += append_bytes_;
+        if (pending_append_bytes_ >= FINDHAP_LM_WRITEBACK_BATCH_BYTES) sync_append();
+#else
         file_.discard(true, append_start_, append_bytes_);
         append_start_ += append_bytes_;
+#endif
         append_bytes_ = 0;
     }
 
@@ -111,6 +126,9 @@ public:
     void finish_append() {
         if (!complete()) throw std::length_error("incomplete original-genotype cache");
         flush_append();
+#if FINDHAP_LM_WRITEBACK_BATCH_BYTES > 0
+        sync_append();
+#endif
         sealed_ = true;
         release_batch();
     }

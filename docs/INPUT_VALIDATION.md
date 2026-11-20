@@ -1,6 +1,6 @@
 # Checking TurboHap input files
 
-Green Neuron AI · TurboHap v1.5.0
+Green Neuron AI · TurboHap v1.6.0
 
 `turbohap-validate-inputs` examines the complete supported input set before
 inference. It collects structural errors and cross-file inconsistencies into
@@ -8,16 +8,12 @@ one report, rather than stopping at the first bad record. Each issue has a
 count, an explanation, suggested corrective action and example locations.
 It does not repair data or open inference result files.
 
-The tool is separate from `findhap`: the ordinary exhaustive inference checks,
-standard/LM implementations and native CPU policies are unchanged. Running the
-audit is an additional preparation step; it does not disable inference checks.
-The audit was introduced in v1.4.0 and is retained in v1.5.0.
+The auditor and the imputation program serve different purposes. The auditor lists issues across the dataset in one pass. During inference, TurboHap checks inputs before opening result files and stops when an unsafe record prevents a reliable run. A warning for duplicate genotype rows in the auditor requires action: both inference modes reject a second row for the same pedigree animal, even under `--input-validation=warn`. Resolve the duplicate in the original export and rerun the audit. Both programs require a finite `errate` between 0 and 1 inclusive.
 
 ## Build and run
 
 From the extracted source directory, using the normal Linux build below.
-On macOS, first follow [installation](INSTALL.md#macos-apple-silicon) and use
-`build-macos` in place of `build`:
+On macOS, the [Mac installer](../MACOS.md) also installs the auditor. Use `~/Applications/TurboHap/bin/turbohap-validate-inputs` in place of the Linux build path:
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++
@@ -165,7 +161,7 @@ bad cell. It can be large and is optional.
   a writer deliberately preserving metadata. Revalidate after editing.
 - Reports can reveal private cohort properties even without animal identifiers.
   Keep real-data reports and detailed TSVs local/private; do not add them to Git
-  or public releases. The committed regression fixtures are synthetic.
+  or public releases.
 
 
 ## Inference checks and diagnostic warning mode

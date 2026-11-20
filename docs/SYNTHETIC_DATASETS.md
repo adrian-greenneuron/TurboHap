@@ -1,12 +1,10 @@
-# Synthetic datasets for the TurboHap v1.5.0 benchmarks
+# Synthetic datasets for the TurboHap benchmarks
 
-The benchmarks use nine simulated dairy-cattle genotype datasets. The workloads
+TurboHap v1.5.0 and v1.6.0 use the same nine simulated dairy-cattle genotype datasets. The workloads
 combine uneven marker spacing, two overlapping SNP panels, multigeneration
 pedigrees, incomplete parent records and genotyping errors. These features
 give phasing and imputation a mix of densely and sparsely observed segments,
-related animals and uncertain calls. The release documents the methods and
-aggregate results; it does not distribute the datasets, simulation truth or
-generation code.
+related animals and uncertain calls. The software distribution includes the methods and aggregate run measurements. The separate Zenodo deposit contains the exact benchmark inputs and expected output checksums. Simulation truth and generator code are excluded from that deposit.
 
 The exact inputs for all nine benchmarks are available on Zenodo. [Dataset DOI 10.5281/zenodo.24144449](https://doi.org/10.5281/zenodo.24144449)
 

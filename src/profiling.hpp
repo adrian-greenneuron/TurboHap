@@ -6,6 +6,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <mutex>
+#include <array>
+#include <atomic>
+#include <cstring>
 #include <sys/resource.h>
 #include <time.h>
 #include <omp.h>
@@ -35,8 +38,15 @@ inline double seconds(clockid_t clock) {
 }
 
 struct Sink {
+    struct Lane {
+        std::array<char, 65536> bytes{};
+        size_t used = 0;
+        std::array<unsigned long long, 4> counts{};
+    };
     FILE* file = nullptr;
     std::mutex mutex;
+    std::array<Lane, 128> lanes;
+    std::atomic<unsigned> next{0};
     Sink() {
         const char* path = std::getenv("FINDHAP_TRACE_PATH");
         if (path && *path) {
@@ -44,7 +54,33 @@ struct Sink {
             if (!file) { std::perror("profile trace"); std::exit(100); }
         }
     }
-    ~Sink() { if (file) std::fclose(file); }
+    unsigned lane() {
+        thread_local const unsigned index = next.fetch_add(1);
+        if (index >= lanes.size()) std::abort();
+        return index;
+    }
+    void flush(Lane& buffer) {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (buffer.used) std::fwrite(buffer.bytes.data(), 1, buffer.used, file);
+        buffer.used = 0;
+    }
+    void append(const char* record, size_t length) {
+        auto& buffer = lanes[lane()];
+        if (length > buffer.bytes.size()) std::abort();
+        if (length > buffer.bytes.size() - buffer.used) flush(buffer);
+        std::memcpy(buffer.bytes.data() + buffer.used, record, length);
+        buffer.used += length;
+    }
+    ~Sink() {
+        if (!file) return;
+        // Inference teams and the asynchronous writer have finished before exit.
+        for (unsigned i = 0; i < next; ++i) {
+            flush(lanes[i]);
+            const auto& c = lanes[i].counts;
+            std::fprintf(file, "{\"phase\":\"work_counts\",\"lane\":%u,\"population_rows\":%llu,\"eligible_rows\":%llu,\"candidate_visits\":%llu,\"exact_scans\":%llu}\n", i,c[0],c[1],c[2],c[3]);
+        }
+        std::fclose(file);
+    }
 };
 
 inline Sink& sink() { static Sink writer; return writer; }
@@ -80,8 +116,8 @@ public:
         rusage usage{};
         getrusage(RUSAGE_SELF, &usage);
         auto& writer = sink();
-        std::lock_guard<std::mutex> lock(writer.mutex);
-        std::fprintf(writer.file,
+        char record[1024];
+        const int length = std::snprintf(record, sizeof record,
             "{\"phase\":\"%s\",\"step\":%d,\"iteration\":%d,\"segment\":%d,"
             "\"chromosome\":%d,\"loci\":%d,\"thread\":%d,\"logical_cpu\":%d,"
             "\"start_monotonic_seconds\":%.9f,\"end_monotonic_seconds\":%.9f,"
@@ -89,7 +125,8 @@ public:
             "\"haplotypes_before\":%d,\"haplotypes_after\":%d,\"process_peak_rss_so_far_kib\":%ld}\n",
             phase_, step_, iteration_, segment_, chromosome_, loci_, omp_get_thread_num(), logical_cpu(),
             wall_, end, end - wall_, cpu, before_, haplotypes_ ? *haplotypes_ : 0, peak_kib(usage));
-        std::fflush(writer.file);
+        if (length < 0 || size_t(length) >= sizeof record) std::abort();
+        writer.append(record, size_t(length));
         active_ = false;
     }
     ~Scope() { stop(); }
@@ -97,7 +134,9 @@ public:
 }
 #define FINDHAP_PHASE(name, ...) findhap_profile::Scope name(__VA_ARGS__)
 #define FINDHAP_END(name) name.stop()
+#define FINDHAP_COUNT(category) (++findhap_profile::sink().lanes[findhap_profile::sink().lane()].counts[category])
 #else
 #define FINDHAP_PHASE(name, ...)
 #define FINDHAP_END(name)
+#define FINDHAP_COUNT(category)
 #endif

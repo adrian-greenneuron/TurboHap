@@ -4,6 +4,7 @@
 findhap [threads] [--low-memory] [--cpu-policy=auto|inherit|performance]
         [--row-schedule=auto|static|dynamic] [--cpu-info]
         [--input-validation=strict|warn] [--stdout=legacy|modern]
+        [--x-progeny=legacy|corrected] [--processing-scope=legacy|chromosome]
 ```
 
 The default is TurboHap. Add `--low-memory` to select TurboHap LM. Both modes
@@ -15,27 +16,30 @@ Without it, Linux uses the OpenMP default, which can be set with
 `OMP_NUM_THREADS`. Native Apple Silicon automatic mode instead uses the
 performance-core count when neither a positional count nor `OMP_NUM_THREADS`
 is supplied. The original two-character interpretation is retained:
-`100` means 10, and `010` means 1. Extra unrecognised arguments after the count
-are ignored; recognised launcher flags are handled wherever they appear.
+`100` means 10, and `010` means 1. TurboHap still ignores trailing positional
+arguments from legacy FindHap commands. Unrecognised long options such as
+`--lowmemory` cause an error. Use `findhap --help` to check the option names.
 
 ## CPU placement
 
 Normal commands use `--cpu-policy=auto`; no extra flag is needed. On a native
 Linux DGX Spark build, this discovers the complete faster core group and uses it
-when the effective thread count fits. Workers can move within that group;
-TurboHap does not add thread binding on Spark. A larger request retains the
-available allocation rather than silently reducing the thread count.
+when the effective thread count fits. A larger request retains the available
+allocation. When TurboHap controls placement and there are fewer chromosomes
+than threads, it pins workers for the main pedigree pass and gives faster cores
+more segment work. It restores each worker's prior affinity after the pass.
 
 Existing CPU restrictions and explicit `OMP_PLACES`, `OMP_PROC_BIND` or
 `GOMP_CPU_AFFINITY` settings take precedence in automatic mode, including
 `OMP_PROC_BIND=FALSE`. Busy cores remain eligible: this policy does not reserve
 cores or manage other jobs.
 
-Native Milan, Cascade Lake and qualified Turin builds default to
+Qualifying AMD EPYC Milan, Genoa and Turin builds, and Intel Cascade Lake builds, default to
 `OMP_PROC_BIND=close` and `OMP_PLACES=cores` when no explicit placement setting
 is supplied. The launcher re-executes before either engine starts so OpenMP
 initialises with those settings. The thread count and allowed CPU allocation
-are preserved. Other CPU profiles retain their applicable placement policy.
+are preserved. `--cpu-info` shows the proposed OpenMP binding on those builds.
+The run's CPU diagnostic reports whether the OpenMP runtime activated it.
 
 On native Apple Silicon, automatic mode discovers the host's performance-core
 count and requests user-initiated quality of service for the main thread and
@@ -57,9 +61,7 @@ precedence. Caller wait-policy settings are also retained. See the
   record of every worker's execution.
 
 Both modes use the same placement policy. Rebuild on the intended CPU so the
-applicable native instruction paths are selected. TurboHap works on Apple Silicon
-Macs, Linux ARM64 and Intel/AMD x86-64 systems; detailed platform benchmarking
-is ongoing.
+applicable native instruction paths are selected. The [installation guide](INSTALL.md#processor-support) lists supported compiler and processor combinations.
 
 ## Row scheduling
 
@@ -105,6 +107,10 @@ rejects blank calls because they can indicate shifted columns. Do not trim
 records or reorder markers.
 The [bundled example](../examples/README.md) illustrates the complete formats.
 
+Supply at most one genotype record per pedigree animal. A duplicate stops a
+run in both strict and warn modes and reports the two line numbers in
+`genotypes.txt`. Resolve duplicate calls in the input export before rerunning.
+
 Optional `hap.listpriors`, `hap.foundpriors` and `hap.Xseg` contain compatible
 prior haplotype results. Keep these files together when reusing a reference or
 imputing additional animals. Their formats and interpretation are unchanged.
@@ -139,7 +145,7 @@ repeat counts such as `4*1`, and real exponents such as `4D-3`.
 | `genout` | 0 suppresses `genotypes.filled`; 1 keeps codes 0–5; 2 selects calls 0/1/2; 5 changes unresolved 3/4 to 5. |
 | `damout` | 0 excludes non-genotyped ancestors from selected outputs; 1 includes eligible females; 2 also includes eligible males. |
 | `listout` | 0 suppresses named library outputs; 1 writes all stages; −1 writes only the final stage. |
-| `errate` | Single-precision allowed mismatch fraction used in haplotype matching and inheritance correction. |
+| `errate` | Finite single-precision mismatch fraction from 0 to 1 inclusive. Used in haplotype matching and inheritance correction. |
 
 The supplied example keeps `maxhap=50000`. Both modes honour the value in
 your `findhap.options`; the limit applies to each segment independently.
@@ -150,7 +156,7 @@ provides approximately **31.1% more haplotype capacity** while retaining
 IDs, based on the requested capacity even if fewer haplotypes are ultimately
 found. The identifiers and output formats remain unchanged.
 
-In v1.5.0, supported native profiles avoid eagerly committing all unused
+Supported native builds avoid eagerly committing all unused
 frequency/order metadata to physical RAM. This weakens the relationship between
 maxhap and peak resident memory; it does not remove every capacity-dependent
 allocation. Other buffers and the genotype data still need memory. Crossing the
@@ -177,6 +183,9 @@ Additional files created by the original options combinations, including
 The normal-completion message is `Program findhap completed normally`.
 Inspect completion and errors as well as output files: an old output file can
 survive a run that writes no records to it.
+After a reported failure, files written by that run can contain incomplete
+results. Earlier files that received no new data keep their contents. Use a
+different working directory to retain a previous result set when rerunning.
 
 ## Choosing a mode
 
@@ -184,7 +193,7 @@ TurboHap prioritises speed with resident genotype storage and indexed haplotype
 search. TurboHap LM reduces resident storage using chromosome processing,
 packed data, bounded working buffers and temporary disk files. It retains the
 same output decisions and bytes, at the cost of more I/O and some additional
-computation. See the [measured trade-offs](turbohap_benchmarks_111126.md).
+computation. See the [measured trade-offs](turbohap_benchmarks_201126.md).
 
 Peak memory depends on pedigree size, marker counts, chromosome lengths,
 haplotype diversity, options and threads. TurboHap LM also uses temporary disk
@@ -196,6 +205,54 @@ storage when reducing RAM use is the objective.
 Strict exhaustive genotype-layout and marker-map checks run by default before inference opens legacy output files. The separate `turbohap-validate-inputs --directory DIR` auditor collects structural and cross-file issues across every ordinary input and active prior file. See [input validation](INPUT_VALIDATION.md) for report examples, error counts, line/byte locations, optional JSON/TSV and privacy guidance.
 
 Use `--input-validation=warn` only to investigate safe legacy layout ambiguities. It retains the old blank/trailing-digit interpretation and can leave misaligned calls; unsafe inputs still fail. Warning detail is capped at five examples, followed by counts. Normal runs should retain the strict default.
+
+## Correcting X-dependent progeny scoring
+
+When FindHap v3 infers haplotypes for an ungenotyped male from his offspring,
+the presence of an X-specific chromosome can cause it to score candidate
+haplotypes against the dam's haplotypes alone, even on autosomes. The default
+`--x-progeny=legacy` preserves that behaviour for compatibility.
+
+Use `--x-progeny=corrected` to use the available sire and dam evidence on autosomes
+and diploid pseudoautosomal segments. On X-specific segments, TurboHap uses
+the existing maternal scoring rule. It identifies the X-specific chromosome
+from `XChrom` in `findhap.options`.
+
+```sh
+/path/to/findhap 20 --x-progeny=corrected
+/path/to/findhap 20 --low-memory --x-progeny=corrected
+```
+
+Corrected scoring can change inferred haplotypes, filled genotypes and derived
+result files. TurboHap records its use in the startup diagnostics on stderr.
+[See how the two rules use evidence from a bull’s parents and calves](X_PROGENY.md).
+
+## Processing each chromosome independently
+
+`--processing-scope=legacy` is the default. It uses genome-wide coverage and
+quality scores and writes a single set of results in the working directory.
+
+`--processing-scope=chromosome` uses each chromosome's coverage to decide when
+to include genotyped animals in population matching. It applies the ancestor
+and genotyped-animal output quality filters separately on each chromosome.
+An animal can qualify for reporting on one chromosome and be excluded on
+another. [Follow one cow through the two analyses](PROCESSING_SCOPE.md).
+
+Chromosome scope automatically uses corrected X-progeny scoring. TurboHap
+prints a startup warning and reports whether it overrode an explicit
+`--x-progeny=legacy` request.
+
+```sh
+/path/to/findhap 20 --processing-scope=chromosome
+/path/to/findhap 20 --low-memory --processing-scope=chromosome
+```
+
+TurboHap reads the input as a whole and writes the enabled result files for
+each chromosome under `chromosome-results/chrN/`, where `N` is the chromosome
+number in the input map. Marker and segment indices in those files start at
+one within each chromosome. Start in a directory without an existing `chromosome-results/`. TurboHap refuses to replace a previous result tree. TurboHap publishes `chromosome-results/` after closing all result files.
+
+A multi-chromosome input with active priors cannot run in chromosome scope: the prior supplies only one reference count for the entire map. To use chromosome-specific priors, prepare one chromosome at a time, with its own `hap.listpriors`, `hap.foundpriors` and `hap.Xseg`, then run it separately.
 
 ## Console output and run logs
 
@@ -219,14 +276,12 @@ The previous peak describes that completed dataset/options combination; it is
 not a guarantee for newly added animals or different options. Capacity summaries
 are diagnostic and do not change any of the ten legacy output-file formats.
 
-## Haplotype capacity and memory
+Modern output also states the actual maximum segment length at every stage,
+in loci rather than base pairs. For example, `Step 2 of 3: maximum segment
+length 71 loci` records the rounded value used by the algorithm.
 
-v1.5.0 uses demand-zero library metadata on qualified Spark, Granite Rapids
-and Turin profiles, reducing resident memory for unused capacity. maxhap remains a hard per-segment
-capacity limit: exceeding it still stops the run. Other buffers and the data
-itself still need memory, so allocation growth does not make memory unlimited
-or completely independent of maxhap. LM preserves its lower-memory processing
-path. Qualified native workload profiles support a wider lookup when a 16-bit
-position cannot represent the live indexed entry count; other paths retain a
-compatible fallback. This is distinct from configured-capacity haplotype IDs. Do not choose 65,535 as a universal safe
-limit: necessary capacity depends on the dataset and options.
+## Sizing memory and scratch storage
+
+Choose `maxhap` above the largest **live** haplotype count seen with comparable animals, marker panels and settings. The program still stops when any segment exhausts its capacity. TurboHap sizes its library reservation using the actual rounded segment widths and segment counts at each stage. Size arithmetic uses wide offsets and rejects unsupported capacities before inference opens output files.
+
+LM writes temporary genotype data on the same filesystem as the run directory. For a scratch-space estimate, allow about one byte per four assayed calls for the raw packed cache, plus about one byte per four full-map loci per input genotype record for the expanded working data. Include rounding at segment boundaries and space for the result files. [Scratch-space estimates](INSTALL.md#storage-for-lm)

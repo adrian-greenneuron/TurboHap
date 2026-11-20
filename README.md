@@ -6,8 +6,9 @@
 
 TurboHap phases haplotypes and imputes missing genotypes using the FindHap v3 method.
 If you already use FindHap, you can keep your input files and analysis settings.
-The benchmark outputs matched FindHap byte for byte, with one exception for
-crossover record order.
+The default analysis follows FindHap v3. On the eight benchmark datasets with
+a FindHap control, both programs produced the same result records. Crossover
+records can appear in a different order.
 
 Choose **TurboHap** for the quickest run, or **TurboHap LM** if RAM is limited.
 LM uses temporary disk space to keep memory use down, so it usually takes a little longer.
@@ -18,66 +19,50 @@ Here’s what that choice looked like on a simulated dairy cattle dataset with *
 | Program | Run time | Peak memory |
 | --- | --- | --- |
 | GNU FindHap | 7 h 11 min | 20.9 GiB |
-| TurboHap | 4 min 59 s (86.4× faster) | 18.1 GiB (13.5% reduction) |
-| TurboHap LM | 7 min 12 s (59.9× faster) | 9.6 GiB (53.8% reduction) |
+| TurboHap | 3 min 46 s (114.2× faster) | 14.9 GiB (28.7% reduction) |
+| TurboHap LM | 4 min 51 s (88.8× faster) | 7.5 GiB (64.2% reduction) |
 <!-- OPENING_EXAMPLE_END -->
 
 You can try either mode with the [bundled FindHap example](examples/README.md)
 before running your own data.
 
-## New in v1.5.0
+## New in v1.6.0
 
 <!-- VERSION_COMPARISON_START -->
-- Across [8 matched datasets](docs/turbohap_release_comparison_111126.md), v1.5.0 delivers a **1.22× speedup with 15% lower peak memory** in standard mode and a **1.27× speedup with 20% lower peak memory** in LM compared with v1.4.0. <!-- VERSION_COMPARISON_END -->
-- Optional modern console output provides timestamped progress, phase timings
-  and peak live-haplotype summaries. Legacy console output remains the default.
-- Demand-zero library metadata and active bounds reduce unused-capacity memory
-  on qualified native profiles while preserving the `maxhap` limit.
-- LM supports adaptive 16/32-bit lookup storage for larger haplotype libraries.
-- Population and pedigree matching improvements include native ARM64 NEON and
-  qualified Intel/AMD vector paths, with compatible fallback paths.
-- Integrated Mac improvements preserve metadata and prior-output ordering;
-  the exact NEON final scan is shared across supported ARM64 builds.
+- Across [nine matched datasets](docs/turbohap_release_comparison_201126.md), v1.6.0 delivers a **1.36× speedup with 13% lower peak memory** in Standard and a **1.48× speedup with 15% lower peak memory** in LM compared with v1.5.0. <!-- VERSION_COMPARISON_END -->
+- When X markers are included, FindHap v3 can overlook a bull’s sire when inferring his autosomal haplotypes from his calves. Choose `--x-progeny=corrected` to use both parents on autosomes. [Why the X rule matters, with a worked example](docs/X_PROGENY.md).
+- Choose `--processing-scope=chromosome` when you want coverage, quality scores and result files for each chromosome separately. This setting automatically uses corrected X-progeny scoring. [See why a cow can qualify on chromosome 1 but fall below the cutoff on X](docs/PROCESSING_SCOPE.md).
+- Apple silicon Macs can now build and check TurboHap with one command. Native Linux builds select optimisations for additional Intel, AMD and Arm processors. [See which processor generations are optimised](docs/PROCESSORS.md).
+- The engine reports duplicate genotype rows and malformed pedigree records before inference. It also checks workspace dimensions for very large panels and pedigrees.
 
-See the [release notes](docs/turbohap_release_notes_111126.md) and
-[changelog](CHANGELOG.md) for the complete changes from v1.4.0.
+See [how speed and memory changed from v1.0.0 to v1.6.0](docs/turbohap_release_history_201126.md) across eight matched datasets. The [release notes](docs/turbohap_release_notes_201126.md) and [changelog](CHANGELOG.md) describe the changes since v1.5.0.
 
 ## Performance
 
 <!-- HEADLINE_START -->
-On the 100,000-animal, 20,000-locus dataset, TurboHap ran **116.4× faster** than GNU FindHap.
+On the 250,000-animal, 20,000-locus dataset, TurboHap ran **204.7× faster** than GNU FindHap.
 <!-- HEADLINE_END -->
 
-The new benchmarks use structured cattle pedigrees, public SNP-chip maps,
-uneven chromosome lengths and marker density, mixed-density genotyping,
-missing calls and simulated calling errors. These are more realistic and
-challenging workloads than the older release benchmarks. They are different
-datasets, so the tables are **not a direct version-to-version comparison**.
+These are the same nine simulated dairy-cattle datasets used for v1.5.0. They include uneven marker spacing, overlapping SNP panels, incomplete pedigrees, missing calls and genotyping errors.
 
-All measurements use **20 CPU threads on an NVIDIA DGX Spark**,
-**GCC/gfortran 13.3**, matching inputs and options, and internal NVMe working
-storage. The GPU is not used. Values are arithmetic means of two technical
-repetitions for each TurboHap mode. GNU FindHap has two repetitions for each
-10k, 25k and 100k dataset, and one per 250k dataset. All eight planned
-control datasets are complete; no 1M × 80k control is planned because of time
-and resource limits. Missing values are not estimated.
+Both TurboHap modes ran twice per dataset on an NVIDIA DGX Spark using 20 CPU threads, GCC 13.3 and internal NVMe storage. The tables give arithmetic means. We used the published GNU FindHap controls from v1.5.0, run with GNU Fortran 13.3 and the same inputs, settings and thread count. They have two repetitions per dataset through 100,000 animals and one for each 250,000-animal dataset. The million-animal comparison covers Standard and LM only.
 
-![Elapsed time and peak memory by dataset and program](docs/assets/turbohap_benchmarks_111126.png)
+![Elapsed time and peak memory by dataset and program](docs/assets/turbohap_benchmarks_201126.png)
 
 <!-- BENCHMARK_TABLES_START -->
 ### Runtime
 
 | Genotyped animals × loci | GNU FindHap | TurboHap | Speedup | TurboHap LM | Speedup |
 | --- | --- | --- | --- | --- | --- |
-| 10,000 × 20,000 | 4m 04s | 3.17 s | 77.1× | 4.07 s | 60.0× |
-| 10,000 × 80,000 | 8m 19s | 9.08 s | 55.0× | 14.71 s | 33.9× |
-| 25,000 × 20,000 | 12m 58s | 8.64 s | 90.1× | 10.35 s | 75.2× |
-| 25,000 × 80,000 | 23m 26s | 23.16 s | 60.7× | 36.28 s | 38.8× |
-| 100,000 × 20,000 | 1h 47m 57s | 55.63 s | 116.4× | 1m 02s | 105.0× |
-| 100,000 × 80,000 | 2h 6m 40s | 1m 45s | 72.3× | 2m 38s | 48.1× |
-| 250,000 × 20,000 | 7h 47m 53s | 4m 06s | 114.2× | 4m 25s | 105.8× |
-| 250,000 × 80,000 | 7h 11m 03s | 4m 59s | 86.4× | 7m 12s | 59.9× |
-| 1,000,000 × 80,000 | Not run | 32m 47s | — | 42m 26s | — |
+| 10,000 × 20,000 | 4m 04s | 2.52 s | 96.8× | 3.00 s | 81.6× |
+| 10,000 × 80,000 | 8m 19s | 7.39 s | 67.5× | 10.75 s | 46.4× |
+| 25,000 × 20,000 | 12m 58s | 6.84 s | 113.8× | 7.77 s | 100.2× |
+| 25,000 × 80,000 | 23m 26s | 19.06 s | 73.8× | 25.24 s | 55.7× |
+| 100,000 × 20,000 | 1h 47m 57s | 38.59 s | 167.8× | 42.38 s | 152.8× |
+| 100,000 × 80,000 | 2h 6m 40s | 1m 23s | 91.5× | 1m 46s | 71.6× |
+| 250,000 × 20,000 | 7h 47m 53s | 2m 17s | 204.7× | 2m 25s | 193.0× |
+| 250,000 × 80,000 | 7h 11m 03s | 3m 46s | 114.2× | 4m 51s | 88.8× |
+| 1,000,000 × 80,000 | Not run | 20m 28s | — | 25m 43s | — |
 
 ### Peak memory
 
@@ -85,15 +70,15 @@ Memory in GiB; reductions are relative to GNU FindHap.
 
 | Genotyped animals × loci | GNU FindHap | TurboHap | Reduction | TurboHap LM | Reduction |
 | --- | --- | --- | --- | --- | --- |
-| 10,000 × 20,000 | 2.213 | 0.364 | 83.5% | 0.289 | 86.9% |
-| 10,000 × 80,000 | 8.577 | 1.006 | 88.3% | 0.670 | 92.2% |
-| 25,000 × 20,000 | 2.385 | 0.774 | 67.5% | 0.568 | 76.2% |
-| 25,000 × 80,000 | 9.243 | 2.206 | 76.1% | 1.360 | 85.3% |
-| 100,000 × 20,000 | 3.669 | 2.740 | 25.3% | 1.944 | 47.0% |
-| 100,000 × 80,000 | 12.591 | 7.720 | 38.7% | 4.326 | 65.6% |
-| 250,000 × 20,000 | 8.325 | 7.288 | 12.5% | 5.249 | 37.0% |
-| 250,000 × 80,000 | 20.893 | 18.081 | 13.5% | 9.646 | 53.8% |
-| 1,000,000 × 80,000 | Not run | 85.328 | — | 51.259 | — |
+| 10,000 × 20,000 | 2.213 | 0.340 | 84.6% | 0.263 | 88.1% |
+| 10,000 × 80,000 | 8.577 | 0.875 | 89.8% | 0.577 | 93.3% |
+| 25,000 × 20,000 | 2.385 | 0.724 | 69.6% | 0.530 | 77.8% |
+| 25,000 × 80,000 | 9.243 | 1.877 | 79.7% | 1.153 | 87.5% |
+| 100,000 × 20,000 | 3.669 | 2.546 | 30.6% | 1.791 | 51.2% |
+| 100,000 × 80,000 | 12.591 | 6.444 | 48.8% | 3.510 | 72.1% |
+| 250,000 × 20,000 | 8.325 | 6.206 | 25.5% | 4.627 | 44.4% |
+| 250,000 × 80,000 | 20.893 | 14.887 | 28.7% | 7.482 | 64.2% |
+| 1,000,000 × 80,000 | Not run | 69.382 | — | 38.885 | — |
 <!-- BENCHMARK_TABLES_END -->
 
 Both TurboHap modes matched their reference output files on all nine datasets.
@@ -101,7 +86,7 @@ In the eight comparisons with GNU FindHap, nine files matched byte for byte.
 The tenth, `cross.overs`, contained the same records in a different order.
 See [output compatibility](docs/COMPATIBILITY.md) for how the files were compared.
 
-See the [full benchmark method, figures and individual observations](docs/turbohap_benchmarks_111126.md)
+See the [full benchmark method, figures and individual observations](docs/turbohap_benchmarks_201126.md)
 and [synthetic-dataset recipe](docs/SYNTHETIC_DATASETS.md).
 The exact inputs for all nine benchmarks are available on Zenodo.
 
@@ -111,52 +96,36 @@ Runtime includes reading, computation, buffered writing and LM scratch activity;
 memory is peak process RSS. Performance depends on the data, settings, storage,
 hardware and competing load. Timed runs used the optional modern console mode.
 
-TurboHap works on **Apple Silicon Macs, Linux ARM64 and Intel/AMD x86-64**.
-Detailed benchmarking on these systems is ongoing.
-
 ## Install and run
 
-Build TurboHap v1.5.0 from source. Clone the release tag:
+Download the source ZIP from the v1.6.0 release’s **Assets**. Extract it and open the folder containing `CMakeLists.txt`. The source package includes the small example used to check your installation.
 
-```sh
-git clone --branch v1.5.0 --depth 1 https://github.com/adrian-greenneuron/TurboHap.git
-cd TurboHap
-```
-
-On Ubuntu/Debian Linux, install a C++17 compiler, OpenMP and CMake:
+**Linux, including Intel, AMD and Arm servers.** On Debian or Ubuntu, install the build tools, then build on the computer that will run TurboHap.
 
 ```sh
 sudo apt update
 sudo apt install build-essential cmake python3
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel 2
 ./build/findhap --help
+python3 examples/check_installation.py
 ```
 
-On Apple Silicon macOS, install the Command Line Tools and Homebrew prerequisites:
+**Apple Silicon Mac.** Install Apple’s Command Line Tools and native Homebrew if needed. From the extracted folder, run:
 
 ```sh
-xcode-select --install
-brew install cmake libomp gcc python
+sh tools/install-macos.sh
 ```
 
-Then follow the [Mac build instructions](MACOS.md), which explain compiler
-selection and OpenMP. The optional M4-specific build is separate from the
-general Apple Silicon installation. Other Linux distributions can use their
-equivalent C++/OpenMP and CMake packages. Windows users can use WSL2; native
-Windows builds are not supported.
+The installer builds the software, checks both modes on the example and places the programs in `~/Applications/TurboHap/bin/`. See the [Mac guide](MACOS.md) for the prerequisites and [installation guide](docs/INSTALL.md) for portable builds, Windows through WSL2 and details for other Linux distributions.
 
-Build on the machine where you will run TurboHap. No GPU, CUDA or Fortran
-compiler is required. The executable is called `findhap`. Run it from a
-writable directory containing your input files:
+**Run an analysis.** From a writable directory containing the inputs, supply the path to the installed or built program and your thread count. For example:
 
 ```sh
-/path/to/TurboHap/build/findhap 20
+/path/to/findhap 20
 ```
 
-The number is the requested CPU thread count. See the [thread settings](docs/USAGE.md)
-for platform defaults. Add `--low-memory` to choose TurboHap LM. If you run
-both modes and want to keep both sets of results, use separate run directories.
+Add `--low-memory` for LM. Use separate working directories when keeping results from both modes. The [usage guide](docs/USAGE.md) explains thread selection and the two optional scientific settings.
 
 Inputs are `findhap.options`, `pedigree.file`, `chromosome.data` and
 `genotypes.txt`, plus any active prior files. Run the independent input auditor
@@ -178,18 +147,12 @@ formats. See [console output and run logs](docs/USAGE.md#console-output-and-run-
 - [Installation and platform instructions](docs/INSTALL.md)
 - [Inputs, outputs, CPU policies and options](docs/USAGE.md)
 - [Standalone input validator](docs/INPUT_VALIDATION.md)
-- [Output compatibility](docs/COMPATIBILITY.md)
+- [Output compatibility and verification results](docs/COMPATIBILITY.md)
 - [Small installation example](examples/README.md)
-- [Release qualification](docs/RELEASE_CHECKS.md)
 
 ## Manuscript
 
-The [author manuscript (PDF)](docs/paper/turbohap_manuscript_221026.pdf) and
-[supplementary material](docs/paper/README.md), dated 22 October 2026, describe
-v1.0.0 and its historical datasets. They have not been revised for v1.5.0 and
-have not been peer reviewed. Their historical data are available on
-[Zenodo](https://doi.org/10.5281/zenodo.23566926); these are **not** the new
-datasets used in the tables above.
+The [v1.6.0 manuscript (PDF)](docs/paper/v1.6.0/turbohap_manuscript_201126.pdf) explains how TurboHap accelerates FindHap phasing and imputation and compares runtime and peak memory on nine benchmark datasets. The [supplementary methods (PDF)](docs/paper/v1.6.0/turbohap_supplement_201126.pdf) describe the implementation and output checks and report the runtime and memory ranges. The [original October study and supplements](https://github.com/adrian-greenneuron/TurboHap/tree/v1.5.0/docs/paper) are available with v1.5.0.
 
 ## Licence and commercial use
 
@@ -199,7 +162,8 @@ and consultancy delivered by universities, charities or government
 institutions, even when charges only recover costs. Ordinary research grants
 do not by themselves make academic research commercial.
 
-TurboHap is licensed by **Green Neuron Ltd, trading as Green Neuron AI**.
+The source code is available under the **TurboHap Academic Research Licence**,
+issued by Green Neuron Ltd, trading as Green Neuron AI.
 Using TurboHap gives us no ownership of your data or results. Publications
 must acknowledge TurboHap and the original FindHap method. See the
 [licence](LICENSE), [citation](CITATION.cff) and

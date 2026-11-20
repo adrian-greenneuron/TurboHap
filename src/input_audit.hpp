@@ -240,8 +240,7 @@ inline void Audit::options_file() {
             "The engine skips two physical records after the controls before reading errate.","Restore the labels/blank records and supply a finite error rate between 0 and 1.");
         else {
             try {
-                options.errate=findhap::input_real(std::string(token.text));
-                if(!std::isfinite(options.errate)||options.errate<0||options.errate>1)throw std::runtime_error("range");
+                options.errate=findhap::input_errate(std::string(token.text));
                 if(options.errate>.1f)issue(file,"large_error_rate","warning",physical,token.column,"errate","More than 10% mismatches permitted.",
                     "An unusually high mismatch fraction may reduce matching specificity.","Check that a fraction, rather than a percentage, was supplied.");
             }catch(const std::exception&) {issue(file,"invalid_error_rate","error",physical,token.column,"errate","Expected a finite error-rate fraction between 0 and 1.",

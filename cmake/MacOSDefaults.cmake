@@ -1,26 +1,25 @@
 # Native Mac qualification is independent of the Linux server profiles.
-option(FINDHAP_APPLE_OPTIMISATIONS "Enable the measured native Apple M4 Pro profile" ON)
+option(FINDHAP_APPLE_OPTIMISATIONS "Enable native Apple Silicon optimisations" ON)
 option(FINDHAP_PREFER_LIBOMP "Prefer libomp on the qualified native Mac" ON)
 set(FINDHAP_QUALIFIED_APPLE_M4 FALSE)
-set(FINDHAP_DEFAULT_RELEASE_FLAGS "-O3 -march=native -funroll-loops -flto -ffp-contract=off")
-if(APPLE AND NOT CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(arm64|aarch64)$")
-    execute_process(COMMAND /usr/sbin/sysctl -n machdep.cpu.brand_string
-        OUTPUT_VARIABLE findhap_host_cpu OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET RESULT_VARIABLE findhap_host_status)
-    if(FINDHAP_APPLE_OPTIMISATIONS AND findhap_host_status EQUAL 0 AND findhap_host_cpu STREQUAL "Apple M4 Pro" AND
-            (NOT CMAKE_OSX_ARCHITECTURES OR "${CMAKE_OSX_ARCHITECTURES}" STREQUAL "arm64"))
-        set(FINDHAP_QUALIFIED_APPLE_M4 TRUE)
-        add_compile_definitions(FINDHAP_NATIVE_APPLE_M4PRO=1)
-        message(STATUS "TurboHap: qualified Apple M4 Pro profile; core count is discovered at runtime")
-        if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-            set(FINDHAP_DEFAULT_RELEASE_FLAGS "-O3 -mcpu=apple-m4 -flto -Wl,-mllvm,-threads=2 -ffp-contract=off")
-        endif()
+set(turbohap_default_cpu_flag "-march=native")
+if(turbohap_native_request AND turbohap_apple_cpu AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(turbohap_default_cpu_flag "-mcpu=${turbohap_apple_cpu}")
+endif()
+set(FINDHAP_DEFAULT_RELEASE_FLAGS "-O3 ${turbohap_default_cpu_flag} -funroll-loops -flto -ffp-contract=off")
+if(APPLE AND turbohap_native_request AND FINDHAP_APPLE_OPTIMISATIONS AND turbohap_host_model STREQUAL "m4pro"
+        AND " ${turbohap_host_features} " MATCHES " neon ")
+    set(FINDHAP_QUALIFIED_APPLE_M4 TRUE)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        set(FINDHAP_DEFAULT_RELEASE_FLAGS "-O3 ${turbohap_default_cpu_flag} -flto -Wl,-mllvm,-threads=2 -ffp-contract=off")
     endif()
 endif()
 
 # Respect explicit OpenMP cache settings. Apple Clang needs an external runtime;
 # qualified GNU Mac builds use its tested GOMP-compatible libomp C interface.
-if(APPLE AND (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR
+if(APPLE AND NOT CMAKE_CROSSCOMPILING AND
+        (NOT CMAKE_OSX_ARCHITECTURES OR CMAKE_OSX_ARCHITECTURES STREQUAL CMAKE_HOST_SYSTEM_PROCESSOR) AND
+        (CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR
         (FINDHAP_QUALIFIED_APPLE_M4 AND FINDHAP_PREFER_LIBOMP)) AND
         NOT DEFINED OpenMP_CXX_FLAGS AND NOT DEFINED OpenMP_CXX_LIB_NAMES)
     find_program(findhap_brew brew HINTS /opt/homebrew/bin /usr/local/bin)

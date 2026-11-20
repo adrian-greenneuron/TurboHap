@@ -12,6 +12,8 @@
 #endif
 
 namespace turbohap_output {
+// Non-null input rows contain lookup codes in [0, 5]. The inputs may refer
+// to the same haplotype. The destination is separate from both input rows.
 inline void reconstruct(const int8_t* a, const int8_t* b, int8_t* __restrict__ out,
                         int length, const int table[6][6], const uint8_t* byte_table,
                         bool male_x) {

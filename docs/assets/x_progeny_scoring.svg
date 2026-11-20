@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 960 378" width="960" height="378" role="img" aria-labelledby="title desc">
+  <title id="title">Which parents are consulted when scoring the bull?</title>
+  <desc id="desc">An example with X-specific markers on the map. When the legacy rule carries over, the two parental checks consult the bull’s dam twice on an autosome, in the pseudoautosomal region and on the X-specific segment. Corrected scoring checks the sire and dam on autosomes and in the pseudoautosomal region. Both rules consult the dam twice on this X-specific segment.</desc>
+  <style>
+    text { font-family: 'DejaVu Sans', Arial, sans-serif; fill: #172f47 }
+    .title { font-size: 28px; font-weight: bold }
+    .subtitle { font-size: 17px; fill: #475e72 }
+    .head { font-size: 19px; font-weight: bold }
+    .note { font-size: 15px; fill: #475e72 }
+    .parent { font-size: 17px; font-weight: bold; text-anchor: middle }
+    .plus { font-size: 19px; fill: #617788; text-anchor: middle }
+  </style>
+  <defs>
+    <g id="dam">
+      <rect x="-32" y="-19" width="64" height="36" rx="7" fill="#e1f0ec" stroke="#76a99e"/>
+      <text y="6" class="parent" style="fill:#145e56">Dam</text>
+    </g>
+    <g id="sire">
+      <rect x="-32" y="-19" width="64" height="36" rx="7" fill="#dfecf5" stroke="#749eb8"/>
+      <text y="6" class="parent" style="fill:#225272">Sire</text>
+    </g>
+    <g id="two-dam">
+      <use xlink:href="#dam" transform="translate(-43)"/>
+      <text y="6" class="plus">+</text>
+      <use xlink:href="#dam" transform="translate(43)"/>
+    </g>
+    <g id="both">
+      <use xlink:href="#sire" transform="translate(-43)"/>
+      <text y="6" class="plus">+</text>
+      <use xlink:href="#dam" transform="translate(43)"/>
+    </g>
+  </defs>
+  <rect width="960" height="378" fill="white"/>
+  <text x="24" y="40" class="title">Which parents are consulted when scoring the bull?</text>
+  <text x="24" y="69" class="subtitle">The calves suggest a haplotype. Each pair shows which of the bull’s own parents can add support.</text>
+  <path d="M24 88H936" stroke="#c3d1d9"/>
+  <text x="33" y="125" class="head">Scoring rule</text>
+  <g text-anchor="middle">
+    <text x="350" y="125" class="head">Autosome</text>
+    <text x="350" y="148" class="note">e.g. chromosome 1</text>
+    <text x="582" y="125" class="head">Pseudoautosomal</text>
+    <text x="582" y="148" class="note">Shared region (PAR)</text>
+    <text x="816" y="125" class="head">X-specific</text>
+    <text x="816" y="148" class="note">Single copy in a bull</text>
+  </g>
+
+  <rect x="24" y="166" width="912" height="72" rx="5" fill="#f0f3f5"/>
+  <text x="36" y="195" class="head">Legacy</text>
+  <text x="36" y="218" class="note">X rule carried over</text>
+  <use xlink:href="#two-dam" transform="translate(350 202)"/>
+  <use xlink:href="#two-dam" transform="translate(582 202)"/>
+  <use xlink:href="#two-dam" transform="translate(816 202)"/>
+
+  <rect x="24" y="246" width="912" height="72" rx="5" fill="#f0f3f5"/>
+  <text x="36" y="275" class="head">Corrected</text>
+  <text x="36" y="298" class="note">Decide per segment</text>
+  <use xlink:href="#both" transform="translate(350 282)"/>
+  <use xlink:href="#both" transform="translate(582 282)"/>
+  <use xlink:href="#two-dam" transform="translate(816 282)"/>
+  <text x="24" y="351" class="subtitle">“Dam + Dam” means a match to her haplotype can count twice in this step.</text>
+</svg>

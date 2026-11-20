@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 316" width="880" height="316" role="img" aria-labelledby="title desc">
+  <title id="title">How TurboHap chooses settings for a native build</title>
+  <desc id="desc">TurboHap checks the processor on the analysis computer and what the compiler supports. A matching profile enables family optimisations. Otherwise the build uses general optimisations for the compiler target. Both results can be inspected using the build report.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M1 1 8 5 1 9" fill="none" stroke="#476078" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect width="880" height="316" rx="14" fill="#f8fafb"/>
+  <g font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" fill="#182f46">
+    <text x="440" y="35" font-size="24" font-weight="bold">How TurboHap chooses settings for a native build</text>
+    <rect x="137" y="53" width="606" height="46" rx="9" fill="#203d54"/>
+    <text x="440" y="82" fill="#fff" font-size="18" font-weight="bold">Build on the computer that will run the analysis</text>
+    <g fill="none" stroke="#476078" stroke-width="2.2" stroke-linejoin="round">
+      <path d="M440 99v17H233v15" marker-end="url(#arrow)"/>
+      <path d="M440 116h207v15" marker-end="url(#arrow)"/>
+    </g>
+    <rect x="36" y="137" width="394" height="86" rx="9" fill="#e3f2ee" stroke="#9ec7ba"/>
+    <g fill="#144e46">
+      <text x="233" y="164" font-size="16">Processor and compiler match a profile</text>
+      <text x="233" y="200" font-size="21" font-weight="bold">Use family optimisations</text>
+    </g>
+    <rect x="450" y="137" width="394" height="86" rx="9" fill="#e8eff6" stroke="#afc2d5"/>
+    <g fill="#244967">
+      <text x="647" y="164" font-size="16">No matching profile is available</text>
+      <text x="647" y="200" font-size="21" font-weight="bold">Use general optimisations</text>
+    </g>
+    <g fill="none" stroke="#476078" stroke-width="2.2" stroke-linejoin="round">
+      <path d="M233 223v17h414v-17"/>
+      <path d="M440 240v13" marker-end="url(#arrow)"/>
+    </g>
+    <rect x="137" y="260" width="606" height="41" rx="8" fill="white" stroke="#bbc9d2"/>
+    <text x="440" y="286" font-size="16">See which settings you have with <tspan font-family="DejaVu Sans Mono, monospace">turbohap-build-info --build-info</tspan></text>
+  </g>
+</svg>

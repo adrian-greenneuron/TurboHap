@@ -3,49 +3,20 @@
 **Adrian R. Carr (2026). _TurboHap: accelerating FindHap haplotype phasing and
 genotype imputation while preserving output compatibility._**
 
-Author manuscript, 22 October 2026; not peer reviewed. These are the exact
-manuscript and supplementary files submitted on that date. They describe
-TurboHap v1.0.0 and the seven-dataset DGX Spark benchmark study.
+## v1.6.0 manuscript · 20 November 2026
 
-| File | Contents |
+This author manuscript describes the v1.6.0 implementation and its nine-dataset benchmark study. It has not been peer reviewed.
+
+| Download | Contents |
 | --- | --- |
-| [Manuscript (PDF)](turbohap_manuscript_221026.pdf) | Main article, four figures and two tables |
-| [Supplementary File 1 (PDF)](turbohap_supplementary_material_221026.pdf) | Methods, all 42 benchmark observations, haplotype-library summaries and simulation recipe |
-| [Supplementary File 2 (ZIP)](turbohap_supplementary_archive_221026.zip?raw=true) | Supplementary PDF and Markdown, machine-readable measurements, input/truth and source/build manifests, output-validation records, exact Fortran reference sources, reproduction tools and figures |
-| [SHA256SUMS](SHA256SUMS) | SHA-256 checksums for the three downloads above |
+| [Manuscript (PDF)](v1.6.0/turbohap_manuscript_201126.pdf) | Phasing and imputation methods, six figures and two benchmark tables |
+| [Supplementary methods (PDF)](v1.6.0/turbohap_supplement_201126.pdf) | Implementation details, verification methods and benchmark measurements |
+| [SHA-256 checksums](v1.6.0/SHA256SUMS) | Checksums for both PDFs |
 
-After downloading the three files and `SHA256SUMS` to the same directory,
-verify their identities with:
+Both PDFs include an offline reader containing the cited C++ code, benchmark measurements and verification evidence. To read it offline, save `source-evidence.html` from the attachments panel in either PDF and open it in a browser. The [benchmark results](../turbohap_benchmarks_201126.md) include the individual measurements in CSV and JSON.
 
-```sh
-sha256sum -c SHA256SUMS
-```
+The November manuscript, supplement and figures are © Adrian R. Carr (2026) and are available under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/). The full licence is included in the reader attached to both PDFs. The [TurboHap software licence](../../LICENSE) applies to the source code.
 
-Extract Supplementary File 2 and run `python3 tools/recalculate_benchmarks.py`
-from its top-level directory to verify its internal checksums and recalculate
-the published summaries. This checks the supplied observations; instructions
-for new inference runs are in Section S2 of Supplementary File 1.
+## Original v1.0.0 manuscript · 22 October 2026
 
-## Historical synthetic datasets and simulation truth
-
-These historical datasets are separate from the new v1.5.0 benchmark suite.
-The new datasets and generation code are not part of this release.
-
-All **seven synthetic input datasets and their simulation truth** are publicly
-archived on Zenodo:
-
-**[TurboHap synthetic benchmark datasets and simulation truth —
-doi:10.5281/zenodo.23566926](https://doi.org/10.5281/zenodo.23566926).**
-
-The record contains one compressed archive per dataset, a README, reproduction
-recipe, dataset manifest, archive inventory, SHA-256 checksums and a verification
-script. These large input/truth archives are downloaded separately from Zenodo;
-the supplementary ZIP above contains the compact study records and tools.
-
-## Licences
-
-The manuscript and figures are distributed under
-[Creative Commons Attribution 4.0 International (CC BY 4.0)](https://creativecommons.org/licenses/by/4.0/).
-The Zenodo datasets and simulation truth use CC BY 4.0 as well.
-TurboHap software retains its [software licence](../../LICENSE), and the original
-USDA Fortran reference retains its public-domain attribution.
+The October paper describes TurboHap v1.0.0 and its seven-dataset benchmark. The original manuscript, both supplements and their checksums are available in the [v1.5.0 manuscript archive](https://github.com/adrian-greenneuron/TurboHap/tree/v1.5.0/docs/paper).

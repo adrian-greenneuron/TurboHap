@@ -1,11 +1,21 @@
 #pragma once
+#include "TurboHapConfigIdentity.hpp"
 namespace turbohap_build {
 inline constexpr const char* version = "@TURBOHAP_VERSION_LABEL@";
 inline constexpr const char* source_commit = "@TURBOHAP_SOURCE_COMMIT@";
 inline constexpr const char* source_sha256 = "@TURBOHAP_SOURCE_SHA256@";
 inline constexpr const char* compiler = "@CMAKE_CXX_COMPILER_ID@ @CMAKE_CXX_COMPILER_VERSION@";
 inline constexpr const char* openmp_libraries = "@TURBOHAP_OPENMP_NAMES@";
-inline constexpr const char* flags = "@TURBOHAP_BUILD_FLAGS@";
 inline constexpr const char* features = "@TURBOHAP_COMPILE_DEFINITIONS@";
+inline constexpr const char* target_processor = "@CMAKE_SYSTEM_PROCESSOR@";
+inline constexpr const char* compiler_target = "@CMAKE_CXX_COMPILER_TARGET@";
+inline constexpr const char* mac_architectures = "@CMAKE_OSX_ARCHITECTURES@";
+inline constexpr const char* deployment_target = "@CMAKE_OSX_DEPLOYMENT_TARGET@";
+inline constexpr const char* sdk = "@CMAKE_OSX_SYSROOT@";
+inline constexpr const char* host_model = "@turbohap_host_model@";
+inline constexpr const char* host_identity = "@turbohap_host_identity@";
+inline constexpr const char* host_features = "@turbohap_host_features@";
+inline constexpr const char* profile_reason = "@turbohap_profile_reason@";
+inline constexpr const char* recipe_reason = "@turbohap_recipe_reason@";
 inline constexpr bool source_is_dirty = @TURBOHAP_SOURCE_DIRTY@;
 }

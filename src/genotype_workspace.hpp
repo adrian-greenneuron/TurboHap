@@ -1,6 +1,7 @@
 #pragma once
 #include "packed_genotypes.hpp"
 #include "phase_buffer.hpp"
+#include "scratch_file.hpp"
 
 #include <array>
 #include <algorithm>
@@ -178,19 +179,9 @@ public:
                 input_batch_ = std::min(records_, std::max(size_t(1), staging_budget / std::max(size_t(1), row_bytes)));
                 if (offsets_.back() > static_cast<uint64_t>(std::numeric_limits<off_t>::max()))
                     throw std::length_error("genotype workspace file is too large");
-                // Use the output filesystem, rather than an implicit /tmp
-                // which could be RAM-backed. Unlink immediately, even on error.
+                // Use the output filesystem and unlink the name before writing.
                 char name[] = ".findhap-workspace-XXXXXX";
-                backing_ = mkstemp(name);
-                if (backing_ < 0) io_error("create");
-                if (unlink(name) != 0) {
-                    const int error = errno;
-                    close(backing_); backing_ = -1; errno = error; io_error("unlink");
-                }
-                if (ftruncate(backing_, offsets_.back()) != 0) {
-                    const int error = errno;
-                    close(backing_); backing_ = -1; errno = error; io_error("size");
-                }
+                backing_ = findhap::open_scratch_file(name, offsets_.back(), "genotype workspace");
                 return;
             }
         }

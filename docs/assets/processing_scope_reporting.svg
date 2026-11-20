@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470" width="960" height="470" role="img" aria-labelledby="title desc">
+<title id="title">Which results include cow 10?</title>
+<desc id="desc">Estimated squared-correlation scores at the end of the run. The genome-wide estimate of 0.9379 passes. In chromosome scope the estimates are 0.9867 on chromosome 1, 0.9942 on chromosome 2, and 0.6667 on X. The first two pass the 0.7056 cutoff. The X record is withheld.</desc>
+
+<rect x="0" y="0" width="960" height="470" rx="0" fill="#ffffff"/>
+<g font-family="DejaVu Sans, Arial, sans-serif">
+<text x="24" y="42" font-size="29" font-weight="700" fill="#162e44" text-anchor="start">Which results include cow 10?</text>
+<text x="24" y="74" font-size="18" font-weight="400" fill="#456170" text-anchor="start">At the end of the run, a second decision uses the estimated genotype quality.</text>
+<text x="24" y="125" font-size="18" font-weight="700" fill="#162e44" text-anchor="start">Scope and chromosome</text>
+<text x="704" y="125" font-size="18" font-weight="700" fill="#162e44" text-anchor="end">Score</text>
+<text x="748" y="125" font-size="18" font-weight="700" fill="#162e44" text-anchor="start">Genotype output</text>
+<rect x="16" y="141" width="928" height="55" rx="7" fill="#eaf2f7"/>
+<text x="24" y="227" font-size="18" font-weight="700" fill="#0d685e" text-anchor="start">Chromosome scope</text>
+<line x1="24" y1="237" x2="936" y2="237" stroke="#c7d4dc" stroke-width="1" />
+<text x="30" y="173" font-size="19" font-weight="700" fill="#245d80" text-anchor="start">Genome-wide</text>
+<line x1="287" y1="167" x2="590" y2="167" stroke="#dce4e9" stroke-width="7" stroke-linecap="round"/>
+<line x1="287" y1="167" x2="571.184" y2="167" stroke="#245d80" stroke-width="7" stroke-linecap="round"/>
+<circle cx="571.184" cy="167" r="6.5" fill="white" stroke="#245d80" stroke-width="3"/>
+<text x="704" y="174" font-size="21" font-weight="700" fill="#162e44" text-anchor="end">0.9379</text>
+<text x="748" y="174" font-size="20" font-weight="700" fill="#245d80" text-anchor="start">Reported</text>
+<text x="30" y="269" font-size="19" font-weight="400" fill="#162e44" text-anchor="start">Chromosome 1</text>
+<line x1="287" y1="263" x2="590" y2="263" stroke="#dce4e9" stroke-width="7" stroke-linecap="round"/>
+<line x1="287" y1="263" x2="585.970" y2="263" stroke="#0d685e" stroke-width="7" stroke-linecap="round"/>
+<circle cx="585.970" cy="263" r="6.5" fill="white" stroke="#0d685e" stroke-width="3"/>
+<text x="704" y="270" font-size="21" font-weight="700" fill="#162e44" text-anchor="end">0.9867</text>
+<text x="748" y="270" font-size="20" font-weight="700" fill="#0d685e" text-anchor="start">Reported</text>
+<text x="30" y="317" font-size="19" font-weight="400" fill="#162e44" text-anchor="start">Chromosome 2</text>
+<line x1="287" y1="311" x2="590" y2="311" stroke="#dce4e9" stroke-width="7" stroke-linecap="round"/>
+<line x1="287" y1="311" x2="588.243" y2="311" stroke="#0d685e" stroke-width="7" stroke-linecap="round"/>
+<circle cx="588.243" cy="311" r="6.5" fill="white" stroke="#0d685e" stroke-width="3"/>
+<text x="704" y="318" font-size="21" font-weight="700" fill="#162e44" text-anchor="end">0.9942</text>
+<text x="748" y="318" font-size="20" font-weight="700" fill="#0d685e" text-anchor="start">Reported</text>
+<text x="30" y="365" font-size="19" font-weight="400" fill="#162e44" text-anchor="start">X chromosome</text>
+<line x1="287" y1="359" x2="590" y2="359" stroke="#dce4e9" stroke-width="7" stroke-linecap="round"/>
+<line x1="287" y1="359" x2="489.010" y2="359" stroke="#744865" stroke-width="7" stroke-linecap="round"/>
+<circle cx="489.010" cy="359" r="6.5" fill="white" stroke="#744865" stroke-width="3"/>
+<text x="704" y="366" font-size="21" font-weight="700" fill="#162e44" text-anchor="end">0.6667</text>
+<text x="748" y="366" font-size="20" font-weight="700" fill="#744865" text-anchor="start">Withheld</text>
+<line x1="500.79679999999996" y1="144" x2="500.79679999999996" y2="376" stroke="#6d5264" stroke-width="2" stroke-dasharray="3 5"/>
+<line x1="287" y1="383" x2="590" y2="383" stroke="#a4b5bf" stroke-width="1" />
+<text x="287" y="407" font-size="16" font-weight="400" fill="#456170" text-anchor="middle">0</text>
+<text x="590" y="407" font-size="16" font-weight="400" fill="#456170" text-anchor="middle">1</text>
+<text x="501" y="407" font-size="17" font-weight="700" fill="#744865" text-anchor="middle">0.7056 cutoff</text>
+<text x="24" y="448" font-size="16" font-weight="400" fill="#456170" text-anchor="start">Reported scores appear in hap.filled. This cow’s withheld score for X appears in do_not_distrib.</text>
+</g>
+</svg>

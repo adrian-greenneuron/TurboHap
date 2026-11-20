@@ -14,8 +14,7 @@ cd run-example
 ../build/findhap 4
 ```
 
-To run TurboHap LM, add `--low-memory`. Each mode writes the ordinary FindHap
-output filenames. Use another run directory when keeping both sets of results.
+To run TurboHap LM, add `--low-memory`. With the default processing scope, each mode writes the ordinary FindHap output filenames. Use separate run directories when keeping both sets. To try the new per-chromosome analysis, repeat the example in a fresh directory with `../build/findhap 4 --processing-scope=chromosome`. Inspect the separate sets of results under `chromosome-results/chrN/`. The example’s saved FindHap checksums apply to the default genome-wide analysis.
 
 Return to the source directory after the manual run:
 
@@ -23,13 +22,15 @@ Return to the source directory after the manual run:
 cd ..
 ```
 
-The automated check runs both modes independently, with one and four threads,
+The automated check runs both modes independently, with one, two and four threads,
 and verifies every output against the saved original-Fortran hashes in
 `small/expected.json`:
 
 ```sh
-python3 tests/check_example.py --binary build/findhap
+python3 examples/check_installation.py --binary build/findhap
 ```
+
+Expect six PASS lines and a summary confirming that all 60 outputs matched. To check an installed Linux copy, use `python3 "$HOME/.local/share/doc/turbohap/examples/check_installation.py" --binary "$HOME/.local/bin/findhap"` for an installation under `$HOME/.local`.
 
 The original options-file comment describes `hapout=2` as writing all animals.
 TurboHap preserves the original program's actual empty-write behaviour for

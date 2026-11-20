@@ -1,0 +1,106 @@
+# CMake fixes the compiler at project(). Only choose one for a fresh, native
+# top-level build on a physical DGX Spark. Leave user and toolchain choices alone.
+function(turbohap_select_spark_compiler)
+    if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux" OR NOT CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR
+            OR CMAKE_CXX_COMPILER OR NOT "$ENV{CXX}" STREQUAL ""
+            OR CMAKE_TOOLCHAIN_FILE OR NOT "$ENV{CMAKE_TOOLCHAIN_FILE}" STREQUAL ""
+            OR CMAKE_SYSTEM_NAME OR CMAKE_SYSROOT OR CMAKE_CXX_COMPILER_TARGET OR FINDHAP_PORTABLE_BUILD
+            OR DEFINED FINDHAP_RELEASE_FLAGS OR DEFINED CMAKE_CXX_FLAGS_RELEASE
+            OR "${CMAKE_CXX_FLAGS} $ENV{CXXFLAGS}" MATCHES "(^| )(-march=|-mcpu=|-mtune=|--?target[= ]|--sysroot[= ])")
+        return()
+    endif()
+    set(product_file "/sys/class/dmi/id/product_name")
+    if(NOT EXISTS "${product_file}")
+        return()
+    endif()
+    file(STRINGS "${product_file}" product LIMIT_COUNT 1)
+    if(NOT product STREQUAL "NVIDIA_DGX_Spark")
+        return()
+    endif()
+
+    # The v1.6 release measurements on the Spark used GCC 13.
+    # An explicit compiler or cross-toolchain already returned above.
+    find_program(turbohap_spark_gcc13 NAMES g++-13)
+    if(turbohap_spark_gcc13)
+        set(CMAKE_CXX_COMPILER "${turbohap_spark_gcc13}" CACHE FILEPATH "Native DGX Spark compiler")
+        message(STATUS "DGX Spark: selected GCC 13 (${turbohap_spark_gcc13})")
+        unset(turbohap_spark_gcc13 CACHE)
+        return()
+    endif()
+    unset(turbohap_spark_gcc13 CACHE)
+
+    # Some distributions provide only a versioned clang++. Prefer the timed
+    # version, then the normal driver, then other versions installed on PATH.
+    file(TO_CMAKE_PATH "$ENV{PATH}" search_dirs)
+    set(names clang++-20 clang++ turbohap-clang++)
+    foreach(dir IN LISTS search_dirs)
+        if(IS_ABSOLUTE "${dir}")
+            file(GLOB versioned RELATIVE "${dir}" "${dir}/clang++-[0-9]*")
+            list(APPEND names ${versioned})
+        endif()
+    endforeach()
+    list(REMOVE_DUPLICATES names)
+    set(tried "")
+    set(probe_args "")
+    foreach(var CMAKE_CXX_FLAGS CMAKE_PREFIX_PATH CMAKE_MAKE_PROGRAM OpenMP_ROOT
+                OpenMP_CXX_FLAGS OpenMP_CXX_LIB_NAMES OpenMP_CXX_INCLUDE_DIR OpenMP_omp_LIBRARY)
+        if(DEFINED ${var})
+            string(REPLACE ";" "\\;" value "${${var}}")
+            list(APPEND probe_args "-D${var}=${value}")
+        endif()
+    endforeach()
+    foreach(name IN LISTS names)
+        unset(turbohap_spark_driver CACHE)
+        find_program(turbohap_spark_driver NAMES "${name}")
+        if(NOT turbohap_spark_driver)
+            continue()
+        endif()
+        get_filename_component(real_driver "${turbohap_spark_driver}" REALPATH)
+        if(real_driver IN_LIST tried)
+            continue()
+        endif()
+        list(APPEND tried "${real_driver}")
+        # Check the user's linker first. If none was specified, also try LLVM's
+        # linker for distributions whose default GNU linker lacks the LTO plugin.
+        set(linkers default)
+        if(NOT CMAKE_EXE_LINKER_FLAGS AND "$ENV{LDFLAGS}" STREQUAL "")
+            list(APPEND linkers lld)
+        endif()
+        foreach(linker IN LISTS linkers)
+            set(link_arg "")
+            if(DEFINED CMAKE_EXE_LINKER_FLAGS)
+                set(link_arg "-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}")
+            elseif(linker STREQUAL "lld")
+                set(link_arg "-DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld")
+            endif()
+            set(dir "${CMAKE_BINARY_DIR}/CMakeFiles/spark-compiler/${name}-${linker}")
+            file(MAKE_DIRECTORY "${dir}")
+            execute_process(COMMAND "${CMAKE_COMMAND}" -S "${turbohap_spark_module_dir}/probes/spark"
+                -B "${dir}" -G "${CMAKE_GENERATOR}" "-DCMAKE_CXX_COMPILER=${turbohap_spark_driver}"
+                ${link_arg} ${probe_args}
+                RESULT_VARIABLE status OUTPUT_FILE "${dir}/configure.log" ERROR_FILE "${dir}/errors.log")
+            if(status STREQUAL "0")
+                set(CMAKE_CXX_COMPILER "${turbohap_spark_driver}" CACHE FILEPATH "Native DGX Spark compiler")
+                set(FINDHAP_AUTO_SPARK_CLANG "${turbohap_spark_driver}" CACHE INTERNAL "Probed default Spark compiler")
+                if(linker STREQUAL "lld")
+                    set(CMAKE_EXE_LINKER_FLAGS_INIT "-fuse-ld=lld" PARENT_SCOPE)
+                endif()
+                message(STATUS "DGX Spark: selected ${turbohap_spark_driver} with generic tuning and LLVM OpenMP")
+                unset(turbohap_spark_driver CACHE)
+                return()
+            endif()
+        endforeach()
+    endforeach()
+    unset(turbohap_spark_driver CACHE)
+    find_program(turbohap_spark_driver NAMES g++)
+    if(NOT turbohap_spark_driver)
+        message(FATAL_ERROR "DGX Spark: no usable Clang/libomp or g++ found. Install a C++17 compiler and OpenMP or set CXX explicitly.")
+    endif()
+    set(CMAKE_CXX_COMPILER "${turbohap_spark_driver}" CACHE FILEPATH "Native DGX Spark compiler")
+    message(STATUS "DGX Spark: using GCC fallback (${turbohap_spark_driver}); no Clang passed the native OpenMP/LTO check")
+    unset(turbohap_spark_driver CACHE)
+endfunction()
+
+# CMAKE_CURRENT_FUNCTION_LIST_DIR is only available from CMake 3.17.
+set(turbohap_spark_module_dir "${CMAKE_CURRENT_LIST_DIR}")
+turbohap_select_spark_compiler()

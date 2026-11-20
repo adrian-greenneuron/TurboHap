@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.6.0 — 20 November 2026
+
+- Introduced optional segment-specific X-progeny scoring and chromosome-level imputation and reporting. Genome-wide FindHap v3 behaviour remains the default.
+- Accelerated pedigree rematching of reconstructed ancestors by reusing an ordered candidate index for each eligible segment. Reduced work and memory in population matching, inheritance storage, Standard snapshots, LM scratch writes and output formatting on supported builds.
+- Size the haplotype library using the largest actual stage, check large workspace dimensions and use wide offsets for haplotype rows, frequencies and per-worker storage. Corrected matcher pointer assumptions for compiler portability.
+- Reject duplicate genotype rows for pedigree animals, malformed pedigree records, out-of-range or non-finite error rates and unknown long options. Improve reporting of worker and output failures. Modern logging now prints the actual length of each segment stage.
+- Added automatic native CPU detection, checked compiler targets, a portable build setting and per-engine build information. Added or expanded native Intel Xeon, AMD EPYC and Linux Arm profiles. The Apple Silicon installer selects the shared native engine and checks both modes.
+- Repeated the nine-dataset Spark comparison using GCC 13.3 and the published v1.5.0 GNU FindHap controls. [Release notes](docs/turbohap_release_notes_201126.md) · [Results and figures](docs/turbohap_benchmarks_201126.md)
+- Included the updated [v1.6.0 manuscript and supplementary methods](docs/paper/README.md).
+
 ## 1.5.0 — 12 November 2026
 
 - **Optional modern console output.** `--stdout=modern` adds UTC date/time stamps,
@@ -47,7 +57,7 @@ benchmarks use different datasets and thread counts from v1.4.0; they are not
 a direct version-to-version timing comparison. The historical manuscript and
 supplementary downloads remain unchanged.
 
-See the [release notes](docs/turbohap_release_notes_111126.md) and [benchmark report](docs/turbohap_benchmarks_111126.md).
+See the [release notes](https://github.com/adrian-greenneuron/TurboHap/blob/v1.5.0/docs/turbohap_release_notes_111126.md) and [benchmark report](https://github.com/adrian-greenneuron/TurboHap/blob/v1.5.0/docs/turbohap_benchmarks_111126.md).
 
 ## 1.4.0 — 5 November 2026
 

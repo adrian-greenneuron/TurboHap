@@ -37,6 +37,20 @@ public:
         counts_[slot] = count;
         if (count) std::memcpy(records_.get() + slot * slot_bytes, source, size_t(count) * record_bytes);
     }
+    bool emit_scoped(FILE* const* destinations, size_t rows) const {
+        if (rows > rows_) throw std::out_of_range("invalid crossover batch row count");
+        for (size_t row = 0; row < rows; ++row) {
+            for (size_t segment = 0; segment < segments_; ++segment) {
+                const size_t slot = segment * rows_ + row;
+                for (int record = 0; record < counts_[slot]; ++record) {
+                    const char* text = records_.get() + slot * slot_bytes + size_t(record) * record_bytes;
+                    if (!destinations[segment] || std::fprintf(destinations[segment], "%s\n", text) < 0)
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
     bool emit(FILE* destination, size_t rows) const {
         if (rows > rows_) throw std::out_of_range("invalid crossover batch row count");
 #if FINDHAP_CROSSOVER_BATCH_WRITE

@@ -1,65 +1,41 @@
 # Output compatibility
 
-TurboHap implements the FindHap v3 input formats, inference method, options and
-ten legacy output filenames. Standard and LM modes must match their qualified
-reference outputs byte for byte, checked using raw file sizes and SHA-256.
-No sorting, rounding or whitespace normalization is used for TurboHap checks.
+TurboHap’s default genome-wide analysis uses FindHap v3’s scientific settings, including its X-dependent progeny scoring. Use this default to reproduce an existing FindHap analysis. Standard and LM accept the same inputs and produce the same enabled result files for a given analysis.
 
-The nine v1.5.0 benchmark datasets supplied 36 successful TurboHap measurements
-and 360 raw output-file checks. Every check passed. The completed GNU FindHap
-controls use identical data, options and thread counts. There is one established
-Fortran exception: multithreaded `cross.overs` output can contain the same
-records in a different order. Its header and all complete records are checked,
-with duplicates retained. That comparison does not claim the unsorted file is
-byte-identical. No other difference is accepted.
+| Analysis requested | Effective X-progeny scoring | Results to compare |
+| --- | --- | --- |
+| No scientific option, or `--processing-scope=legacy` | Legacy | One genome-wide result set, comparable with FindHap v3. |
+| Genome-wide with `--x-progeny=corrected` | Corrected | One genome-wide result set. Calls for an inferred male and derived outputs can change when the marker map includes X-specific segments. |
+| `--processing-scope=chromosome` | Corrected, including when legacy scoring was requested explicitly | One result set per chromosome, with its own reference eligibility and quality cutoffs. Compare a chromosome with a standalone run on that same map using corrected scoring. |
 
-All eight planned FindHap control datasets are complete. The 1M × 80k case
-has no FindHap control. Its TurboHap runs were checked against retained
-qualified TurboHap references; a direct GNU comparison is not implied.
-See the [benchmark report](turbohap_benchmarks_111126.md) for individual
-verification statuses, counts and methods.
+The [illustrated guide to X-progeny scoring](X_PROGENY.md) follows one cattle family and shows why corrected genome-wide scoring can change an autosomal call.
 
-## What is preserved
+For an example of which animals qualify for matching and which appear in the genotype files, follow the same cow under both processing scopes. [Illustrated guide to chromosome scope](PROCESSING_SCOPE.md)
 
-- Existing filenames, positional options, genotype encodings and enabled outputs.
-- Standard/LM inference decisions and result-file ordering for qualified inputs.
-- Exact numerical decisions in native vector paths and their fallbacks.
-- The original capacity-failure behaviour when a segment exceeds maxhap.
+## What the release benchmarks checked
 
-Strict validation rejects malformed or ambiguous layouts instead of silently
-accepting shifted calls. Diagnostic `--input-validation=warn` retains documented
-safe legacy interpretations; reproducing unsafe reads or crashes is not a
-compatibility requirement. The [standalone validator](INPUT_VALIDATION.md)
-does not alter inputs or inference outputs.
+On the nine release datasets, the 36 v1.6.0 runs produced **360/360 raw file matches** to their retained references. Every comparison used the actual file bytes. The previously published GNU FindHap controls provide 14 runs on eight of those datasets. Of their 140 file comparisons, **126 matched byte for byte**. In 14 `cross.overs` files the header and complete records matched, including duplicate records, after allowing for record order. Multithreaded GNU FindHap can write its crossover records in a different order. The million-animal dataset has a TurboHap reference only. [Measurements and checks](turbohap_benchmarks_201126.md)
 
-Console progress, timestamps and elapsed-time diagnostics are separate from
-result-file compatibility. Release builds default to `--stdout=legacy` for
-FindHap-style console output. `--stdout=modern` adds clearer progress and
-capacity summaries. No exact identity is claimed for elapsed timings or console
-formatting.
+All nine benchmark maps contain autosomes only. The chromosome and X choices have separate evidence. On a cohort with an X-specific map, the ten files for chromosome 1 and the ten files for X each matched the corresponding standalone corrected run in Standard and LM. These checks included the inferred calls, per-animal quality scores, and which animals passed or failed the output filters. Together these comparisons gave **40/40 exact file matches**.
 
-The positional thread argument retains the original two-character
-interpretation: `100` selects 10 and `010` selects 1. Use a positive one- or
-two-digit count. Recognized launcher flags may precede or follow it.
-Explicit OpenMP/CPU restrictions take precedence over automatic placement.
+We also checked the new haplotype lookup for reconstructed ancestors against the preceding implementation. The checks covered an ordinary pedigree and a case where the algorithm accepted a match with a nonzero conflict. All ten files matched in each case in both Standard and LM (**40/40**).
 
-Use a fresh output directory for comparisons. Legacy file-opening semantics can
-leave an existing output untouched when the selected options write no records.
-Only compare outputs enabled by the options. `hapout=2` preserves the actual
-legacy behaviour; it does not produce the all-animal output advertised by one
-original options comment.
+## Comparing your results
+
+Use the same input files, options, processing scope and X-progeny setting in fresh run directories. A result file that receives no records under the original genome-wide options can retain its previous contents. Check completion before comparing files and include only the files your options enable. With `hapout=2`, the original empty-write behaviour is retained.
+
+To verify exact matches, compare the raw byte length and SHA-256 of each enabled output against its trusted reference. The record-order allowance above applies specifically to GNU FindHap’s `cross.overs` control. Console timestamps, CPU placement messages and elapsed times are diagnostics. Choosing `--stdout=modern` changes their presentation and leaves the scientific choices intact. [Options and output files](USAGE.md)
+
+## The executable used for the benchmarks
+
+A clean build from the release source on the DGX Spark with GCC 13.3.0 reproduced the executable used for all 36 TurboHap measurements. It was 2,195,592 bytes with SHA-256 `0175f748051e5868ef8e349019c8fc5d44250704f56dc3b733320eecfeb04004`. This identifies the benchmark executable. For a build on your own computer, use the example below to check the results.
 
 ## Installation checks
 
+From the extracted source folder, run:
+
 ```sh
-(cd build && ctest --output-on-failure --parallel 1)
-python3 tests/check_example.py --binary build/findhap
+python3 examples/check_installation.py --binary build/findhap
 ```
 
-Use `build-macos` for the Mac recipe. The example checker runs both modes at
-one and four threads and checks the saved original Fortran reference identities;
-it needs neither Fortran nor the benchmark datasets. The broader suite covers
-parsing, priors, output order, CPU policies, lookup widths, allocation and vector
-paths. Platform-dependent skips are reported, not counted as successful tests.
-Passing qualification is evidence for the tested configurations, not a proof for
-every possible dataset or compiler. See [release qualification](RELEASE_CHECKS.md).
+Use `build-macos/findhap` for the manual Mac build. The checker runs the small USDA example in Standard and LM at one, two and four threads. It compares each output’s size and SHA-256 with the original Fortran reference. All six runs can be checked using just Python, the compiled program and the supplied example. [Worked example](../examples/README.md)

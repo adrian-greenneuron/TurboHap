@@ -3,10 +3,12 @@
 #include <array>
 #include <cerrno>
 #include <climits>
+#include <cmath>
 #include <cstdlib>
 #include <istream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace findhap {
 
@@ -55,6 +57,13 @@ inline float input_real(std::string token) {
     char* end;
     float value = std::strtof(token.c_str(), &end);
     if (end != token.c_str() + token.size()) throw std::runtime_error("invalid real: " + token);
+    return value;
+}
+
+inline float input_errate(std::string token) {
+    const float value = input_real(std::move(token));
+    if (!std::isfinite(value) || value < 0.0f || value > 1.0f)
+        throw std::runtime_error("findhap.options: errate must be a finite fraction between 0 and 1");
     return value;
 }
 
@@ -123,7 +132,7 @@ inline Options read_options(std::istream& input) {
     if (!std::getline(input, ignored) || !std::getline(input, ignored))
         throw std::runtime_error("missing skipped option records");
     NumericRead error_rate(input);
-    options.errate = input_real(error_rate.next());
+    options.errate = input_errate(error_rate.next());
     return options;
 }
 

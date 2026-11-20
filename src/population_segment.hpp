@@ -1,6 +1,9 @@
 #pragma once
 #include <cstdint>
 #include "platform_policy.hpp"
+#if FINDHAP_POP_FINAL_SCAN_X86
+#include "population_final_x86.hpp"
+#endif
 #if FINDHAP_POP_FINAL_SCAN_NEON && defined(__ARM_NEON)
 #include <cstdlib>
 #include "neon_bits.hpp"

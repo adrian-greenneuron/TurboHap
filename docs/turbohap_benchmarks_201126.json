@@ -1,0 +1,4981 @@
+{
+  "threads": 20,
+  "summary": "arithmetic mean",
+  "datasets": [
+    {
+      "id": "n10000_m20000",
+      "animals": 10000,
+      "loci": 20000,
+      "maxhap": 50000,
+      "gnu_expected_repeats": 2,
+      "gnu_status": "complete"
+    },
+    {
+      "id": "n10000_m80000",
+      "animals": 10000,
+      "loci": 80000,
+      "maxhap": 50000,
+      "gnu_expected_repeats": 2,
+      "gnu_status": "complete"
+    },
+    {
+      "id": "n25000_m20000",
+      "animals": 25000,
+      "loci": 20000,
+      "maxhap": 50000,
+      "gnu_expected_repeats": 2,
+      "gnu_status": "complete"
+    },
+    {
+      "id": "n25000_m80000",
+      "animals": 25000,
+      "loci": 80000,
+      "maxhap": 50000,
+      "gnu_expected_repeats": 2,
+      "gnu_status": "complete"
+    },
+    {
+      "id": "n100000_m20000",
+      "animals": 100000,
+      "loci": 20000,
+      "maxhap": 60000,
+      "gnu_expected_repeats": 2,
+      "gnu_status": "complete"
+    },
+    {
+      "id": "n100000_m80000",
+      "animals": 100000,
+      "loci": 80000,
+      "maxhap": 50000,
+      "gnu_expected_repeats": 2,
+      "gnu_status": "complete"
+    },
+    {
+      "id": "n250000_m20000",
+      "animals": 250000,
+      "loci": 20000,
+      "maxhap": 130000,
+      "gnu_expected_repeats": 1,
+      "gnu_status": "complete"
+    },
+    {
+      "id": "n250000_m80000",
+      "animals": 250000,
+      "loci": 80000,
+      "maxhap": 60000,
+      "gnu_expected_repeats": 1,
+      "gnu_status": "complete"
+    },
+    {
+      "id": "n1000000_m80000",
+      "animals": 1000000,
+      "loci": 80000,
+      "maxhap": 170000,
+      "gnu_expected_repeats": 0,
+      "gnu_status": "not-planned"
+    }
+  ],
+  "hardware": "NVIDIA DGX Spark; NVIDIA GB10 CPU, 10 Cortex-X925 performance and 10 Cortex-A725 efficiency cores; 128 GB unified memory; internal NVMe working storage; CPU execution only",
+  "compiler": "GCC/gfortran 13.3.0 with libgomp",
+  "fortran_flags": "-O3 -march=native -funroll-loops -flto -flto-partition=1to1 -ffp-contract=off -fopenmp -fno-underscoring",
+  "options": {
+    "iterations": 4,
+    "XChrom": 0,
+    "maxlen": 100,
+    "minlen": 50,
+    "steps": 3,
+    "errate": 0.004,
+    "outputs": 10
+  },
+  "schema_version": 2,
+  "release_version": "1.6.0",
+  "status": "release",
+  "date": "2026-11-20",
+  "measured_version": "v1.6.0-rc.2",
+  "measured_binary_sha256": "0175f748051e5868ef8e349019c8fc5d44250704f56dc3b733320eecfeb04004",
+  "cpp_flags": "-O3 -march=native -funroll-loops -flto -ffp-contract=off -std=gnu++17 -fopenmp",
+  "measured_stdout": "modern",
+  "processing_scope": "legacy",
+  "x_progeny": "legacy",
+  "observations": [
+    {
+      "id": "n10000_m20000_GNU_r1",
+      "dataset": "n10000_m20000",
+      "animals": 10000,
+      "loci": 20000,
+      "program": "GNU FindHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 247.11,
+      "user_seconds": 1345.64,
+      "system_seconds": 44.86,
+      "peak_rss_kib": 2320480,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n10000_m80000_GNU_r1",
+      "dataset": "n10000_m80000",
+      "animals": 10000,
+      "loci": 80000,
+      "program": "GNU FindHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 500.02,
+      "user_seconds": 2008.54,
+      "system_seconds": 64.89,
+      "peak_rss_kib": 8994200,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n25000_m20000_GNU_r1",
+      "dataset": "n25000_m20000",
+      "animals": 25000,
+      "loci": 20000,
+      "program": "GNU FindHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 779.49,
+      "user_seconds": 4761.01,
+      "system_seconds": 128.99,
+      "peak_rss_kib": 2501048,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n25000_m80000_GNU_r1",
+      "dataset": "n25000_m80000",
+      "animals": 25000,
+      "loci": 80000,
+      "program": "GNU FindHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 1419.33,
+      "user_seconds": 6539.81,
+      "system_seconds": 164.09,
+      "peak_rss_kib": 9691984,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n100000_m20000_GNU_r1",
+      "dataset": "n100000_m20000",
+      "animals": 100000,
+      "loci": 20000,
+      "program": "GNU FindHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 6480.79,
+      "user_seconds": 46045.06,
+      "system_seconds": 640.19,
+      "peak_rss_kib": 3847080,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n100000_m80000_GNU_r1",
+      "dataset": "n100000_m80000",
+      "animals": 100000,
+      "loci": 80000,
+      "program": "GNU FindHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 7613.27,
+      "user_seconds": 44260.72,
+      "system_seconds": 686.06,
+      "peak_rss_kib": 13202248,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n250000_m20000_GNU_r1",
+      "dataset": "n250000_m20000",
+      "animals": 250000,
+      "loci": 20000,
+      "program": "GNU FindHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 130000,
+      "wall_seconds": 28072.92,
+      "user_seconds": 213100.13,
+      "system_seconds": 1716.61,
+      "peak_rss_kib": 8729800,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n10000_m20000_GNU_r2",
+      "dataset": "n10000_m20000",
+      "animals": 10000,
+      "loci": 20000,
+      "program": "GNU FindHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 241.52,
+      "user_seconds": 1333.34,
+      "system_seconds": 43.24,
+      "peak_rss_kib": 2320720,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n10000_m80000_GNU_r2",
+      "dataset": "n10000_m80000",
+      "animals": 10000,
+      "loci": 80000,
+      "program": "GNU FindHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 497.92,
+      "user_seconds": 1996.07,
+      "system_seconds": 64.73,
+      "peak_rss_kib": 8994088,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n25000_m20000_GNU_r2",
+      "dataset": "n25000_m20000",
+      "animals": 25000,
+      "loci": 20000,
+      "program": "GNU FindHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 776.98,
+      "user_seconds": 4767.54,
+      "system_seconds": 128.76,
+      "peak_rss_kib": 2500780,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n25000_m80000_GNU_r2",
+      "dataset": "n25000_m80000",
+      "animals": 25000,
+      "loci": 80000,
+      "program": "GNU FindHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 1393.03,
+      "user_seconds": 6489.86,
+      "system_seconds": 161.7,
+      "peak_rss_kib": 9691760,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n100000_m20000_GNU_r2",
+      "dataset": "n100000_m20000",
+      "animals": 100000,
+      "loci": 20000,
+      "program": "GNU FindHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 6473.54,
+      "user_seconds": 46047.93,
+      "system_seconds": 630.78,
+      "peak_rss_kib": 3847080,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n100000_m80000_GNU_r2",
+      "dataset": "n100000_m80000",
+      "animals": 100000,
+      "loci": 80000,
+      "program": "GNU FindHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 7587.3,
+      "user_seconds": 44502.57,
+      "system_seconds": 683.21,
+      "peak_rss_kib": 13202072,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-10",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n250000_m80000_GNU_r1",
+      "dataset": "n250000_m80000",
+      "animals": 250000,
+      "loci": 80000,
+      "program": "GNU FindHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 25863.03,
+      "user_seconds": 166787.96,
+      "system_seconds": 1835.69,
+      "peak_rss_kib": 21908220,
+      "exit_status": 0,
+      "swaps": 0,
+      "date": "2026-11-11",
+      "source": "published v1.5.0 GNU control"
+    },
+    {
+      "id": "n10000_m20000_standard_r1",
+      "dataset": "n10000_m20000",
+      "animals": 10000,
+      "loci": 20000,
+      "program": "TurboHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 2.53,
+      "user_seconds": 31.85,
+      "system_seconds": 0.85,
+      "peak_rss_kib": 356872,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 7204,
+      "host_swap_in_mib": 0.0,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n10000_m20000_LM_r1",
+      "dataset": "n10000_m20000",
+      "animals": 10000,
+      "loci": 20000,
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 3.0,
+      "user_seconds": 32.61,
+      "system_seconds": 1.48,
+      "peak_rss_kib": 275184,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 7204,
+      "host_swap_in_mib": 0.0,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n10000_m20000_LM_r2",
+      "dataset": "n10000_m20000",
+      "animals": 10000,
+      "loci": 20000,
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 2.99,
+      "user_seconds": 32.4,
+      "system_seconds": 1.67,
+      "peak_rss_kib": 275388,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 7204,
+      "host_swap_in_mib": 0.0,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n10000_m20000_standard_r2",
+      "dataset": "n10000_m20000",
+      "animals": 10000,
+      "loci": 20000,
+      "program": "TurboHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 2.52,
+      "user_seconds": 31.8,
+      "system_seconds": 0.86,
+      "peak_rss_kib": 357184,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 7204,
+      "host_swap_in_mib": 0.0,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n10000_m80000_standard_r1",
+      "dataset": "n10000_m80000",
+      "animals": 10000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 7.26,
+      "user_seconds": 98.75,
+      "system_seconds": 1.95,
+      "peak_rss_kib": 917284,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 4170,
+      "host_swap_in_mib": 0.0,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n10000_m80000_LM_r1",
+      "dataset": "n10000_m80000",
+      "animals": 10000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 10.83,
+      "user_seconds": 100.5,
+      "system_seconds": 5.11,
+      "peak_rss_kib": 604736,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 4170,
+      "host_swap_in_mib": 0.0,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n10000_m80000_LM_r2",
+      "dataset": "n10000_m80000",
+      "animals": 10000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 10.68,
+      "user_seconds": 100.72,
+      "system_seconds": 4.37,
+      "peak_rss_kib": 604672,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 4170,
+      "host_swap_in_mib": 0.0,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n10000_m80000_standard_r2",
+      "dataset": "n10000_m80000",
+      "animals": 10000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 7.52,
+      "user_seconds": 98.86,
+      "system_seconds": 2.28,
+      "peak_rss_kib": 917140,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 4170,
+      "host_swap_in_mib": 0.12109375,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n25000_m20000_standard_r1",
+      "dataset": "n25000_m20000",
+      "animals": 25000,
+      "loci": 20000,
+      "program": "TurboHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 6.72,
+      "user_seconds": 92.41,
+      "system_seconds": 1.68,
+      "peak_rss_kib": 759640,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 15458,
+      "host_swap_in_mib": 0.0546875,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n25000_m20000_LM_r1",
+      "dataset": "n25000_m20000",
+      "animals": 25000,
+      "loci": 20000,
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 7.8,
+      "user_seconds": 94.44,
+      "system_seconds": 2.77,
+      "peak_rss_kib": 555712,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 15458,
+      "host_swap_in_mib": 0.0234375,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n25000_m20000_LM_r2",
+      "dataset": "n25000_m20000",
+      "animals": 25000,
+      "loci": 20000,
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 7.73,
+      "user_seconds": 94.28,
+      "system_seconds": 2.83,
+      "peak_rss_kib": 556188,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 15458,
+      "host_swap_in_mib": 0.08984375,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n25000_m20000_standard_r2",
+      "dataset": "n25000_m20000",
+      "animals": 25000,
+      "loci": 20000,
+      "program": "TurboHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 6.96,
+      "user_seconds": 92.5,
+      "system_seconds": 1.95,
+      "peak_rss_kib": 759680,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 15458,
+      "host_swap_in_mib": 0.03125,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n25000_m80000_standard_r1",
+      "dataset": "n25000_m80000",
+      "animals": 25000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 19.25,
+      "user_seconds": 261.9,
+      "system_seconds": 5.12,
+      "peak_rss_kib": 1968196,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 7899,
+      "host_swap_in_mib": 0.015625,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n25000_m80000_LM_r1",
+      "dataset": "n25000_m80000",
+      "animals": 25000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 25.25,
+      "user_seconds": 267.5,
+      "system_seconds": 9.42,
+      "peak_rss_kib": 1208992,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 7899,
+      "host_swap_in_mib": 0.01953125,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n25000_m80000_LM_r2",
+      "dataset": "n25000_m80000",
+      "animals": 25000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 25.24,
+      "user_seconds": 267.24,
+      "system_seconds": 9.29,
+      "peak_rss_kib": 1208792,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 7899,
+      "host_swap_in_mib": 0.03515625,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n25000_m80000_standard_r2",
+      "dataset": "n25000_m80000",
+      "animals": 25000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 18.87,
+      "user_seconds": 261.87,
+      "system_seconds": 5.14,
+      "peak_rss_kib": 1968500,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 7899,
+      "host_swap_in_mib": 1.296875,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n100000_m20000_standard_r1",
+      "dataset": "n100000_m20000",
+      "animals": 100000,
+      "loci": 20000,
+      "program": "TurboHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 38.68,
+      "user_seconds": 591.15,
+      "system_seconds": 6.93,
+      "peak_rss_kib": 2666892,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 55564,
+      "host_swap_in_mib": 0.1328125,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n100000_m20000_LM_r1",
+      "dataset": "n100000_m20000",
+      "animals": 100000,
+      "loci": 20000,
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 42.38,
+      "user_seconds": 594.6,
+      "system_seconds": 9.96,
+      "peak_rss_kib": 1878720,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 55564,
+      "host_swap_in_mib": 0.1328125,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n100000_m20000_LM_r2",
+      "dataset": "n100000_m20000",
+      "animals": 100000,
+      "loci": 20000,
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 42.38,
+      "user_seconds": 595.05,
+      "system_seconds": 9.28,
+      "peak_rss_kib": 1878016,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 55564,
+      "host_swap_in_mib": 0.04296875,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n100000_m20000_standard_r2",
+      "dataset": "n100000_m20000",
+      "animals": 100000,
+      "loci": 20000,
+      "program": "TurboHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 38.51,
+      "user_seconds": 590.34,
+      "system_seconds": 6.83,
+      "peak_rss_kib": 2672792,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 55564,
+      "host_swap_in_mib": 0.0078125,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n100000_m80000_standard_r1",
+      "dataset": "n100000_m80000",
+      "animals": 100000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 82.33,
+      "user_seconds": 1221.79,
+      "system_seconds": 17.07,
+      "peak_rss_kib": 6756928,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 26039,
+      "host_swap_in_mib": 0.66796875,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n100000_m80000_LM_r1",
+      "dataset": "n100000_m80000",
+      "animals": 100000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 106.56,
+      "user_seconds": 1256.19,
+      "system_seconds": 31.25,
+      "peak_rss_kib": 3680036,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 26039,
+      "host_swap_in_mib": 0.11328125,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n100000_m80000_LM_r2",
+      "dataset": "n100000_m80000",
+      "animals": 100000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 105.78,
+      "user_seconds": 1253.04,
+      "system_seconds": 28.62,
+      "peak_rss_kib": 3680100,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 26039,
+      "host_swap_in_mib": 0.015625,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n100000_m80000_standard_r2",
+      "dataset": "n100000_m80000",
+      "animals": 100000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 50000,
+      "wall_seconds": 83.83,
+      "user_seconds": 1224.18,
+      "system_seconds": 18.81,
+      "peak_rss_kib": 6756952,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 26039,
+      "host_swap_in_mib": 0.01171875,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n250000_m20000_standard_r1",
+      "dataset": "n250000_m20000",
+      "animals": 250000,
+      "loci": 20000,
+      "program": "TurboHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 130000,
+      "wall_seconds": 138.64,
+      "user_seconds": 2223.15,
+      "system_seconds": 18.73,
+      "peak_rss_kib": 6508324,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 120124,
+      "host_swap_in_mib": 0.03125,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n250000_m20000_LM_r1",
+      "dataset": "n250000_m20000",
+      "animals": 250000,
+      "loci": 20000,
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 130000,
+      "wall_seconds": 144.35,
+      "user_seconds": 2207.2,
+      "system_seconds": 23.41,
+      "peak_rss_kib": 4853124,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 120124,
+      "host_swap_in_mib": 0.0,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n250000_m20000_LM_r2",
+      "dataset": "n250000_m20000",
+      "animals": 250000,
+      "loci": 20000,
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 130000,
+      "wall_seconds": 146.61,
+      "user_seconds": 2209.01,
+      "system_seconds": 23.47,
+      "peak_rss_kib": 4849844,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 120124,
+      "host_swap_in_mib": 0.0,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n250000_m20000_standard_r2",
+      "dataset": "n250000_m20000",
+      "animals": 250000,
+      "loci": 20000,
+      "program": "TurboHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 130000,
+      "wall_seconds": 135.66,
+      "user_seconds": 2201.25,
+      "system_seconds": 18.44,
+      "peak_rss_kib": 6506816,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 120124,
+      "host_swap_in_mib": 0.00390625,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n250000_m80000_standard_r1",
+      "dataset": "n250000_m80000",
+      "animals": 250000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 226.48,
+      "user_seconds": 3489.06,
+      "system_seconds": 45.32,
+      "peak_rss_kib": 15611700,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 52936,
+      "host_swap_in_mib": 0.03125,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n250000_m80000_LM_r1",
+      "dataset": "n250000_m80000",
+      "animals": 250000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 294.77,
+      "user_seconds": 3587.05,
+      "system_seconds": 67.46,
+      "peak_rss_kib": 7845736,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 52936,
+      "host_swap_in_mib": 1.75,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n250000_m80000_LM_r2",
+      "dataset": "n250000_m80000",
+      "animals": 250000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 287.89,
+      "user_seconds": 3578.16,
+      "system_seconds": 66.52,
+      "peak_rss_kib": 7845600,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 52936,
+      "host_swap_in_mib": 0.0625,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n250000_m80000_standard_r2",
+      "dataset": "n250000_m80000",
+      "animals": 250000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 60000,
+      "wall_seconds": 226.3,
+      "user_seconds": 3486.09,
+      "system_seconds": 44.36,
+      "peak_rss_kib": 15609604,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 52936,
+      "host_swap_in_mib": 0.0078125,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n1000000_m80000_standard_r1",
+      "dataset": "n1000000_m80000",
+      "animals": 1000000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 170000,
+      "wall_seconds": 1233.56,
+      "user_seconds": 19239.11,
+      "system_seconds": 212.04,
+      "peak_rss_kib": 72744604,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 167248,
+      "host_swap_in_mib": 12280.8984375,
+      "host_swap_out_mib": 13052.50390625,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n1000000_m80000_LM_r1",
+      "dataset": "n1000000_m80000",
+      "animals": 1000000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 1,
+      "threads": 20,
+      "maxhap": 170000,
+      "wall_seconds": 1541.24,
+      "user_seconds": 20599.28,
+      "system_seconds": 262.28,
+      "peak_rss_kib": 40770864,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 167248,
+      "host_swap_in_mib": 6.7421875,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n1000000_m80000_LM_r2",
+      "dataset": "n1000000_m80000",
+      "animals": 1000000,
+      "loci": 80000,
+      "program": "TurboHap LM",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 170000,
+      "wall_seconds": 1545.18,
+      "user_seconds": 20590.78,
+      "system_seconds": 272.77,
+      "peak_rss_kib": 40776272,
+      "exit_status": 0,
+      "date": "2026-11-19",
+      "peak_live_haplotypes": 167248,
+      "host_swap_in_mib": 19.94921875,
+      "host_swap_out_mib": 0.0,
+      "source": "v1.6.0-rc.2 benchmark"
+    },
+    {
+      "id": "n1000000_m80000_standard_r2",
+      "dataset": "n1000000_m80000",
+      "animals": 1000000,
+      "loci": 80000,
+      "program": "TurboHap",
+      "repeat": 2,
+      "threads": 20,
+      "maxhap": 170000,
+      "wall_seconds": 1222.93,
+      "user_seconds": 19278.43,
+      "system_seconds": 197.9,
+      "peak_rss_kib": 72760248,
+      "exit_status": 0,
+      "date": "2026-11-20",
+      "peak_live_haplotypes": 167248,
+      "host_swap_in_mib": 5101.85546875,
+      "host_swap_out_mib": 7043.9296875,
+      "source": "v1.6.0-rc.2 benchmark"
+    }
+  ],
+  "validation": [
+    {
+      "id": "n10000_m20000_GNU_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m80000_GNU_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m20000_GNU_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m80000_GNU_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m20000_GNU_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m80000_GNU_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m20000_GNU_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m20000_GNU_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m80000_GNU_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m20000_GNU_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m80000_GNU_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m20000_GNU_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m80000_GNU_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m80000_GNU_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": false,
+          "record_order_exception": true,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m20000_standard_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m20000_LM_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m20000_LM_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m20000_standard_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m80000_standard_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m80000_LM_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m80000_LM_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n10000_m80000_standard_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m20000_standard_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m20000_LM_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m20000_LM_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m20000_standard_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m80000_standard_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m80000_LM_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m80000_LM_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n25000_m80000_standard_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m20000_standard_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m20000_LM_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m20000_LM_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m20000_standard_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m80000_standard_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m80000_LM_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m80000_LM_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n100000_m80000_standard_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m20000_standard_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m20000_LM_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m20000_LM_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m20000_standard_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m80000_standard_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m80000_LM_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m80000_LM_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n250000_m80000_standard_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n1000000_m80000_standard_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n1000000_m80000_LM_r1",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n1000000_m80000_LM_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "id": "n1000000_m80000_standard_r2",
+      "files": [
+        {
+          "file": "allele.frequency",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "cross.overs",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "do_not_distrib",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "genotypes.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.Xseg",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.filled",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.found",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.inherit",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "hap.list",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        },
+        {
+          "file": "haplotypes.txt",
+          "raw_identical": true,
+          "record_order_exception": false,
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "published_baseline": {
+    "version": "1.5.0",
+    "url": "https://github.com/adrian-greenneuron/TurboHap/blob/v1.5.0/docs/turbohap_benchmarks_111126.json",
+    "json_sha256": "217fe8167bf11bb7097a9af8ba492a929fe4c3f6843d9157baf632a926b8d2a7",
+    "observations": [
+      {
+        "id": "n10000_m20000_standard_r1",
+        "dataset": "n10000_m20000",
+        "animals": 10000,
+        "loci": 20000,
+        "program": "TurboHap",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 3.16,
+        "user_seconds": 37.36,
+        "system_seconds": 0.76,
+        "peak_rss_kib": 381928,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 7204
+      },
+      {
+        "id": "n10000_m20000_LM_r1",
+        "dataset": "n10000_m20000",
+        "animals": 10000,
+        "loci": 20000,
+        "program": "TurboHap LM",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 4.05,
+        "user_seconds": 37.9,
+        "system_seconds": 1.37,
+        "peak_rss_kib": 302660,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 7204
+      },
+      {
+        "id": "n10000_m20000_LM_r2",
+        "dataset": "n10000_m20000",
+        "animals": 10000,
+        "loci": 20000,
+        "program": "TurboHap LM",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 4.09,
+        "user_seconds": 37.96,
+        "system_seconds": 1.4,
+        "peak_rss_kib": 303364,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 7204
+      },
+      {
+        "id": "n10000_m20000_standard_r2",
+        "dataset": "n10000_m20000",
+        "animals": 10000,
+        "loci": 20000,
+        "program": "TurboHap",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 3.18,
+        "user_seconds": 37.43,
+        "system_seconds": 0.8,
+        "peak_rss_kib": 382284,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 7204
+      },
+      {
+        "id": "n10000_m80000_standard_r1",
+        "dataset": "n10000_m80000",
+        "animals": 10000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 9.07,
+        "user_seconds": 110.06,
+        "system_seconds": 1.99,
+        "peak_rss_kib": 1054740,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 4170
+      },
+      {
+        "id": "n10000_m80000_LM_r1",
+        "dataset": "n10000_m80000",
+        "animals": 10000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 14.93,
+        "user_seconds": 111.43,
+        "system_seconds": 3.85,
+        "peak_rss_kib": 701864,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 4170
+      },
+      {
+        "id": "n10000_m80000_LM_r2",
+        "dataset": "n10000_m80000",
+        "animals": 10000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 14.5,
+        "user_seconds": 111.1,
+        "system_seconds": 4.01,
+        "peak_rss_kib": 702908,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 4170
+      },
+      {
+        "id": "n10000_m80000_standard_r2",
+        "dataset": "n10000_m80000",
+        "animals": 10000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 9.09,
+        "user_seconds": 109.8,
+        "system_seconds": 1.93,
+        "peak_rss_kib": 1054848,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 4170
+      },
+      {
+        "id": "n25000_m20000_standard_r1",
+        "dataset": "n25000_m20000",
+        "animals": 25000,
+        "loci": 20000,
+        "program": "TurboHap",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 8.68,
+        "user_seconds": 113.39,
+        "system_seconds": 1.58,
+        "peak_rss_kib": 812164,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 15458
+      },
+      {
+        "id": "n25000_m20000_LM_r1",
+        "dataset": "n25000_m20000",
+        "animals": 25000,
+        "loci": 20000,
+        "program": "TurboHap LM",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 10.35,
+        "user_seconds": 115.71,
+        "system_seconds": 2.88,
+        "peak_rss_kib": 595036,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 15458
+      },
+      {
+        "id": "n25000_m20000_LM_r2",
+        "dataset": "n25000_m20000",
+        "animals": 25000,
+        "loci": 20000,
+        "program": "TurboHap LM",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 10.35,
+        "user_seconds": 115.87,
+        "system_seconds": 2.7,
+        "peak_rss_kib": 595236,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 15458
+      },
+      {
+        "id": "n25000_m20000_standard_r2",
+        "dataset": "n25000_m20000",
+        "animals": 25000,
+        "loci": 20000,
+        "program": "TurboHap",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 8.6,
+        "user_seconds": 113.4,
+        "system_seconds": 1.62,
+        "peak_rss_kib": 812028,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 15458
+      },
+      {
+        "id": "n25000_m80000_standard_r1",
+        "dataset": "n25000_m80000",
+        "animals": 25000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 23.05,
+        "user_seconds": 295.45,
+        "system_seconds": 3.86,
+        "peak_rss_kib": 2313132,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 7899
+      },
+      {
+        "id": "n25000_m80000_LM_r1",
+        "dataset": "n25000_m80000",
+        "animals": 25000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 36.2,
+        "user_seconds": 300.68,
+        "system_seconds": 8.46,
+        "peak_rss_kib": 1426276,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 7899
+      },
+      {
+        "id": "n25000_m80000_LM_r2",
+        "dataset": "n25000_m80000",
+        "animals": 25000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 36.37,
+        "user_seconds": 301.34,
+        "system_seconds": 7.59,
+        "peak_rss_kib": 1426216,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 7899
+      },
+      {
+        "id": "n25000_m80000_standard_r2",
+        "dataset": "n25000_m80000",
+        "animals": 25000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 23.28,
+        "user_seconds": 295.34,
+        "system_seconds": 4.1,
+        "peak_rss_kib": 2312596,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 7899
+      },
+      {
+        "id": "n100000_m20000_standard_r1",
+        "dataset": "n100000_m20000",
+        "animals": 100000,
+        "loci": 20000,
+        "program": "TurboHap",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 60000,
+        "wall_seconds": 55.58,
+        "user_seconds": 863.69,
+        "system_seconds": 5.69,
+        "peak_rss_kib": 2873140,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 55564
+      },
+      {
+        "id": "n100000_m20000_LM_r1",
+        "dataset": "n100000_m20000",
+        "animals": 100000,
+        "loci": 20000,
+        "program": "TurboHap LM",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 60000,
+        "wall_seconds": 61.32,
+        "user_seconds": 867.72,
+        "system_seconds": 8.21,
+        "peak_rss_kib": 2038368,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 55564
+      },
+      {
+        "id": "n100000_m20000_LM_r2",
+        "dataset": "n100000_m20000",
+        "animals": 100000,
+        "loci": 20000,
+        "program": "TurboHap LM",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 60000,
+        "wall_seconds": 62.03,
+        "user_seconds": 875.92,
+        "system_seconds": 9.08,
+        "peak_rss_kib": 2037948,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 55564
+      },
+      {
+        "id": "n100000_m20000_standard_r2",
+        "dataset": "n100000_m20000",
+        "animals": 100000,
+        "loci": 20000,
+        "program": "TurboHap",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 60000,
+        "wall_seconds": 55.68,
+        "user_seconds": 858.0,
+        "system_seconds": 5.65,
+        "peak_rss_kib": 2872116,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 55564
+      },
+      {
+        "id": "n100000_m80000_standard_r1",
+        "dataset": "n100000_m80000",
+        "animals": 100000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 105.55,
+        "user_seconds": 1445.11,
+        "system_seconds": 15.42,
+        "peak_rss_kib": 8094556,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 26039
+      },
+      {
+        "id": "n100000_m80000_LM_r1",
+        "dataset": "n100000_m80000",
+        "animals": 100000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 158.52,
+        "user_seconds": 1476.06,
+        "system_seconds": 30.0,
+        "peak_rss_kib": 4536340,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 26039
+      },
+      {
+        "id": "n100000_m80000_LM_r2",
+        "dataset": "n100000_m80000",
+        "animals": 100000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 157.44,
+        "user_seconds": 1489.64,
+        "system_seconds": 28.6,
+        "peak_rss_kib": 4535492,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 26039
+      },
+      {
+        "id": "n100000_m80000_standard_r2",
+        "dataset": "n100000_m80000",
+        "animals": 100000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 50000,
+        "wall_seconds": 104.55,
+        "user_seconds": 1444.87,
+        "system_seconds": 14.89,
+        "peak_rss_kib": 8094956,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 26039
+      },
+      {
+        "id": "n250000_m20000_standard_r1",
+        "dataset": "n250000_m20000",
+        "animals": 250000,
+        "loci": 20000,
+        "program": "TurboHap",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 130000,
+        "wall_seconds": 244.79,
+        "user_seconds": 4119.73,
+        "system_seconds": 14.75,
+        "peak_rss_kib": 7646060,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 120124
+      },
+      {
+        "id": "n250000_m20000_LM_r1",
+        "dataset": "n250000_m20000",
+        "animals": 250000,
+        "loci": 20000,
+        "program": "TurboHap LM",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 130000,
+        "wall_seconds": 263.13,
+        "user_seconds": 4207.64,
+        "system_seconds": 21.65,
+        "peak_rss_kib": 5500792,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 120124
+      },
+      {
+        "id": "n250000_m20000_LM_r2",
+        "dataset": "n250000_m20000",
+        "animals": 250000,
+        "loci": 20000,
+        "program": "TurboHap LM",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 130000,
+        "wall_seconds": 267.33,
+        "user_seconds": 4227.61,
+        "system_seconds": 22.26,
+        "peak_rss_kib": 5507456,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 120124
+      },
+      {
+        "id": "n250000_m20000_standard_r2",
+        "dataset": "n250000_m20000",
+        "animals": 250000,
+        "loci": 20000,
+        "program": "TurboHap",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 130000,
+        "wall_seconds": 246.9,
+        "user_seconds": 4153.57,
+        "system_seconds": 15.37,
+        "peak_rss_kib": 7638272,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 120124
+      },
+      {
+        "id": "n250000_m80000_standard_r1",
+        "dataset": "n250000_m80000",
+        "animals": 250000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 60000,
+        "wall_seconds": 300.35,
+        "user_seconds": 4390.28,
+        "system_seconds": 36.05,
+        "peak_rss_kib": 18958940,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 52936
+      },
+      {
+        "id": "n250000_m80000_LM_r1",
+        "dataset": "n250000_m80000",
+        "animals": 250000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 60000,
+        "wall_seconds": 434.93,
+        "user_seconds": 4546.68,
+        "system_seconds": 66.48,
+        "peak_rss_kib": 10116600,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 52936
+      },
+      {
+        "id": "n250000_m80000_LM_r2",
+        "dataset": "n250000_m80000",
+        "animals": 250000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 60000,
+        "wall_seconds": 429.26,
+        "user_seconds": 4546.39,
+        "system_seconds": 64.03,
+        "peak_rss_kib": 10113520,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 52936
+      },
+      {
+        "id": "n250000_m80000_standard_r2",
+        "dataset": "n250000_m80000",
+        "animals": 250000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 60000,
+        "wall_seconds": 298.44,
+        "user_seconds": 4394.1,
+        "system_seconds": 35.58,
+        "peak_rss_kib": 18960100,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 52936
+      },
+      {
+        "id": "n1000000_m80000_standard_r1",
+        "dataset": "n1000000_m80000",
+        "animals": 1000000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 170000,
+        "wall_seconds": 1971.14,
+        "user_seconds": 32061.42,
+        "system_seconds": 156.06,
+        "peak_rss_kib": 89467828,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 167248
+      },
+      {
+        "id": "n1000000_m80000_LM_r1",
+        "dataset": "n1000000_m80000",
+        "animals": 1000000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 1,
+        "threads": 20,
+        "maxhap": 170000,
+        "wall_seconds": 2549.62,
+        "user_seconds": 33103.51,
+        "system_seconds": 267.35,
+        "peak_rss_kib": 53742960,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 167248
+      },
+      {
+        "id": "n1000000_m80000_LM_r2",
+        "dataset": "n1000000_m80000",
+        "animals": 1000000,
+        "loci": 80000,
+        "program": "TurboHap LM",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 170000,
+        "wall_seconds": 2542.83,
+        "user_seconds": 32973.24,
+        "system_seconds": 282.35,
+        "peak_rss_kib": 53754052,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 167248
+      },
+      {
+        "id": "n1000000_m80000_standard_r2",
+        "dataset": "n1000000_m80000",
+        "animals": 1000000,
+        "loci": 80000,
+        "program": "TurboHap",
+        "repeat": 2,
+        "threads": 20,
+        "maxhap": 170000,
+        "wall_seconds": 1962.03,
+        "user_seconds": 31930.51,
+        "system_seconds": 153.89,
+        "peak_rss_kib": 89476948,
+        "exit_status": 0,
+        "swaps": 0,
+        "date": "2026-11-10",
+        "peak_live_haplotypes": 167248
+      }
+    ]
+  }
+}

@@ -1,12 +1,15 @@
 #pragma once
 #include <cstdio>
 #include <cstring>
+#if FINDHAP_HAS_FLOAT_TO_CHARS
 #include <charconv>
 #include <cfenv>
 #include <cmath>
+#endif
 #include "integer_output.hpp"
 
 namespace turbohap_output {
+#if FINDHAP_HAS_FLOAT_TO_CHARS
 inline bool fixed_five(char* destination, double value) {
     if (!std::isfinite(value)) return false;
     char digits[10];
@@ -18,6 +21,7 @@ inline bool fixed_five(char* destination, double value) {
     std::memcpy(destination + 10 - n, digits, n);
     return true;
 }
+#endif
 
 // Match the first 58 bytes of the historical snprintf(..., 59, ...) header.
 // Preserve printf's fixed conversion and minimum-width/overflow semantics.
@@ -27,6 +31,7 @@ inline void haplist_header(char* destination, float hap_pct, double tot_pct,
                            int start, int length) {
     char header[96]; // 20 float bytes + at most six 11-byte integers + separator.
     int prefix;
+#if FINDHAP_HAS_FLOAT_TO_CHARS
     if constexpr (FastFloat) {
         // to_chars uses the C-locale fixed conversion, without changing either
         // input value. Non-nearest rounding and exceptional/wide fields retain
@@ -34,7 +39,9 @@ inline void haplist_header(char* destination, float hap_pct, double tot_pct,
         prefix = std::fegetround() == FE_TONEAREST &&
                  fixed_five(header, static_cast<double>(hap_pct)) &&
                  fixed_five(header + 10, tot_pct) ? 20 : -1;
-    } else {
+    } else
+#endif
+    {
         prefix = std::snprintf(header, 21, "%10.5f%10.5f", hap_pct, tot_pct);
     }
     if (prefix != 20) {

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 960 392" width="960" height="392" role="img" aria-labelledby="title desc">
+  <title id="title">What a bull inherits from each parent</title>
+  <desc id="desc">Sire 49 and dam 64 are the parents of ungenotyped bull 103. Daughter 172 and son 181 are two of his genotyped calves. On an autosome the bull gets one copy from each parent. In the pseudoautosomal region he gets one copy on his sire’s Y and one on his dam’s X. Only his dam supplies an X-specific copy.</desc>
+  <style>
+    text { font-family: 'DejaVu Sans', Arial, sans-serif; fill: #172f47 }
+    .title { font-size: 29px; font-weight: bold }
+    .subtitle { font-size: 17px; fill: #475e72 }
+    .section { font-size: 19px; font-weight: bold }
+    .label { font-size: 17px; font-weight: bold }
+    .note { font-size: 15px; fill: #475e72 }
+    .sire { fill: #25597e } .dam { fill: #116d64 }
+  </style>
+  <defs>
+    <g id="copy">
+      <rect x="-39" y="0" width="78" height="10" rx="5" fill="currentColor"/>
+      <path d="M-22 1v8M-5 1v8M18 1v8" stroke="white" stroke-opacity=".65" stroke-width="2"/>
+    </g>
+  </defs>
+  <rect width="960" height="392" fill="white"/>
+  <text x="24" y="39" class="title">What a bull inherits from each parent</text>
+  <text x="24" y="66" class="subtitle">His calves give clues to his missing genotype. His parents help identify which haplotypes he could carry.</text>
+  <path d="M24 82H936" stroke="#c3d1d9"/>
+
+  <text x="24" y="115" class="section">Bull 103 and his family</text>
+  <g fill="none" stroke="#7d8f9a" stroke-width="2">
+    <path d="M78 170H244 M161 170V214 M161 236V276 M78 276H244 M78 276V300 M244 276V300"/>
+  </g>
+  <text x="78" y="150" text-anchor="middle" class="label sire">Sire 49</text>
+  <text x="244" y="150" text-anchor="middle" class="label dam">Dam 64</text>
+  <rect x="68" y="160" width="20" height="20" rx="1" fill="white" stroke="#25597e" stroke-width="2.5"/>
+  <circle cx="244" cy="170" r="11" fill="white" stroke="#116d64" stroke-width="2.5"/>
+  <rect x="149" y="212" width="24" height="24" rx="1" fill="white" stroke="#172f47" stroke-width="3"/>
+  <text x="185" y="223" class="label">Bull 103</text>
+  <text x="185" y="244" class="note">Ungenotyped</text>
+  <circle cx="78" cy="309" r="10" fill="white" stroke="#526778" stroke-width="2"/>
+  <rect x="234" y="299" width="20" height="20" rx="1" fill="white" stroke="#526778" stroke-width="2"/>
+  <text x="78" y="344" text-anchor="middle" class="label">Daughter 172</text>
+  <text x="244" y="344" text-anchor="middle" class="label">Son 181</text>
+  <text x="24" y="374" class="note">Two of his genotyped calves are shown.</text>
+
+  <path d="M345 98V370" stroke="#d7e1e6"/>
+  <text x="370" y="115" class="section">Copies inherited by bull 103</text>
+  <text x="370" y="150" class="note">Region on the map</text>
+  <text x="678" y="150" text-anchor="middle" class="label sire">From his sire</text>
+  <text x="852" y="150" text-anchor="middle" class="label dam">From his dam</text>
+  <path d="M370 163H936 M370 228H936 M370 294H936" stroke="#d7e1e6"/>
+  <text x="370" y="191" class="label">Autosome</text>
+  <text x="370" y="212" class="note">e.g. chromosome 1</text>
+  <use xlink:href="#copy" transform="translate(678 179)" color="#25597e"/>
+  <use xlink:href="#copy" transform="translate(852 179)" color="#116d64"/>
+  <text x="678" y="212" text-anchor="middle" class="note">One copy</text>
+  <text x="852" y="212" text-anchor="middle" class="note">One copy</text>
+  <text x="370" y="258" class="label">Pseudoautosomal</text>
+  <text x="370" y="279" class="note">Region shared by X and Y</text>
+  <use xlink:href="#copy" transform="translate(678 246)" color="#25597e"/>
+  <use xlink:href="#copy" transform="translate(852 246)" color="#116d64"/>
+  <text x="678" y="279" text-anchor="middle" class="note">Copy on his Y</text>
+  <text x="852" y="279" text-anchor="middle" class="note">Copy on his X</text>
+  <text x="370" y="324" class="label">X-specific</text>
+  <text x="370" y="346" class="note">Outside the shared region</text>
+  <path d="M668 317H688" stroke="#8d9ca7" stroke-width="2"/>
+  <use xlink:href="#copy" transform="translate(852 312)" color="#116d64"/>
+  <text x="678" y="346" text-anchor="middle" class="note">No copy</text>
+  <text x="852" y="346" text-anchor="middle" class="note">Copy on his X</text>
+</svg>

@@ -1,9 +1,14 @@
 #pragma once
-// Qualified on M4 Pro with the public byte references and generated pedigrees.
+// The native Apple Silicon engine was exercised on M1 Pro, M4 Pro and M5.
 // Every feature remains individually overridable. No core count is compiled in.
 #if defined(__APPLE__) && defined(__aarch64__) && defined(__ARM_NEON) && \
-    defined(FINDHAP_NATIVE_APPLE_M4PRO) && FINDHAP_NATIVE_APPLE_M4PRO
+    ((defined(FINDHAP_NATIVE_APPLE_M4PRO) && FINDHAP_NATIVE_APPLE_M4PRO) || \
+     (defined(FINDHAP_APPLE_SILICON_COHORT) && FINDHAP_APPLE_SILICON_COHORT))
 #define TURBOHAP_APPLE_M4_PROFILE 1
+// Explicit fixture and caller settings take priority over the cohort default.
+#if defined(FINDHAP_M4_COHORT_ORDERED_SCAN_ORDER) && !defined(FINDHAP_ORDERED_SCAN_ORDER)
+#define FINDHAP_ORDERED_SCAN_ORDER FINDHAP_M4_COHORT_ORDERED_SCAN_ORDER
+#endif
 #ifndef FINDHAP_ORDERED_LAYOUT
 #define FINDHAP_ORDERED_LAYOUT 1
 #endif

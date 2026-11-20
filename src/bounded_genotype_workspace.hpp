@@ -14,6 +14,15 @@ class BoundedGenotypeWorkspace {
     findhap::PhaseBuffer<uint8_t> input_;
     size_t input_capacity_ = 0, input_batch_ = 0, input_first_ = 0, input_count_ = 0;
     uint64_t read_bytes_ = 0, write_bytes_ = 0;
+#if FINDHAP_LM_WRITEBACK_BATCH_BYTES > 0
+    size_t pending_input_bytes_ = 0;
+
+    void sync_input() {
+        if (!pending_input_bytes_) return;
+        file_->discard(true);
+        pending_input_bytes_ = 0;
+    }
+#endif
 #if FINDHAP_MMAP_PHASE_BUFFERS && FINDHAP_PHASE_LM_RESERVE
     size_t input_reserve_ = 0;
 #endif
@@ -115,11 +124,21 @@ public:
             write_bytes_ += bytes;
             begin += bytes;
         }
+#if FINDHAP_LM_WRITEBACK_BATCH_BYTES > 0
+        // A serial batch can cover several scattered segment ranges.
+        // Complete writeback within one staging block of the byte threshold.
+        pending_input_bytes_ += begin;
+        if (pending_input_bytes_ >= FINDHAP_LM_WRITEBACK_BATCH_BYTES) sync_input();
+#else
         file_->discard(true);
+#endif
     }
 
     void finish_input() {
         if (dense_) dense_->finish_input();
+#if FINDHAP_LM_WRITEBACK_BATCH_BYTES > 0
+        sync_input();
+#endif
         input_.reset();
         input_capacity_ = 0;
     }
