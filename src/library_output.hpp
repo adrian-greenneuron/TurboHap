@@ -8,6 +8,12 @@
 
 namespace turbohap_output {
 inline bool fixed_five(char* destination, double value) {
+#if !(defined(__cpp_lib_to_chars) && __cpp_lib_to_chars >= 201611L)
+    // Modified build: libstdc++ before GCC 11 has no floating-point to_chars.
+    // Report "not converted" so the caller keeps the authoritative snprintf path.
+    (void)destination; (void)value;
+    return false;
+#else
     if (!std::isfinite(value)) return false;
     char digits[10];
     const auto converted = std::to_chars(digits, digits + sizeof(digits), value,
@@ -17,6 +23,7 @@ inline bool fixed_five(char* destination, double value) {
     std::memset(destination, ' ', 10 - n);
     std::memcpy(destination + 10 - n, digits, n);
     return true;
+#endif
 }
 
 // Match the first 58 bytes of the historical snprintf(..., 59, ...) header.

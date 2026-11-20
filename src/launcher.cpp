@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
         argv[count] = nullptr;
         if (count > 1 && std::strcmp(argv[1], "--help") == 0) {
             std::puts(
-                "TurboHap\n"
+                "TurboHap (unofficial modified build; see MODIFICATIONS.md)\n"
                 "Usage: findhap [threads] [--low-memory] [--cpu-policy=auto|inherit|performance] [--cpu-info]\n\n"
                 "Standard mode prioritizes speed. --low-memory reduces peak memory.\n"
                 "Options may appear before or after the thread count.\n"

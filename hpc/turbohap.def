@@ -1,0 +1,78 @@
+# Apptainer (Singularity) image for TurboHap 1.5.0-modified.2 (unofficial build) on Rocky Linux 9.
+#
+# Two ways to get the image:
+#  1. Convert the Docker image (simplest; same contents, Ubuntu 20.04 base):
+#       apptainer build turbohap.sif docker-archive://turbohap-1.5.0-modified.2-docker.tar
+#     (gunzip the .tar.gz first), or docker-daemon://turbohap:1.5.0-modified.2
+#  2. Build from this file (needs --fakeroot or root; run from the source folder):
+#       apptainer build --fakeroot --build-arg MARCH=x86-64-v3 turbohap.sif hpc/turbohap.def
+#     MARCH=native tunes the binary to the CPU that builds the image: build on a
+#     compute node of the partition you will use, or choose a portable target.
+#     --build-arg needs Apptainer 1.2 or newer.
+#
+# Run (settings from environment variables, see docker/turbohap-run):
+#   apptainer run --cleanenv --bind "$RUNNING_DIR":/home/galaxy/data \
+#       --env FINDHAP_DIR=/home/galaxy/data,OMP_NUM_THREADS=16 turbohap.sif
+#
+# Licence: free for non-commercial academic research and teaching only;
+# commercial use needs a licence from Green Neuron AI. Unofficial modified
+# build; licence and notices in /opt/turbohap/share/doc/turbohap/.
+
+Bootstrap: docker
+From: rockylinux/rockylinux:9
+Stage: build
+
+%arguments
+    MARCH=native
+
+%setup
+    mkdir -p "${APPTAINER_ROOTFS}/src"
+
+%files
+    . /src
+
+%post
+    set -e
+    dnf -y install gcc-c++ cmake make python3
+    dnf clean all
+    cd /src
+    rm -rf build .git
+    cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++ -DBUILD_TESTING=OFF \
+        "-DFINDHAP_RELEASE_FLAGS=-O3 -march={{ MARCH }} -funroll-loops -flto -ffp-contract=off"
+    cmake --build build --parallel 4
+    # Stop the build if any output differs from the original Fortran.
+    LC_ALL=C OMP_DYNAMIC=FALSE python3 tests/check_example.py --binary build/findhap
+    cmake --install build --prefix /opt/turbohap
+    install -m 755 docker/turbohap-run /opt/turbohap/bin/turbohap-run
+    install -m 644 MODIFICATIONS.md /opt/turbohap/share/doc/turbohap/MODIFICATIONS.md
+
+Bootstrap: docker
+From: rockylinux/rockylinux:9
+Stage: final
+
+%files from build
+    /opt/turbohap /opt/turbohap
+
+%post
+    dnf -y install libgomp libstdc++
+    dnf clean all
+
+%environment
+    export LC_ALL=C
+    export OMP_DYNAMIC=FALSE
+    export PATH=/opt/turbohap/bin:$PATH
+
+%runscript
+    # Settings from arguments, or from FINDHAP_DIR, FINDHAP_THREADS /
+    # OMP_NUM_THREADS, FINDHAP_LOW_MEMORY, FINDHAP_INPUT_VALIDATION,
+    # FINDHAP_VALIDATE_ONLY and fped, fgeno, fgenout, ...
+    exec /opt/turbohap/bin/turbohap-run "$@"
+
+%labels
+    Title TurboHap 1.5.0-modified.2 (unofficial modified build of TurboHap 1.5.0)
+    Source https://github.com/adrian-greenneuron/TurboHap
+
+%help
+    TurboHap 1.5.0-modified.2: FindHap v3 in C++ (unofficial modified build; see
+    /opt/turbohap/share/doc/turbohap/MODIFICATIONS.md).
+    Usage: apptainer run --cleanenv --bind DIR:/data --env FINDHAP_DIR=/data,OMP_NUM_THREADS=16 turbohap.sif

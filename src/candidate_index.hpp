@@ -16,7 +16,19 @@
 #else
 #define FINDHAP_USE_ORDERED 0
 #endif
-#if FINDHAP_POP_ENCODE && defined(__AVX2__)
+// Modified build: exact whole-segment allele bitsets for segments longer than
+// 64 loci (see MODIFICATIONS.md). They replace the byte comparison of a
+// candidate by a few word operations; results are unchanged.
+#ifndef FINDHAP_MOD_WIDE
+// Standard mode with AVX2 only: no gain was measured in low-memory mode or
+// with scalar encoding.
+#if defined(__linux__) && defined(__AVX2__) && defined(FINDHAP_HIGH_MEMORY) && !FINDHAP_POP_FULL
+#define FINDHAP_MOD_WIDE 1
+#else
+#define FINDHAP_MOD_WIDE 0
+#endif
+#endif
+#if (FINDHAP_POP_ENCODE || FINDHAP_MOD_WIDE) && defined(__AVX2__)
 #include <immintrin.h>
 #endif
 #if FINDHAP_USE_ORDERED
@@ -96,8 +108,113 @@ private:
     std::unique_ptr<ActiveOrderedLookup> ordered_;
     bool ordered_disabled_ = false;
 #endif
+#if FINDHAP_MOD_WIDE
+    // Per haplotype: wide_words_ words of "allele 0" bits, then as many of
+    // "allele 2" bits. wide_valid_ is set when every allele is 0, 1 or 2.
+    int wide_length_ = 0, wide_words_ = 0;
+    std::vector<uint64_t> wide_;
+    std::vector<uint8_t> wide_valid_;
+#endif
 
 public:
+#if FINDHAP_MOD_WIDE
+    int wide_words() const { return wide_words_; }
+    // Bitsets of one segment. Returns false when an allele is outside 0..2.
+    static bool wide_encode(const int8_t* alleles, int length, uint64_t* zero, uint64_t* two) {
+        const int words = (length + 63) / 64;
+        for (int w = 0; w < words; ++w) { zero[w] = 0; two[w] = 0; }
+        bool valid = true;
+        int q = 0;
+#if defined(__AVX2__)
+        const auto vzero = _mm256_setzero_si256();
+        const auto vtwo = _mm256_set1_epi8(2);
+        auto bad = _mm256_setzero_si256();
+        for (; q + 32 <= length; q += 32) {
+            const auto values = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(alleles + q));
+            zero[q / 64] |= uint64_t(uint32_t(_mm256_movemask_epi8(_mm256_cmpeq_epi8(values, vzero)))) << (q % 64);
+            two[q / 64] |= uint64_t(uint32_t(_mm256_movemask_epi8(_mm256_cmpeq_epi8(values, vtwo)))) << (q % 64);
+            // Unsigned maximum with 2 differs from 2 exactly for values outside 0..2.
+            bad = _mm256_or_si256(bad, _mm256_xor_si256(_mm256_max_epu8(values, vtwo), vtwo));
+        }
+        valid = _mm256_testz_si256(bad, bad);
+#endif
+        for (; q < length; ++q) {
+            const int value = alleles[q];
+            zero[q / 64] |= uint64_t(value == 0) << (q % 64);
+            two[q / 64] |= uint64_t(value == 2) << (q % 64);
+            valid = valid && value >= 0 && value <= 2;
+        }
+        return valid;
+    }
+    // Query side, for any allele values (a backsolved segment holds -2..4):
+    // ge2 marks alleles that conflict with a haplotype 0, le0 those that
+    // conflict with a haplotype 2, out those that conflict with a haplotype 1.
+    static void wide_query(const int8_t* alleles, int length, uint64_t* ge2, uint64_t* le0, uint64_t* out) {
+        const int words = (length + 63) / 64;
+        for (int w = 0; w < words; ++w) { ge2[w] = 0; le0[w] = 0; out[w] = 0; }
+        int q = 0;
+#if defined(__AVX2__)
+        const auto vzero = _mm256_setzero_si256();
+        const auto vone = _mm256_set1_epi8(1);
+        const auto vtwo = _mm256_set1_epi8(2);
+        for (; q + 32 <= length; q += 32) {
+            const auto values = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(alleles + q));
+            ge2[q / 64] |= uint64_t(uint32_t(_mm256_movemask_epi8(_mm256_cmpgt_epi8(values, vone)))) << (q % 64);
+            le0[q / 64] |= uint64_t(uint32_t(_mm256_movemask_epi8(_mm256_cmpgt_epi8(vone, values)))) << (q % 64);
+            out[q / 64] |= uint64_t(uint32_t(_mm256_movemask_epi8(_mm256_or_si256(
+                _mm256_cmpgt_epi8(values, vtwo), _mm256_cmpgt_epi8(vzero, values))))) << (q % 64);
+        }
+#endif
+        for (; q < length; ++q) {
+            const int value = alleles[q];
+            ge2[q / 64] |= uint64_t(value >= 2) << (q % 64);
+            le0[q / 64] |= uint64_t(value <= 0) << (q % 64);
+            out[q / 64] |= uint64_t(value > 2 || value < 0) << (q % 64);
+        }
+    }
+    // Exact number of loci where |query - haplotype| > 1, as the byte
+    // comparison counts them. With stop_at_first the count is only told apart
+    // from zero. False when the haplotype row holds values outside 0..2.
+    bool wide_count(const uint64_t* ge2, const uint64_t* le0, const uint64_t* out, int haplotype,
+                    bool stop_at_first, int& count) const {
+        if (!wide_valid_[haplotype - 1]) return false;
+        const uint64_t* hap = &wide_[size_t(haplotype - 1) * 2 * wide_words_];
+        int total = 0;
+        for (int w = 0; w < wide_words_; ++w) {
+            const uint64_t zero = hap[w], two = hap[wide_words_ + w];
+            const uint64_t bits = (ge2[w] & zero) | (le0[w] & two) | (out[w] & ~(zero | two));
+            if (bits) {
+                if (stop_at_first) { count = 1; return true; }
+                total += __builtin_popcountll(bits);
+            }
+        }
+        count = total;
+        return true;
+    }
+    // After a zero count: loci, in increasing order, where the haplotype is
+    // unknown (1) and the query is not (it is 0 or 2 there).
+    int wide_fill(const uint64_t* ge2, const uint64_t* le0, int haplotype, int* positions) const {
+        const uint64_t* hap = &wide_[size_t(haplotype - 1) * 2 * wide_words_];
+        int count = 0;
+        for (int w = 0; w < wide_words_; ++w) {
+            uint64_t bits = ~(hap[w] | hap[wide_words_ + w]) & (ge2[w] | le0[w]);
+            while (bits) { positions[count++] = w * 64 + __builtin_ctzll(bits); bits &= bits - 1; }
+        }
+        return count;
+    }
+private:
+    void wide_refresh(int haplotype, const int8_t* alleles) {
+        if (!wide_words_) return;
+        if (wide_valid_.size() < size_t(haplotype)) {
+            const size_t grown = std::max(size_t(haplotype), wide_valid_.size() + wide_valid_.size() / 2);
+            wide_valid_.resize(grown);
+            wide_.resize(grown * 2 * wide_words_);
+        }
+        uint64_t* hap = &wide_[size_t(haplotype - 1) * 2 * wide_words_];
+        wide_valid_[haplotype - 1] = wide_encode(alleles, wide_length_, hap, hap + wide_words_);
+    }
+public:
+#endif
     CandidateIndex(int length, const int8_t* library, int stride, int haplotypes)
         : width_(std::min(length, 64)), contiguous_(length <= 64), entries_(haplotypes) {
         for (int k = 0; k < width_; ++k)
@@ -136,6 +253,13 @@ public:
 #if FINDHAP_POP_FULL && FINDHAP_POP_COMPACT
         if (length <= 128) valid_.resize(haplotypes);
         if (length > 64 && length <= 128) full_.resize(haplotypes);
+#endif
+#if FINDHAP_MOD_WIDE
+        if (length > 64) {
+            wide_length_ = length; wide_words_ = (length + 63) / 64;
+            wide_valid_.resize(haplotypes);
+            wide_.resize(size_t(haplotypes) * 2 * wide_words_);
+        }
 #endif
         for (int h = 0; h < haplotypes; ++h)
             refresh(h+1, library + (size_t)h * stride);
@@ -422,6 +546,9 @@ public:
         }
 #else
         entries_[haplotype - 1] = encode(alleles);
+#endif
+#if FINDHAP_MOD_WIDE
+        wide_refresh(haplotype, alleles);
 #endif
 #if FINDHAP_USE_ORDERED
         if (ordered_) {

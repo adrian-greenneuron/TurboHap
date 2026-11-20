@@ -1,5 +1,56 @@
 # Changelog
 
+## 1.5.0-modified.2 — 16 November 2026 (unofficial modified build)
+
+Not a release by the TurboHap author: TurboHap 1.5.0 with the changes of
+1.5.0-modified and those below. Result files remain byte-for-byte identical
+to TurboHap 1.5.0. Details in [MODIFICATIONS.md](MODIFICATIONS.md).
+
+- Faster haplotype search on large libraries: candidates are compared with
+  whole-segment allele bitsets instead of byte by byte (standard mode, Linux
+  with AVX2, segments longer than 64 loci). About 30–40% less time on
+  simulated high-diversity data.
+- Ordered candidate scan filters 256 positions per step (standard mode,
+  AVX2) and does not repeat work when a search resumes after a rejected
+  candidate.
+- Version label `1.5.0-modified.2`.
+- Documentation: notice at the top of `README.md`, English user manual
+  `hpc/README.en.md` beside the Italian `hpc/README.md`, measurements in
+  `MODIFICATIONS.md`.
+
+## 1.5.0-modified — 12 November 2026 (unofficial modified build)
+
+Not a release by the TurboHap author: TurboHap 1.5.0 with the changes
+below. Details in [MODIFICATIONS.md](MODIFICATIONS.md). Result files are
+byte-for-byte identical to TurboHap 1.5.0 (and 1.4.0) on every dataset
+tested. Replaces the earlier unofficial package labelled `1.5.0-unofficial`,
+which was built on 1.4.0.
+
+- Haplotype library reservation sized per step: about 8 times smaller on a
+  4,000-SNP chromosome, so a large `maxhap` (for example 1,000,000) fits.
+- Lazy library initialization and demand-zero frequency/order metadata on
+  every Linux CPU, not only on the qualified profiles; library mapped
+  without an up-front reservation check, so whole-genome runs with a large
+  `maxhap` start.
+- Portable parts of the 1.5.0 workload bundle (segment-owned progeny stage,
+  active library bound, early single-conflict rejection, base-frequency
+  loop) on every Linux CPU; CPU-specific kernels keep their guards.
+- Pedigree phase split by segment when a run has fewer chromosomes than
+  threads (for example one chromosome per run), instead of two thread
+  barriers per animal.
+- Output lines formatted by the worker threads; one thread writes a batch
+  while the others prepare the next.
+- Builds with GCC 9 and 10 (Ubuntu 20.04), for containers that run under
+  older Docker versions.
+- Version label `1.5.0-modified`; `--help` names the build as unofficial.
+- `Dockerfile`, `docker/turbohap-run` (configuration by environment
+  variables, including the `fped`, `fgeno`, `fgenout`, ... names of the
+  earlier FindHap container), `hpc/` (native build, Apptainer definition,
+  SLURM array job, split and merge by chromosome) and
+  `tools/compare_builds.py`. `hpc/merge_filled.py` takes chromosome folders
+  named `chr1`, `chr2`, ... or `1`, `2`, ..., and with
+  `--file genotypes.txt` also merges the original genotypes.
+
 ## 1.5.0 — 12 November 2026
 
 - **Optional modern console output.** `--stdout=modern` adds UTC date/time stamps,

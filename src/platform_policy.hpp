@@ -33,10 +33,23 @@
 #else
 #define TURBOHAP_WORKLOAD_PROFILE 0
 #endif
+// Modified build: the portable parts of the 1.5.0 workload bundle (segment-
+// owned progeny stage, active library bound, early single-conflict rejection,
+// base-frequency loop) on every Linux target. Their CPU-specific kernels keep
+// their own guards and fall back to the scalar code elsewhere. Results are
+// unchanged; see MODIFICATIONS.md.
+#if TURBOHAP_WORKLOAD_PROFILE || defined(__linux__)
+#define TURBOHAP_MOD_PORTABLE_PROFILE 1
+#else
+#define TURBOHAP_MOD_PORTABLE_PROFILE 0
+#endif
 // 8 November: use the qualified demand-zero library metadata on native Linux
 // Spark and qualified Intel/AMD in both engines, at every maxhap.
 #ifndef FINDHAP_LIBRARY_METADATA
-#if (defined(__linux__) && defined(__ARM_NEON) && defined(FINDHAP_NATIVE_GB10) && FINDHAP_NATIVE_GB10) || TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE
+// Modified build: demand-zero frequency/order metadata on every Linux target,
+// not only the qualified native profiles. It pairs with the lazy library
+// mapping below (FINDHAP_HAPLIST_INIT=3); results are unchanged.
+#if (defined(__linux__) && defined(__ARM_NEON) && defined(FINDHAP_NATIVE_GB10) && FINDHAP_NATIVE_GB10) || TURBOHAP_NATIVE_X86_WORKLOAD_PROFILE || defined(__linux__)
 #define FINDHAP_LIBRARY_METADATA 1
 #else
 #define FINDHAP_LIBRARY_METADATA 0
@@ -49,7 +62,7 @@
 #define FINDHAP_METADATA_CHUNK 1
 #endif
 #ifndef FINDHAP_PEDIGREE_VECTOR_BASE
-#define FINDHAP_PEDIGREE_VECTOR_BASE TURBOHAP_WORKLOAD_PROFILE
+#define FINDHAP_PEDIGREE_VECTOR_BASE TURBOHAP_MOD_PORTABLE_PROFILE
 #endif
 #ifndef FINDHAP_POP_FINAL_SCAN_NEON
 // The exact final validation/fill scan needs ARM64 NEON, not a CPU model or OS.
@@ -74,10 +87,10 @@
 #endif
 #endif
 #ifndef FINDHAP_PROGENY_SEGMENT_OWNED
-#define FINDHAP_PROGENY_SEGMENT_OWNED TURBOHAP_WORKLOAD_PROFILE
+#define FINDHAP_PROGENY_SEGMENT_OWNED TURBOHAP_MOD_PORTABLE_PROFILE
 #endif
 #ifndef FINDHAP_LIBRARY_ACTIVE_BOUND
-#define FINDHAP_LIBRARY_ACTIVE_BOUND TURBOHAP_WORKLOAD_PROFILE
+#define FINDHAP_LIBRARY_ACTIVE_BOUND TURBOHAP_MOD_PORTABLE_PROFILE
 #endif
 #ifndef FINDHAP_PEDIGREE_NEON_NEAR
 #define FINDHAP_PEDIGREE_NEON_NEAR TURBOHAP_NEON_WORKLOAD_PROFILE
@@ -217,8 +230,12 @@
 #ifndef FINDHAP_PEDIGREE_CHROMOSOMES
 #define FINDHAP_PEDIGREE_CHROMOSOMES 1
 #endif
+// Modified build: segment-owned pedigree passes when chromosomes < threads.
+#ifndef FINDHAP_PEDIGREE_SEGMENT_OWNERS
+#define FINDHAP_PEDIGREE_SEGMENT_OWNERS 1
+#endif
 #ifndef FINDHAP_PEDIGREE_EARLY_REJECT
-#define FINDHAP_PEDIGREE_EARLY_REJECT TURBOHAP_WORKLOAD_PROFILE
+#define FINDHAP_PEDIGREE_EARLY_REJECT TURBOHAP_MOD_PORTABLE_PROFILE
 #endif
 #ifndef FINDHAP_PEDIGREE_MASK_BACKEND
 #if defined(__AVX2__)
@@ -370,7 +387,11 @@
 // 2 poisons unused capacity for diagnostics; 3 uses fresh step mappings and
 // initializes published rows, releasing old physical pages between steps.
 #ifndef FINDHAP_HAPLIST_INIT
-#if TURBOHAP_TESTED_MAC_BUNDLE_DEFAULT
+// Modified build: fresh step mappings with row initialization on every Linux
+// target, not only the qualified bundle. Results are unchanged (no unpublished
+// row is read; checked with the poisoning mode 2); peak memory follows the
+// haplotypes actually found instead of maxhap.
+#if TURBOHAP_TESTED_MAC_BUNDLE_DEFAULT || defined(__linux__)
 #define FINDHAP_HAPLIST_INIT 3
 #else
 #define FINDHAP_HAPLIST_INIT 0
