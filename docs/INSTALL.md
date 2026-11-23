@@ -2,7 +2,7 @@
 
 The build installs three programs. `findhap` runs Standard or low-memory (LM) inference, `turbohap-validate-inputs` audits your input files, and `turbohap-build-info` identifies the compiler and processor settings in your executable. All three run on the CPU. They require neither Python nor a Fortran compiler for routine use.
 
-Download the v1.6.0 source ZIP from the release’s **Assets**, extract it and open the folder containing `CMakeLists.txt`. Keep the `cmake/`, `src/`, `tools/` and `examples/` directories together. Use a fresh build directory when upgrading or changing CPUs, compilers or OpenMP runtimes. Native builds target the machine on which you compile them.
+Download the v1.7.0 source ZIP from the release’s **Assets**, extract it and open the folder containing `CMakeLists.txt`. Keep the `cmake/`, `src/`, `tools/` and `examples/` directories together. Use a fresh build directory when upgrading or changing CPUs, compilers or OpenMP runtimes. Native builds target the machine on which you compile them.
 
 ## Linux
 

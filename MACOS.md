@@ -29,7 +29,7 @@ If you omit the thread count, automatic mode uses the performance-core count unl
 
 ## What the native build selects
 
-TurboHap automatically chooses settings for your M-series generation. If your compiler does not recognise that generation, the installer tries a compatible target. [Processor generations and how to check your build](docs/PROCESSORS.md)
+TurboHap automatically chooses settings for your M-series generation. Standard and LM use the same 512-candidate NEON scanner on Apple silicon. Native builds also use a streamed result writer. If your compiler does not recognise that generation, the installer tries a compatible target. [Processor generations and how to check your build](docs/PROCESSORS.md)
 
 To inspect your installed compiler, architecture, OpenMP link and selected engines:
 

@@ -1,35 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 316" width="880" height="316" role="img" aria-labelledby="title desc">
-  <title id="title">How TurboHap chooses settings for a native build</title>
-  <desc id="desc">TurboHap checks the processor on the analysis computer and what the compiler supports. A matching profile enables family optimisations. Otherwise the build uses general optimisations for the compiler target. Both results can be inspected using the build report.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="452" viewBox="0 0 920 452" role="img" aria-labelledby="title description">
+  <title id="title">How TurboHap selects the 512-candidate scanner</title>
+  <desc id="description">A native build selects family settings where available, or general settings for the target. Standard and LM both screen up to 512 candidates. x86 checks AVX-512F first, then AVX2. Arm uses NEON on supported targets. A scalar scanner covers other targets.</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M1 1 8 5 1 9" fill="none" stroke="#476078" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M1 1 8 5 1 9" fill="none" stroke="#546d7b" stroke-width="1.7" stroke-linejoin="round"/>
     </marker>
   </defs>
-  <rect width="880" height="316" rx="14" fill="#f8fafb"/>
-  <g font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" fill="#182f46">
-    <text x="440" y="35" font-size="24" font-weight="bold">How TurboHap chooses settings for a native build</text>
-    <rect x="137" y="53" width="606" height="46" rx="9" fill="#203d54"/>
-    <text x="440" y="82" fill="#fff" font-size="18" font-weight="bold">Build on the computer that will run the analysis</text>
-    <g fill="none" stroke="#476078" stroke-width="2.2" stroke-linejoin="round">
-      <path d="M440 99v17H233v15" marker-end="url(#arrow)"/>
-      <path d="M440 116h207v15" marker-end="url(#arrow)"/>
+  <rect width="920" height="452" rx="15" fill="#f6f9fa"/>
+  <g font-family="DejaVu Sans, Arial, sans-serif" text-anchor="middle" fill="#1b3347">
+    <text x="460" y="40" font-size="25" font-weight="bold">How TurboHap chooses the scanner</text>
+    <rect x="165" y="62" width="590" height="51" rx="8" fill="#234153"/>
+    <text x="460" y="94" fill="#fff" font-size="19" font-weight="bold">Build on the computer that will run the analysis</text>
+    <path d="M460 114v19" fill="none" stroke="#546d7b" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="95" y="141" width="730" height="67" rx="8" fill="#fff" stroke="#aabcc6"/>
+    <text x="460" y="168" font-size="17" font-weight="bold">Both modes screen up to 512 candidate haplotypes together</text>
+    <text x="460" y="192" font-size="15">A known processor uses its family settings. Other targets use general settings.</text>
+    <g fill="none" stroke="#546d7b" stroke-width="2" stroke-linejoin="round">
+      <path d="M460 209v14H245v18" marker-end="url(#arrow)"/>
+      <path d="M460 223h215v18" marker-end="url(#arrow)"/>
     </g>
-    <rect x="36" y="137" width="394" height="86" rx="9" fill="#e3f2ee" stroke="#9ec7ba"/>
-    <g fill="#144e46">
-      <text x="233" y="164" font-size="16">Processor and compiler match a profile</text>
-      <text x="233" y="200" font-size="21" font-weight="bold">Use family optimisations</text>
+    <rect x="45" y="249" width="400" height="102" rx="9" fill="#e4f2ef" stroke="#99bfba"/>
+    <text x="245" y="276" font-size="19" font-weight="bold" fill="#13544b">Intel and AMD x86</text>
+    <text x="245" y="306" font-size="16">AVX-512F first, then AVX2, then scalar</text>
+    <text x="245" y="331" font-size="14">Uses the features exposed by the running system</text>
+    <rect x="475" y="249" width="400" height="102" rx="9" fill="#e6eef6" stroke="#acbdce"/>
+    <text x="675" y="276" font-size="19" font-weight="bold" fill="#244c63">Arm, including Apple silicon</text>
+    <text x="675" y="306" font-size="16">NEON when supported, otherwise scalar</text>
+    <text x="675" y="331" font-size="14">Selected for the Arm compiler target</text>
+    <g fill="none" stroke="#546d7b" stroke-width="2">
+      <path d="M245 352v16h430v-16"/>
+      <path d="M460 368v12" marker-end="url(#arrow)"/>
     </g>
-    <rect x="450" y="137" width="394" height="86" rx="9" fill="#e8eff6" stroke="#afc2d5"/>
-    <g fill="#244967">
-      <text x="647" y="164" font-size="16">No matching profile is available</text>
-      <text x="647" y="200" font-size="21" font-weight="bold">Use general optimisations</text>
-    </g>
-    <g fill="none" stroke="#476078" stroke-width="2.2" stroke-linejoin="round">
-      <path d="M233 223v17h414v-17"/>
-      <path d="M440 240v13" marker-end="url(#arrow)"/>
-    </g>
-    <rect x="137" y="260" width="606" height="41" rx="8" fill="white" stroke="#bbc9d2"/>
-    <text x="440" y="286" font-size="16">See which settings you have with <tspan font-family="DejaVu Sans Mono, monospace">turbohap-build-info --build-info</tspan></text>
+    <rect x="70" y="389" width="780" height="43" rx="8" fill="#fff" stroke="#b6c7ce"/>
+    <text x="460" y="416" font-size="16">See the choice for each mode with <tspan font-family="DejaVu Sans Mono, monospace">turbohap-build-info --build-info</tspan></text>
   </g>
 </svg>

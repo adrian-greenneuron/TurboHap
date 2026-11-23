@@ -2,8 +2,8 @@ cff-version: 1.2.0
 title: "TurboHap: fast, compatible haplotype phasing and genotype imputation"
 message: "Please cite TurboHap and the original FindHap method when using this software."
 type: software
-version: 1.6.0
-date-released: 2026-11-20
+version: 1.7.0
+date-released: 2026-11-23
 authors:
   - family-names: Carr
     given-names: Adrian R.

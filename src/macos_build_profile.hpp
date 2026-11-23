@@ -1,4 +1,16 @@
 #pragma once
+// Eight adjacent words hold 512 candidates. Both Apple defaults can be overridden.
+#if defined(__APPLE__) && defined(__aarch64__) && defined(__ARM_NEON)
+#define TURBOHAP_APPLE_ARM_NEON 1
+#ifndef FINDHAP_ORDERED_LAYOUT
+#define FINDHAP_ORDERED_LAYOUT 2
+#endif
+#ifndef FINDHAP_OUTPUT_STREAMS
+#define FINDHAP_OUTPUT_STREAMS 2
+#endif
+#else
+#define TURBOHAP_APPLE_ARM_NEON 0
+#endif
 // The native Apple Silicon engine was exercised on M1 Pro, M4 Pro and M5.
 // Every feature remains individually overridable. No core count is compiled in.
 #if defined(__APPLE__) && defined(__aarch64__) && defined(__ARM_NEON) && \
@@ -8,9 +20,6 @@
 // Explicit fixture and caller settings take priority over the cohort default.
 #if defined(FINDHAP_M4_COHORT_ORDERED_SCAN_ORDER) && !defined(FINDHAP_ORDERED_SCAN_ORDER)
 #define FINDHAP_ORDERED_SCAN_ORDER FINDHAP_M4_COHORT_ORDERED_SCAN_ORDER
-#endif
-#ifndef FINDHAP_ORDERED_LAYOUT
-#define FINDHAP_ORDERED_LAYOUT 1
 #endif
 #ifndef FINDHAP_POP_ENCODE
 #define FINDHAP_POP_ENCODE 5

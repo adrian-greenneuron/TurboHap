@@ -78,6 +78,10 @@
   "hardware": "NVIDIA DGX Spark; NVIDIA GB10 CPU, 10 Cortex-X925 performance and 10 Cortex-A725 efficiency cores; 128 GB unified memory; internal NVMe working storage; CPU execution only",
   "compiler": "GCC/gfortran 13.3.0 with libgomp",
   "fortran_flags": "-O3 -march=native -funroll-loops -flto -flto-partition=1to1 -ffp-contract=off -fopenmp -fno-underscoring",
+  "cpp_flags": "-O3 -march=native -funroll-loops -flto -ffp-contract=off -std=gnu++17 -fopenmp",
+  "measured_stdout": "modern",
+  "processing_scope": "legacy",
+  "x_progeny": "legacy",
   "options": {
     "iterations": 4,
     "XChrom": 0,
@@ -87,16 +91,11 @@
     "errate": 0.004,
     "outputs": 10
   },
-  "schema_version": 2,
-  "release_version": "1.6.0",
-  "status": "release",
-  "date": "2026-11-20",
-  "measured_version": "v1.6.0-rc.2",
-  "measured_binary_sha256": "0175f748051e5868ef8e349019c8fc5d44250704f56dc3b733320eecfeb04004",
-  "cpp_flags": "-O3 -march=native -funroll-loops -flto -ffp-contract=off -std=gnu++17 -fopenmp",
-  "measured_stdout": "modern",
-  "processing_scope": "legacy",
-  "x_progeny": "legacy",
+  "schema_version": 3,
+  "release_version": "1.7.0",
+  "measurement_date": "2026-11-22",
+  "measured_binary_sha256": "938fb1cb5c76c8d8213f6f44ac9f90f3b24d490d6abb912bf6f9bf600bfaf8da",
+  "measured_binary_bytes": 2196328,
   "observations": [
     {
       "id": "n10000_m20000_GNU_r1",
@@ -359,19 +358,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 2.53,
-      "user_seconds": 31.85,
-      "system_seconds": 0.85,
-      "peak_rss_kib": 356872,
+      "wall_seconds": 2.37,
+      "user_seconds": 28.85,
+      "system_seconds": 0.8,
+      "peak_rss_kib": 356760,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 7204,
+      "source": "v1.7.0 release benchmark",
       "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.2042
     },
     {
-      "id": "n10000_m20000_LM_r1",
+      "id": "n10000_m20000_lm_r1",
       "dataset": "n10000_m20000",
       "animals": 10000,
       "loci": 20000,
@@ -379,19 +380,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 3.0,
-      "user_seconds": 32.61,
-      "system_seconds": 1.48,
-      "peak_rss_kib": 275184,
+      "wall_seconds": 2.92,
+      "user_seconds": 29.97,
+      "system_seconds": 1.59,
+      "peak_rss_kib": 274776,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 7204,
+      "source": "v1.7.0 release benchmark",
       "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.1608
     },
     {
-      "id": "n10000_m20000_LM_r2",
+      "id": "n10000_m20000_lm_r2",
       "dataset": "n10000_m20000",
       "animals": 10000,
       "loci": 20000,
@@ -399,16 +402,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 2.99,
-      "user_seconds": 32.4,
-      "system_seconds": 1.67,
-      "peak_rss_kib": 275388,
+      "wall_seconds": 2.88,
+      "user_seconds": 29.83,
+      "system_seconds": 1.64,
+      "peak_rss_kib": 275080,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 7204,
+      "source": "v1.7.0 release benchmark",
       "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.2011
     },
     {
       "id": "n10000_m20000_standard_r2",
@@ -419,16 +424,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 2.52,
-      "user_seconds": 31.8,
-      "system_seconds": 0.86,
-      "peak_rss_kib": 357184,
+      "wall_seconds": 2.38,
+      "user_seconds": 28.84,
+      "system_seconds": 0.78,
+      "peak_rss_kib": 357252,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 7204,
+      "source": "v1.7.0 release benchmark",
       "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.2028
     },
     {
       "id": "n10000_m80000_standard_r1",
@@ -439,19 +446,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 7.26,
-      "user_seconds": 98.75,
-      "system_seconds": 1.95,
-      "peak_rss_kib": 917284,
+      "wall_seconds": 7.47,
+      "user_seconds": 96.54,
+      "system_seconds": 2.21,
+      "peak_rss_kib": 916884,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 4170,
+      "source": "v1.7.0 release benchmark",
       "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.3882
     },
     {
-      "id": "n10000_m80000_LM_r1",
+      "id": "n10000_m80000_lm_r1",
       "dataset": "n10000_m80000",
       "animals": 10000,
       "loci": 80000,
@@ -459,19 +468,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 10.83,
-      "user_seconds": 100.5,
-      "system_seconds": 5.11,
-      "peak_rss_kib": 604736,
+      "wall_seconds": 10.6,
+      "user_seconds": 98.36,
+      "system_seconds": 4.98,
+      "peak_rss_kib": 604884,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 4170,
+      "source": "v1.7.0 release benchmark",
       "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.4565
     },
     {
-      "id": "n10000_m80000_LM_r2",
+      "id": "n10000_m80000_lm_r2",
       "dataset": "n10000_m80000",
       "animals": 10000,
       "loci": 80000,
@@ -479,16 +490,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 10.68,
-      "user_seconds": 100.72,
-      "system_seconds": 4.37,
-      "peak_rss_kib": 604672,
+      "wall_seconds": 10.37,
+      "user_seconds": 97.86,
+      "system_seconds": 4.45,
+      "peak_rss_kib": 604808,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 4170,
+      "source": "v1.7.0 release benchmark",
       "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.3995
     },
     {
       "id": "n10000_m80000_standard_r2",
@@ -499,16 +512,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 7.52,
-      "user_seconds": 98.86,
-      "system_seconds": 2.28,
-      "peak_rss_kib": 917140,
+      "wall_seconds": 7.47,
+      "user_seconds": 96.58,
+      "system_seconds": 2.56,
+      "peak_rss_kib": 917160,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 4170,
-      "host_swap_in_mib": 0.12109375,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.4338
     },
     {
       "id": "n25000_m20000_standard_r1",
@@ -519,19 +534,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 6.72,
-      "user_seconds": 92.41,
-      "system_seconds": 1.68,
-      "peak_rss_kib": 759640,
+      "wall_seconds": 6.04,
+      "user_seconds": 76.05,
+      "system_seconds": 1.93,
+      "peak_rss_kib": 759420,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 15458,
-      "host_swap_in_mib": 0.0546875,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.277
     },
     {
-      "id": "n25000_m20000_LM_r1",
+      "id": "n25000_m20000_lm_r1",
       "dataset": "n25000_m20000",
       "animals": 25000,
       "loci": 20000,
@@ -539,19 +556,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 7.8,
-      "user_seconds": 94.44,
-      "system_seconds": 2.77,
-      "peak_rss_kib": 555712,
+      "wall_seconds": 7.0,
+      "user_seconds": 79.12,
+      "system_seconds": 2.85,
+      "peak_rss_kib": 555560,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 15458,
-      "host_swap_in_mib": 0.0234375,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.3225
     },
     {
-      "id": "n25000_m20000_LM_r2",
+      "id": "n25000_m20000_lm_r2",
       "dataset": "n25000_m20000",
       "animals": 25000,
       "loci": 20000,
@@ -559,16 +578,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 7.73,
-      "user_seconds": 94.28,
-      "system_seconds": 2.83,
-      "peak_rss_kib": 556188,
+      "wall_seconds": 6.99,
+      "user_seconds": 79.52,
+      "system_seconds": 2.71,
+      "peak_rss_kib": 555216,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 15458,
-      "host_swap_in_mib": 0.08984375,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.3547
     },
     {
       "id": "n25000_m20000_standard_r2",
@@ -579,16 +600,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 6.96,
-      "user_seconds": 92.5,
-      "system_seconds": 1.95,
-      "peak_rss_kib": 759680,
+      "wall_seconds": 5.89,
+      "user_seconds": 76.03,
+      "system_seconds": 1.66,
+      "peak_rss_kib": 759176,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 15458,
-      "host_swap_in_mib": 0.03125,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.3557
     },
     {
       "id": "n25000_m80000_standard_r1",
@@ -599,19 +622,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 19.25,
-      "user_seconds": 261.9,
-      "system_seconds": 5.12,
-      "peak_rss_kib": 1968196,
+      "wall_seconds": 18.16,
+      "user_seconds": 245.68,
+      "system_seconds": 5.09,
+      "peak_rss_kib": 1968272,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 7899,
-      "host_swap_in_mib": 0.015625,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.8407
     },
     {
-      "id": "n25000_m80000_LM_r1",
+      "id": "n25000_m80000_lm_r1",
       "dataset": "n25000_m80000",
       "animals": 25000,
       "loci": 80000,
@@ -619,19 +644,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 25.25,
-      "user_seconds": 267.5,
-      "system_seconds": 9.42,
-      "peak_rss_kib": 1208992,
+      "wall_seconds": 24.81,
+      "user_seconds": 254.38,
+      "system_seconds": 9.04,
+      "peak_rss_kib": 1208336,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 7899,
-      "host_swap_in_mib": 0.01953125,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.8733
     },
     {
-      "id": "n25000_m80000_LM_r2",
+      "id": "n25000_m80000_lm_r2",
       "dataset": "n25000_m80000",
       "animals": 25000,
       "loci": 80000,
@@ -639,16 +666,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 25.24,
-      "user_seconds": 267.24,
-      "system_seconds": 9.29,
-      "peak_rss_kib": 1208792,
+      "wall_seconds": 24.97,
+      "user_seconds": 255.63,
+      "system_seconds": 8.37,
+      "peak_rss_kib": 1209560,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 7899,
-      "host_swap_in_mib": 0.03515625,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.8174
     },
     {
       "id": "n25000_m80000_standard_r2",
@@ -659,16 +688,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 18.87,
-      "user_seconds": 261.87,
-      "system_seconds": 5.14,
-      "peak_rss_kib": 1968500,
+      "wall_seconds": 17.63,
+      "user_seconds": 244.7,
+      "system_seconds": 4.11,
+      "peak_rss_kib": 1968436,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 7899,
-      "host_swap_in_mib": 1.296875,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.829
     },
     {
       "id": "n100000_m20000_standard_r1",
@@ -679,19 +710,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 60000,
-      "wall_seconds": 38.68,
-      "user_seconds": 591.15,
-      "system_seconds": 6.93,
-      "peak_rss_kib": 2666892,
+      "wall_seconds": 28.59,
+      "user_seconds": 403.86,
+      "system_seconds": 6.99,
+      "peak_rss_kib": 2670016,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 55564,
-      "host_swap_in_mib": 0.1328125,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.9351
     },
     {
-      "id": "n100000_m20000_LM_r1",
+      "id": "n100000_m20000_lm_r1",
       "dataset": "n100000_m20000",
       "animals": 100000,
       "loci": 20000,
@@ -699,19 +732,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 60000,
-      "wall_seconds": 42.38,
-      "user_seconds": 594.6,
-      "system_seconds": 9.96,
-      "peak_rss_kib": 1878720,
+      "wall_seconds": 32.97,
+      "user_seconds": 414.65,
+      "system_seconds": 9.42,
+      "peak_rss_kib": 1879600,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 55564,
-      "host_swap_in_mib": 0.1328125,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.06640625,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 1.0276
     },
     {
-      "id": "n100000_m20000_LM_r2",
+      "id": "n100000_m20000_lm_r2",
       "dataset": "n100000_m20000",
       "animals": 100000,
       "loci": 20000,
@@ -719,16 +754,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 60000,
-      "wall_seconds": 42.38,
-      "user_seconds": 595.05,
-      "system_seconds": 9.28,
-      "peak_rss_kib": 1878016,
+      "wall_seconds": 32.87,
+      "user_seconds": 414.98,
+      "system_seconds": 10.12,
+      "peak_rss_kib": 1877996,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 55564,
-      "host_swap_in_mib": 0.04296875,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.9925
     },
     {
       "id": "n100000_m20000_standard_r2",
@@ -739,16 +776,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 60000,
-      "wall_seconds": 38.51,
-      "user_seconds": 590.34,
-      "system_seconds": 6.83,
-      "peak_rss_kib": 2672792,
+      "wall_seconds": 28.63,
+      "user_seconds": 404.3,
+      "system_seconds": 6.97,
+      "peak_rss_kib": 2672024,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 55564,
-      "host_swap_in_mib": 0.0078125,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.9775
     },
     {
       "id": "n100000_m80000_standard_r1",
@@ -759,19 +798,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 82.33,
-      "user_seconds": 1221.79,
-      "system_seconds": 17.07,
-      "peak_rss_kib": 6756928,
+      "wall_seconds": 76.08,
+      "user_seconds": 1073.96,
+      "system_seconds": 18.9,
+      "peak_rss_kib": 6755640,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 26039,
-      "host_swap_in_mib": 0.66796875,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.03125,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.9253
     },
     {
-      "id": "n100000_m80000_LM_r1",
+      "id": "n100000_m80000_lm_r1",
       "dataset": "n100000_m80000",
       "animals": 100000,
       "loci": 80000,
@@ -779,19 +820,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 106.56,
-      "user_seconds": 1256.19,
-      "system_seconds": 31.25,
-      "peak_rss_kib": 3680036,
+      "wall_seconds": 98.2,
+      "user_seconds": 1113.25,
+      "system_seconds": 30.44,
+      "peak_rss_kib": 3679604,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 26039,
-      "host_swap_in_mib": 0.11328125,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 1.0512
     },
     {
-      "id": "n100000_m80000_LM_r2",
+      "id": "n100000_m80000_lm_r2",
       "dataset": "n100000_m80000",
       "animals": 100000,
       "loci": 80000,
@@ -799,16 +842,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 105.78,
-      "user_seconds": 1253.04,
-      "system_seconds": 28.62,
-      "peak_rss_kib": 3680100,
+      "wall_seconds": 98.48,
+      "user_seconds": 1115.83,
+      "system_seconds": 28.15,
+      "peak_rss_kib": 3679776,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 26039,
-      "host_swap_in_mib": 0.015625,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0078125,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 1.0156
     },
     {
       "id": "n100000_m80000_standard_r2",
@@ -819,16 +864,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 50000,
-      "wall_seconds": 83.83,
-      "user_seconds": 1224.18,
-      "system_seconds": 18.81,
-      "peak_rss_kib": 6756952,
+      "wall_seconds": 74.73,
+      "user_seconds": 1072.66,
+      "system_seconds": 16.82,
+      "peak_rss_kib": 6756052,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 26039,
-      "host_swap_in_mib": 0.01171875,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.871
     },
     {
       "id": "n250000_m20000_standard_r1",
@@ -839,19 +886,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 130000,
-      "wall_seconds": 138.64,
-      "user_seconds": 2223.15,
-      "system_seconds": 18.73,
-      "peak_rss_kib": 6508324,
+      "wall_seconds": 95.11,
+      "user_seconds": 1468.87,
+      "system_seconds": 18.59,
+      "peak_rss_kib": 6504188,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 120124,
-      "host_swap_in_mib": 0.03125,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.00390625,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.8737
     },
     {
-      "id": "n250000_m20000_LM_r1",
+      "id": "n250000_m20000_lm_r1",
       "dataset": "n250000_m20000",
       "animals": 250000,
       "loci": 20000,
@@ -859,19 +908,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 130000,
-      "wall_seconds": 144.35,
-      "user_seconds": 2207.2,
-      "system_seconds": 23.41,
-      "peak_rss_kib": 4853124,
+      "wall_seconds": 100.99,
+      "user_seconds": 1416.9,
+      "system_seconds": 23.71,
+      "peak_rss_kib": 4855840,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 120124,
-      "host_swap_in_mib": 0.0,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.00390625,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 1.0547
     },
     {
-      "id": "n250000_m20000_LM_r2",
+      "id": "n250000_m20000_lm_r2",
       "dataset": "n250000_m20000",
       "animals": 250000,
       "loci": 20000,
@@ -879,16 +930,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 130000,
-      "wall_seconds": 146.61,
-      "user_seconds": 2209.01,
-      "system_seconds": 23.47,
-      "peak_rss_kib": 4849844,
+      "wall_seconds": 101.16,
+      "user_seconds": 1419.04,
+      "system_seconds": 23.6,
+      "peak_rss_kib": 4855364,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 120124,
+      "source": "v1.7.0 release benchmark",
       "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 4.2952
     },
     {
       "id": "n250000_m20000_standard_r2",
@@ -899,16 +952,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 130000,
-      "wall_seconds": 135.66,
-      "user_seconds": 2201.25,
-      "system_seconds": 18.44,
-      "peak_rss_kib": 6506816,
+      "wall_seconds": 94.69,
+      "user_seconds": 1462.38,
+      "system_seconds": 18.76,
+      "peak_rss_kib": 6508160,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 120124,
-      "host_swap_in_mib": 0.00390625,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 1.0036
     },
     {
       "id": "n250000_m80000_standard_r1",
@@ -919,19 +974,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 60000,
-      "wall_seconds": 226.48,
-      "user_seconds": 3489.06,
-      "system_seconds": 45.32,
-      "peak_rss_kib": 15611700,
+      "wall_seconds": 199.68,
+      "user_seconds": 2926.01,
+      "system_seconds": 45.61,
+      "peak_rss_kib": 15610548,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 52936,
-      "host_swap_in_mib": 0.03125,
-      "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.125,
+      "host_swap_out_mib": 5.04296875,
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.9447
     },
     {
-      "id": "n250000_m80000_LM_r1",
+      "id": "n250000_m80000_lm_r1",
       "dataset": "n250000_m80000",
       "animals": 250000,
       "loci": 80000,
@@ -939,19 +996,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 60000,
-      "wall_seconds": 294.77,
-      "user_seconds": 3587.05,
-      "system_seconds": 67.46,
-      "peak_rss_kib": 7845736,
+      "wall_seconds": 262.93,
+      "user_seconds": 3030.4,
+      "system_seconds": 75.8,
+      "peak_rss_kib": 7845480,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 52936,
-      "host_swap_in_mib": 1.75,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 6.3199
     },
     {
-      "id": "n250000_m80000_LM_r2",
+      "id": "n250000_m80000_lm_r2",
       "dataset": "n250000_m80000",
       "animals": 250000,
       "loci": 80000,
@@ -959,16 +1018,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 60000,
-      "wall_seconds": 287.89,
-      "user_seconds": 3578.16,
-      "system_seconds": 66.52,
-      "peak_rss_kib": 7845600,
+      "wall_seconds": 256.48,
+      "user_seconds": 3038.34,
+      "system_seconds": 72.42,
+      "peak_rss_kib": 7845668,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 52936,
-      "host_swap_in_mib": 0.0625,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.0,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 1.0071
     },
     {
       "id": "n250000_m80000_standard_r2",
@@ -979,16 +1040,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 60000,
-      "wall_seconds": 226.3,
-      "user_seconds": 3486.09,
-      "system_seconds": 44.36,
-      "peak_rss_kib": 15609604,
+      "wall_seconds": 198.42,
+      "user_seconds": 2922.79,
+      "system_seconds": 44.88,
+      "peak_rss_kib": 15610752,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 52936,
-      "host_swap_in_mib": 0.0078125,
-      "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 17.12109375,
+      "host_swap_out_mib": 0.57421875,
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 0.9695
     },
     {
       "id": "n1000000_m80000_standard_r1",
@@ -999,19 +1062,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 170000,
-      "wall_seconds": 1233.56,
-      "user_seconds": 19239.11,
-      "system_seconds": 212.04,
-      "peak_rss_kib": 72744604,
+      "wall_seconds": 1102.04,
+      "user_seconds": 16024.31,
+      "system_seconds": 189.93,
+      "peak_rss_kib": 72752644,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 167248,
-      "host_swap_in_mib": 12280.8984375,
-      "host_swap_out_mib": 13052.50390625,
-      "source": "v1.6.0-rc.2 benchmark"
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 6.11328125,
+      "host_swap_out_mib": 0.18359375,
+      "genotype_page_cache": "evict where possible",
+      "final_disk_flush_seconds": 3.0391
     },
     {
-      "id": "n1000000_m80000_LM_r1",
+      "id": "n1000000_m80000_lm_r1",
       "dataset": "n1000000_m80000",
       "animals": 1000000,
       "loci": 80000,
@@ -1019,19 +1084,21 @@
       "repeat": 1,
       "threads": 20,
       "maxhap": 170000,
-      "wall_seconds": 1541.24,
-      "user_seconds": 20599.28,
-      "system_seconds": 262.28,
-      "peak_rss_kib": 40770864,
+      "wall_seconds": 1378.09,
+      "user_seconds": 17084.5,
+      "system_seconds": 274.01,
+      "peak_rss_kib": 40778668,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 167248,
-      "host_swap_in_mib": 6.7421875,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 1.10546875,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 2.8889
     },
     {
-      "id": "n1000000_m80000_LM_r2",
+      "id": "n1000000_m80000_lm_r2",
       "dataset": "n1000000_m80000",
       "animals": 1000000,
       "loci": 80000,
@@ -1039,16 +1106,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 170000,
-      "wall_seconds": 1545.18,
-      "user_seconds": 20590.78,
-      "system_seconds": 272.77,
-      "peak_rss_kib": 40776272,
+      "wall_seconds": 1375.78,
+      "user_seconds": 17124.51,
+      "system_seconds": 273.92,
+      "peak_rss_kib": 40776516,
       "exit_status": 0,
-      "date": "2026-11-19",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 167248,
-      "host_swap_in_mib": 19.94921875,
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.140625,
       "host_swap_out_mib": 0.0,
-      "source": "v1.6.0-rc.2 benchmark"
+      "genotype_page_cache": "warmed",
+      "final_disk_flush_seconds": 3.2159
     },
     {
       "id": "n1000000_m80000_standard_r2",
@@ -1059,16 +1128,18 @@
       "repeat": 2,
       "threads": 20,
       "maxhap": 170000,
-      "wall_seconds": 1222.93,
-      "user_seconds": 19278.43,
-      "system_seconds": 197.9,
-      "peak_rss_kib": 72760248,
+      "wall_seconds": 1083.9,
+      "user_seconds": 15924.7,
+      "system_seconds": 192.48,
+      "peak_rss_kib": 72760816,
       "exit_status": 0,
-      "date": "2026-11-20",
+      "date": "2026-11-22",
       "peak_live_haplotypes": 167248,
-      "host_swap_in_mib": 5101.85546875,
-      "host_swap_out_mib": 7043.9296875,
-      "source": "v1.6.0-rc.2 benchmark"
+      "source": "v1.7.0 release benchmark",
+      "host_swap_in_mib": 0.01171875,
+      "host_swap_out_mib": 0.0,
+      "genotype_page_cache": "evict where possible",
+      "final_disk_flush_seconds": 1.9267
     }
   ],
   "validation": [
@@ -1984,63 +2055,84 @@
     },
     {
       "id": "n10000_m20000_standard_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "45b6285c120f7d5f927b523be6857d2ebe91f166aa53cf0b537d7d76e946b4f9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 16095402,
+          "sha256": "b73065262bb6ac86aaa75f59d5cbaad824ebfeccd66159b110ce3f68f245803c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 200900928,
+          "sha256": "7401075698481bb9e88f45aaeb8efcd949885dcbec1389e46bf7b627391b330a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "6495a11abf69f5e7e90197735cc875ff875b47dce107cf3ec956a175a2c74992",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 561738,
+          "sha256": "84377dab129126b59668d071316fd0f9e9e3326d0d70f4e4adc211ac4796fa59",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 70568589,
+          "sha256": "a0ac37ea5cc507a530238e219a9773372b03bf92733585edc51e57ddd251a1f8",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 27660656,
+          "sha256": "4a8330a2e6a205f39653be02969e3f5c7938a7856d971278caff89e3ca1d982e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 283358427,
+          "sha256": "b699d29e9a786efa61a457ef5e31d8f1ed39c7c9932c4fd2d2fd97159a8d1bac",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 401480928,
+          "sha256": "7f0da358b39c05f93fd16caf8adf109492ff5236a3cbfa7bdcbd14957866ed09",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2048,64 +2140,85 @@
       ]
     },
     {
-      "id": "n10000_m20000_LM_r1",
+      "id": "n10000_m20000_lm_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "45b6285c120f7d5f927b523be6857d2ebe91f166aa53cf0b537d7d76e946b4f9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 16095402,
+          "sha256": "b73065262bb6ac86aaa75f59d5cbaad824ebfeccd66159b110ce3f68f245803c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 200900928,
+          "sha256": "7401075698481bb9e88f45aaeb8efcd949885dcbec1389e46bf7b627391b330a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "6495a11abf69f5e7e90197735cc875ff875b47dce107cf3ec956a175a2c74992",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 561738,
+          "sha256": "84377dab129126b59668d071316fd0f9e9e3326d0d70f4e4adc211ac4796fa59",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 70568589,
+          "sha256": "a0ac37ea5cc507a530238e219a9773372b03bf92733585edc51e57ddd251a1f8",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 27660656,
+          "sha256": "4a8330a2e6a205f39653be02969e3f5c7938a7856d971278caff89e3ca1d982e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 283358427,
+          "sha256": "b699d29e9a786efa61a457ef5e31d8f1ed39c7c9932c4fd2d2fd97159a8d1bac",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 401480928,
+          "sha256": "7f0da358b39c05f93fd16caf8adf109492ff5236a3cbfa7bdcbd14957866ed09",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2113,64 +2226,85 @@
       ]
     },
     {
-      "id": "n10000_m20000_LM_r2",
+      "id": "n10000_m20000_lm_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "45b6285c120f7d5f927b523be6857d2ebe91f166aa53cf0b537d7d76e946b4f9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 16095402,
+          "sha256": "b73065262bb6ac86aaa75f59d5cbaad824ebfeccd66159b110ce3f68f245803c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 200900928,
+          "sha256": "7401075698481bb9e88f45aaeb8efcd949885dcbec1389e46bf7b627391b330a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "6495a11abf69f5e7e90197735cc875ff875b47dce107cf3ec956a175a2c74992",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 561738,
+          "sha256": "84377dab129126b59668d071316fd0f9e9e3326d0d70f4e4adc211ac4796fa59",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 70568589,
+          "sha256": "a0ac37ea5cc507a530238e219a9773372b03bf92733585edc51e57ddd251a1f8",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 27660656,
+          "sha256": "4a8330a2e6a205f39653be02969e3f5c7938a7856d971278caff89e3ca1d982e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 283358427,
+          "sha256": "b699d29e9a786efa61a457ef5e31d8f1ed39c7c9932c4fd2d2fd97159a8d1bac",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 401480928,
+          "sha256": "7f0da358b39c05f93fd16caf8adf109492ff5236a3cbfa7bdcbd14957866ed09",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2179,63 +2313,84 @@
     },
     {
       "id": "n10000_m20000_standard_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "45b6285c120f7d5f927b523be6857d2ebe91f166aa53cf0b537d7d76e946b4f9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 16095402,
+          "sha256": "b73065262bb6ac86aaa75f59d5cbaad824ebfeccd66159b110ce3f68f245803c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 200900928,
+          "sha256": "7401075698481bb9e88f45aaeb8efcd949885dcbec1389e46bf7b627391b330a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "6495a11abf69f5e7e90197735cc875ff875b47dce107cf3ec956a175a2c74992",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 561738,
+          "sha256": "84377dab129126b59668d071316fd0f9e9e3326d0d70f4e4adc211ac4796fa59",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 70568589,
+          "sha256": "a0ac37ea5cc507a530238e219a9773372b03bf92733585edc51e57ddd251a1f8",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 27660656,
+          "sha256": "4a8330a2e6a205f39653be02969e3f5c7938a7856d971278caff89e3ca1d982e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 283358427,
+          "sha256": "b699d29e9a786efa61a457ef5e31d8f1ed39c7c9932c4fd2d2fd97159a8d1bac",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 401480928,
+          "sha256": "7f0da358b39c05f93fd16caf8adf109492ff5236a3cbfa7bdcbd14957866ed09",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2244,63 +2399,84 @@
     },
     {
       "id": "n10000_m80000_standard_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "be3ef58daab28f1cdf0989577d7a3baaf5719baa3e81a16d01aa3de8916f6375",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 39686176,
+          "sha256": "63677706f40fb6e176340f410f8c16589b9eb4b1facf38c92b981c0488740999",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 802640928,
+          "sha256": "a8e4073964716e8792d3d9a8e73a282db2423a7adda25f29a8efe3c491bc4d0b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "c8708d7071fd7d675ebdb5ef5015e7963cb5cd9145daa7f2a0ad3dfa7e7bb22e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 561738,
+          "sha256": "0597c617b8da5192a8b904aa158c2d88022c00d1aea7ae52d71a2a6717e64768",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 231733155,
+          "sha256": "3f8a3fbc7581be52b348b9f05b2059dfc33695be71fae46d4409c8fff24034d7",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 75759740,
+          "sha256": "5eb75e808ed8bd3698d52f75008a46cfaa7efd75fb82885ec1aa612d82ca59ce",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 558067341,
+          "sha256": "130cc2202bcbf5d708aaf835203588f25cb8a03e994b519afa691f26b6b0fcf5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 1604960928,
+          "sha256": "b007bc05e1bd79f6f532f8615dd9fb73e82772f5b975b32f3d05f8ac17703e94",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2308,64 +2484,85 @@
       ]
     },
     {
-      "id": "n10000_m80000_LM_r1",
+      "id": "n10000_m80000_lm_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "be3ef58daab28f1cdf0989577d7a3baaf5719baa3e81a16d01aa3de8916f6375",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 39686176,
+          "sha256": "63677706f40fb6e176340f410f8c16589b9eb4b1facf38c92b981c0488740999",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 802640928,
+          "sha256": "a8e4073964716e8792d3d9a8e73a282db2423a7adda25f29a8efe3c491bc4d0b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "c8708d7071fd7d675ebdb5ef5015e7963cb5cd9145daa7f2a0ad3dfa7e7bb22e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 561738,
+          "sha256": "0597c617b8da5192a8b904aa158c2d88022c00d1aea7ae52d71a2a6717e64768",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 231733155,
+          "sha256": "3f8a3fbc7581be52b348b9f05b2059dfc33695be71fae46d4409c8fff24034d7",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 75759740,
+          "sha256": "5eb75e808ed8bd3698d52f75008a46cfaa7efd75fb82885ec1aa612d82ca59ce",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 558067341,
+          "sha256": "130cc2202bcbf5d708aaf835203588f25cb8a03e994b519afa691f26b6b0fcf5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 1604960928,
+          "sha256": "b007bc05e1bd79f6f532f8615dd9fb73e82772f5b975b32f3d05f8ac17703e94",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2373,64 +2570,85 @@
       ]
     },
     {
-      "id": "n10000_m80000_LM_r2",
+      "id": "n10000_m80000_lm_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "be3ef58daab28f1cdf0989577d7a3baaf5719baa3e81a16d01aa3de8916f6375",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 39686176,
+          "sha256": "63677706f40fb6e176340f410f8c16589b9eb4b1facf38c92b981c0488740999",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 802640928,
+          "sha256": "a8e4073964716e8792d3d9a8e73a282db2423a7adda25f29a8efe3c491bc4d0b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "c8708d7071fd7d675ebdb5ef5015e7963cb5cd9145daa7f2a0ad3dfa7e7bb22e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 561738,
+          "sha256": "0597c617b8da5192a8b904aa158c2d88022c00d1aea7ae52d71a2a6717e64768",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 231733155,
+          "sha256": "3f8a3fbc7581be52b348b9f05b2059dfc33695be71fae46d4409c8fff24034d7",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 75759740,
+          "sha256": "5eb75e808ed8bd3698d52f75008a46cfaa7efd75fb82885ec1aa612d82ca59ce",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 558067341,
+          "sha256": "130cc2202bcbf5d708aaf835203588f25cb8a03e994b519afa691f26b6b0fcf5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 1604960928,
+          "sha256": "b007bc05e1bd79f6f532f8615dd9fb73e82772f5b975b32f3d05f8ac17703e94",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2439,63 +2657,84 @@
     },
     {
       "id": "n10000_m80000_standard_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "be3ef58daab28f1cdf0989577d7a3baaf5719baa3e81a16d01aa3de8916f6375",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 39686176,
+          "sha256": "63677706f40fb6e176340f410f8c16589b9eb4b1facf38c92b981c0488740999",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 802640928,
+          "sha256": "a8e4073964716e8792d3d9a8e73a282db2423a7adda25f29a8efe3c491bc4d0b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "c8708d7071fd7d675ebdb5ef5015e7963cb5cd9145daa7f2a0ad3dfa7e7bb22e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 561738,
+          "sha256": "0597c617b8da5192a8b904aa158c2d88022c00d1aea7ae52d71a2a6717e64768",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 231733155,
+          "sha256": "3f8a3fbc7581be52b348b9f05b2059dfc33695be71fae46d4409c8fff24034d7",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 75759740,
+          "sha256": "5eb75e808ed8bd3698d52f75008a46cfaa7efd75fb82885ec1aa612d82ca59ce",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 558067341,
+          "sha256": "130cc2202bcbf5d708aaf835203588f25cb8a03e994b519afa691f26b6b0fcf5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 1604960928,
+          "sha256": "b007bc05e1bd79f6f532f8615dd9fb73e82772f5b975b32f3d05f8ac17703e94",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2504,63 +2743,84 @@
     },
     {
       "id": "n25000_m20000_standard_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "e72889e25980239dc6d6e936c9e78308638c1ff6aaad648e151ff83889124102",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 39617368,
+          "sha256": "4a308bedf1e961fe446cb69161e07f0441511827d34bd8207d926c3e5de8ac3a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 502783168,
+          "sha256": "6f5568ebf9410585a553d7a44a32bb9b7df8516d6c5521182446a1e63c47b896",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "89cf145b28eab77889838a86173a808410d5cda30b19690320afa615a11e756d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 1405658,
+          "sha256": "c2bda0f48436f129314b4f2b692e7355beb8733137b76d0d6feeaad34317f7cf",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 178348136,
+          "sha256": "8f4e8275ac061bee783626a1c7c578de95bfcf3e1086e250de90981558a0c8a7",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 69223716,
+          "sha256": "2c0130feed5480258d67f77b31769e05c9c2e8170ffc7762476722a2ac58706e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 634866494,
+          "sha256": "98ba1b726fc57f1e8159ddf09c55c5bf4293ee95d3c4e3a00335e453bd239162",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 1004763168,
+          "sha256": "891e2fefaff3ba09a09d2553c1292f8860b6650103bc2e50f9b8c9ecf5590f2e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2568,64 +2828,85 @@
       ]
     },
     {
-      "id": "n25000_m20000_LM_r1",
+      "id": "n25000_m20000_lm_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "e72889e25980239dc6d6e936c9e78308638c1ff6aaad648e151ff83889124102",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 39617368,
+          "sha256": "4a308bedf1e961fe446cb69161e07f0441511827d34bd8207d926c3e5de8ac3a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 502783168,
+          "sha256": "6f5568ebf9410585a553d7a44a32bb9b7df8516d6c5521182446a1e63c47b896",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "89cf145b28eab77889838a86173a808410d5cda30b19690320afa615a11e756d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 1405658,
+          "sha256": "c2bda0f48436f129314b4f2b692e7355beb8733137b76d0d6feeaad34317f7cf",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 178348136,
+          "sha256": "8f4e8275ac061bee783626a1c7c578de95bfcf3e1086e250de90981558a0c8a7",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 69223716,
+          "sha256": "2c0130feed5480258d67f77b31769e05c9c2e8170ffc7762476722a2ac58706e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 634866494,
+          "sha256": "98ba1b726fc57f1e8159ddf09c55c5bf4293ee95d3c4e3a00335e453bd239162",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 1004763168,
+          "sha256": "891e2fefaff3ba09a09d2553c1292f8860b6650103bc2e50f9b8c9ecf5590f2e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2633,64 +2914,85 @@
       ]
     },
     {
-      "id": "n25000_m20000_LM_r2",
+      "id": "n25000_m20000_lm_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "e72889e25980239dc6d6e936c9e78308638c1ff6aaad648e151ff83889124102",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 39617368,
+          "sha256": "4a308bedf1e961fe446cb69161e07f0441511827d34bd8207d926c3e5de8ac3a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 502783168,
+          "sha256": "6f5568ebf9410585a553d7a44a32bb9b7df8516d6c5521182446a1e63c47b896",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "89cf145b28eab77889838a86173a808410d5cda30b19690320afa615a11e756d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 1405658,
+          "sha256": "c2bda0f48436f129314b4f2b692e7355beb8733137b76d0d6feeaad34317f7cf",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 178348136,
+          "sha256": "8f4e8275ac061bee783626a1c7c578de95bfcf3e1086e250de90981558a0c8a7",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 69223716,
+          "sha256": "2c0130feed5480258d67f77b31769e05c9c2e8170ffc7762476722a2ac58706e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 634866494,
+          "sha256": "98ba1b726fc57f1e8159ddf09c55c5bf4293ee95d3c4e3a00335e453bd239162",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 1004763168,
+          "sha256": "891e2fefaff3ba09a09d2553c1292f8860b6650103bc2e50f9b8c9ecf5590f2e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2699,63 +3001,84 @@
     },
     {
       "id": "n25000_m20000_standard_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "e72889e25980239dc6d6e936c9e78308638c1ff6aaad648e151ff83889124102",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 39617368,
+          "sha256": "4a308bedf1e961fe446cb69161e07f0441511827d34bd8207d926c3e5de8ac3a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 502783168,
+          "sha256": "6f5568ebf9410585a553d7a44a32bb9b7df8516d6c5521182446a1e63c47b896",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "89cf145b28eab77889838a86173a808410d5cda30b19690320afa615a11e756d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 1405658,
+          "sha256": "c2bda0f48436f129314b4f2b692e7355beb8733137b76d0d6feeaad34317f7cf",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 178348136,
+          "sha256": "8f4e8275ac061bee783626a1c7c578de95bfcf3e1086e250de90981558a0c8a7",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 69223716,
+          "sha256": "2c0130feed5480258d67f77b31769e05c9c2e8170ffc7762476722a2ac58706e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 634866494,
+          "sha256": "98ba1b726fc57f1e8159ddf09c55c5bf4293ee95d3c4e3a00335e453bd239162",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 1004763168,
+          "sha256": "891e2fefaff3ba09a09d2553c1292f8860b6650103bc2e50f9b8c9ecf5590f2e",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2764,63 +3087,84 @@
     },
     {
       "id": "n25000_m80000_standard_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "3d6c8f83eda8f28cb52126d57ef0b8577fa8bb74455f3fbcd8cfdc7cb8876c25",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 98604917,
+          "sha256": "ec103ef6ac5286a8b39f800e9100b232c5522fa57bce8dd55f0b622b112bd016",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 2007842816,
+          "sha256": "b7b757508823f4f9896516d1f0644956205781de8dc0d262c3aec84f4ae767a9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "02c0ed677a8cc2ea5cdb4a3f03f9fcddf0afde3b5f24087787942a7e873fe6d6",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 1405042,
+          "sha256": "9dd81f6bd42c0904109dbfc8b6a398ff9cab3876cf34bb602689219a644c9612",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 585909323,
+          "sha256": "9edc0a97e9d3b5bb44f03e832cee2102e0d0b23517aaa4905223b9c253867771",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 189515426,
+          "sha256": "1fa7f61f568952e772c1c11e56d22b814b07cfcd3cef1c1990574a1607eba506",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 1197467193,
+          "sha256": "9bd07dbce8036607cce29e91c376923821848b9edbfd9bcdff1673bc0cf6324d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 4014882816,
+          "sha256": "131738c0b793307f4a2099466f148b757f752fc55cb4b3da710921c2e39ed203",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2828,64 +3172,85 @@
       ]
     },
     {
-      "id": "n25000_m80000_LM_r1",
+      "id": "n25000_m80000_lm_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "3d6c8f83eda8f28cb52126d57ef0b8577fa8bb74455f3fbcd8cfdc7cb8876c25",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 98604917,
+          "sha256": "ec103ef6ac5286a8b39f800e9100b232c5522fa57bce8dd55f0b622b112bd016",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 2007842816,
+          "sha256": "b7b757508823f4f9896516d1f0644956205781de8dc0d262c3aec84f4ae767a9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "02c0ed677a8cc2ea5cdb4a3f03f9fcddf0afde3b5f24087787942a7e873fe6d6",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 1405042,
+          "sha256": "9dd81f6bd42c0904109dbfc8b6a398ff9cab3876cf34bb602689219a644c9612",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 585909323,
+          "sha256": "9edc0a97e9d3b5bb44f03e832cee2102e0d0b23517aaa4905223b9c253867771",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 189515426,
+          "sha256": "1fa7f61f568952e772c1c11e56d22b814b07cfcd3cef1c1990574a1607eba506",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 1197467193,
+          "sha256": "9bd07dbce8036607cce29e91c376923821848b9edbfd9bcdff1673bc0cf6324d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 4014882816,
+          "sha256": "131738c0b793307f4a2099466f148b757f752fc55cb4b3da710921c2e39ed203",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2893,64 +3258,85 @@
       ]
     },
     {
-      "id": "n25000_m80000_LM_r2",
+      "id": "n25000_m80000_lm_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "3d6c8f83eda8f28cb52126d57ef0b8577fa8bb74455f3fbcd8cfdc7cb8876c25",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 98604917,
+          "sha256": "ec103ef6ac5286a8b39f800e9100b232c5522fa57bce8dd55f0b622b112bd016",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 2007842816,
+          "sha256": "b7b757508823f4f9896516d1f0644956205781de8dc0d262c3aec84f4ae767a9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "02c0ed677a8cc2ea5cdb4a3f03f9fcddf0afde3b5f24087787942a7e873fe6d6",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 1405042,
+          "sha256": "9dd81f6bd42c0904109dbfc8b6a398ff9cab3876cf34bb602689219a644c9612",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 585909323,
+          "sha256": "9edc0a97e9d3b5bb44f03e832cee2102e0d0b23517aaa4905223b9c253867771",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 189515426,
+          "sha256": "1fa7f61f568952e772c1c11e56d22b814b07cfcd3cef1c1990574a1607eba506",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 1197467193,
+          "sha256": "9bd07dbce8036607cce29e91c376923821848b9edbfd9bcdff1673bc0cf6324d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 4014882816,
+          "sha256": "131738c0b793307f4a2099466f148b757f752fc55cb4b3da710921c2e39ed203",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -2959,63 +3345,84 @@
     },
     {
       "id": "n25000_m80000_standard_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "3d6c8f83eda8f28cb52126d57ef0b8577fa8bb74455f3fbcd8cfdc7cb8876c25",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 98604917,
+          "sha256": "ec103ef6ac5286a8b39f800e9100b232c5522fa57bce8dd55f0b622b112bd016",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 2007842816,
+          "sha256": "b7b757508823f4f9896516d1f0644956205781de8dc0d262c3aec84f4ae767a9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "02c0ed677a8cc2ea5cdb4a3f03f9fcddf0afde3b5f24087787942a7e873fe6d6",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 1405042,
+          "sha256": "9dd81f6bd42c0904109dbfc8b6a398ff9cab3876cf34bb602689219a644c9612",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 585909323,
+          "sha256": "9edc0a97e9d3b5bb44f03e832cee2102e0d0b23517aaa4905223b9c253867771",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 189515426,
+          "sha256": "1fa7f61f568952e772c1c11e56d22b814b07cfcd3cef1c1990574a1607eba506",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 1197467193,
+          "sha256": "9bd07dbce8036607cce29e91c376923821848b9edbfd9bcdff1673bc0cf6324d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 4014882816,
+          "sha256": "131738c0b793307f4a2099466f148b757f752fc55cb4b3da710921c2e39ed203",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3024,63 +3431,84 @@
     },
     {
       "id": "n100000_m20000_standard_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "b1293e511edf329d5edbfec00dcf0d7623f218392a4f856086644ec8ad028f5f",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 152348113,
+          "sha256": "ee27726b05b2892bf7bf2f2c45c9820878b914b2e1b0c51a0a3a2d4169bd550d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 2009389888,
+          "sha256": "b155eae9f3ef5479ddc48b26ca11e9529395c39d076a8a84a435756ee651c048",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "bb0320c131b1fc1d2270ed18007fcec4d93b1dd226ef6ece40b941d8ebec3d95",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 5617418,
+          "sha256": "ab894b064a82d442eb90cdafc14dba6f4d743038f27b1922e7b7870cad1e7fa4",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 733187186,
+          "sha256": "97d8f28e1355a95cdfb38e947e5f803d23c68283534d28875ba762e126e256ff",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 276652896,
+          "sha256": "fee4d0c72feaff07542ffc7c37bc40bb8908ddf798c1194031f9b6309e9fb442",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 2181198696,
+          "sha256": "bf5b984ff7c360c4706d76b99895391128324c954fbf0051909419852954aff5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 4015569888,
+          "sha256": "3f3fe3b92a5aabf6977472907a7ff5c9c36bbc53360da442fb1053b644cdd0a2",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3088,64 +3516,85 @@
       ]
     },
     {
-      "id": "n100000_m20000_LM_r1",
+      "id": "n100000_m20000_lm_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "b1293e511edf329d5edbfec00dcf0d7623f218392a4f856086644ec8ad028f5f",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 152348113,
+          "sha256": "ee27726b05b2892bf7bf2f2c45c9820878b914b2e1b0c51a0a3a2d4169bd550d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 2009389888,
+          "sha256": "b155eae9f3ef5479ddc48b26ca11e9529395c39d076a8a84a435756ee651c048",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "bb0320c131b1fc1d2270ed18007fcec4d93b1dd226ef6ece40b941d8ebec3d95",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 5617418,
+          "sha256": "ab894b064a82d442eb90cdafc14dba6f4d743038f27b1922e7b7870cad1e7fa4",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 733187186,
+          "sha256": "97d8f28e1355a95cdfb38e947e5f803d23c68283534d28875ba762e126e256ff",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 276652896,
+          "sha256": "fee4d0c72feaff07542ffc7c37bc40bb8908ddf798c1194031f9b6309e9fb442",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 2181198696,
+          "sha256": "bf5b984ff7c360c4706d76b99895391128324c954fbf0051909419852954aff5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 4015569888,
+          "sha256": "3f3fe3b92a5aabf6977472907a7ff5c9c36bbc53360da442fb1053b644cdd0a2",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3153,64 +3602,85 @@
       ]
     },
     {
-      "id": "n100000_m20000_LM_r2",
+      "id": "n100000_m20000_lm_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "b1293e511edf329d5edbfec00dcf0d7623f218392a4f856086644ec8ad028f5f",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 152348113,
+          "sha256": "ee27726b05b2892bf7bf2f2c45c9820878b914b2e1b0c51a0a3a2d4169bd550d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 2009389888,
+          "sha256": "b155eae9f3ef5479ddc48b26ca11e9529395c39d076a8a84a435756ee651c048",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "bb0320c131b1fc1d2270ed18007fcec4d93b1dd226ef6ece40b941d8ebec3d95",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 5617418,
+          "sha256": "ab894b064a82d442eb90cdafc14dba6f4d743038f27b1922e7b7870cad1e7fa4",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 733187186,
+          "sha256": "97d8f28e1355a95cdfb38e947e5f803d23c68283534d28875ba762e126e256ff",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 276652896,
+          "sha256": "fee4d0c72feaff07542ffc7c37bc40bb8908ddf798c1194031f9b6309e9fb442",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 2181198696,
+          "sha256": "bf5b984ff7c360c4706d76b99895391128324c954fbf0051909419852954aff5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 4015569888,
+          "sha256": "3f3fe3b92a5aabf6977472907a7ff5c9c36bbc53360da442fb1053b644cdd0a2",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3219,63 +3689,84 @@
     },
     {
       "id": "n100000_m20000_standard_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "b1293e511edf329d5edbfec00dcf0d7623f218392a4f856086644ec8ad028f5f",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 152348113,
+          "sha256": "ee27726b05b2892bf7bf2f2c45c9820878b914b2e1b0c51a0a3a2d4169bd550d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 2009389888,
+          "sha256": "b155eae9f3ef5479ddc48b26ca11e9529395c39d076a8a84a435756ee651c048",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "bb0320c131b1fc1d2270ed18007fcec4d93b1dd226ef6ece40b941d8ebec3d95",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 5617418,
+          "sha256": "ab894b064a82d442eb90cdafc14dba6f4d743038f27b1922e7b7870cad1e7fa4",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 733187186,
+          "sha256": "97d8f28e1355a95cdfb38e947e5f803d23c68283534d28875ba762e126e256ff",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 276652896,
+          "sha256": "fee4d0c72feaff07542ffc7c37bc40bb8908ddf798c1194031f9b6309e9fb442",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 2181198696,
+          "sha256": "bf5b984ff7c360c4706d76b99895391128324c954fbf0051909419852954aff5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 4015569888,
+          "sha256": "3f3fe3b92a5aabf6977472907a7ff5c9c36bbc53360da442fb1053b644cdd0a2",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3284,63 +3775,84 @@
     },
     {
       "id": "n100000_m80000_standard_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "98916453a068a557ba04ae1a0a9c7c22a947343042f683d860064715a14af2bb",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 396918585,
+          "sha256": "400b5de36570c32957a6adf354b5c736089eae68b1117ca2efd25a44a0a480ca",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 8024808640,
+          "sha256": "8ec661b2bedffa3146a537942f549a73c03948ec81c2d1b4d684aaf6b8b032de",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "ed10526aa94714d93f8f1c52565218b46f92769be7936b5f30a08825f73dbd7d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 5615234,
+          "sha256": "fef2bf0a12d1c83b3a339b97fe427522c637c856441eadbf13dc962dd8394644",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 2355446461,
+          "sha256": "37f06800e89ad880e07befb2365d4a11053c043ecdc4ee34c4e7b074e24bb710",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 757440254,
+          "sha256": "907afcba37d185d2ab76af9338ab213aa6d6885e59c3159b5aa1df49fdca0fd8",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 3582886673,
+          "sha256": "d348147f3842c2be6d14fd66afff4b6f55496b13705c8a7078779ba690747637",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 16046408640,
+          "sha256": "1363583f0d07528d5ce20188024804d62f714f8596f1db549e44f9f7f59f9755",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3348,64 +3860,85 @@
       ]
     },
     {
-      "id": "n100000_m80000_LM_r1",
+      "id": "n100000_m80000_lm_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "98916453a068a557ba04ae1a0a9c7c22a947343042f683d860064715a14af2bb",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 396918585,
+          "sha256": "400b5de36570c32957a6adf354b5c736089eae68b1117ca2efd25a44a0a480ca",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 8024808640,
+          "sha256": "8ec661b2bedffa3146a537942f549a73c03948ec81c2d1b4d684aaf6b8b032de",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "ed10526aa94714d93f8f1c52565218b46f92769be7936b5f30a08825f73dbd7d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 5615234,
+          "sha256": "fef2bf0a12d1c83b3a339b97fe427522c637c856441eadbf13dc962dd8394644",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 2355446461,
+          "sha256": "37f06800e89ad880e07befb2365d4a11053c043ecdc4ee34c4e7b074e24bb710",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 757440254,
+          "sha256": "907afcba37d185d2ab76af9338ab213aa6d6885e59c3159b5aa1df49fdca0fd8",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 3582886673,
+          "sha256": "d348147f3842c2be6d14fd66afff4b6f55496b13705c8a7078779ba690747637",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 16046408640,
+          "sha256": "1363583f0d07528d5ce20188024804d62f714f8596f1db549e44f9f7f59f9755",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3413,64 +3946,85 @@
       ]
     },
     {
-      "id": "n100000_m80000_LM_r2",
+      "id": "n100000_m80000_lm_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "98916453a068a557ba04ae1a0a9c7c22a947343042f683d860064715a14af2bb",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 396918585,
+          "sha256": "400b5de36570c32957a6adf354b5c736089eae68b1117ca2efd25a44a0a480ca",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 8024808640,
+          "sha256": "8ec661b2bedffa3146a537942f549a73c03948ec81c2d1b4d684aaf6b8b032de",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "ed10526aa94714d93f8f1c52565218b46f92769be7936b5f30a08825f73dbd7d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 5615234,
+          "sha256": "fef2bf0a12d1c83b3a339b97fe427522c637c856441eadbf13dc962dd8394644",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 2355446461,
+          "sha256": "37f06800e89ad880e07befb2365d4a11053c043ecdc4ee34c4e7b074e24bb710",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 757440254,
+          "sha256": "907afcba37d185d2ab76af9338ab213aa6d6885e59c3159b5aa1df49fdca0fd8",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 3582886673,
+          "sha256": "d348147f3842c2be6d14fd66afff4b6f55496b13705c8a7078779ba690747637",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 16046408640,
+          "sha256": "1363583f0d07528d5ce20188024804d62f714f8596f1db549e44f9f7f59f9755",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3479,63 +4033,84 @@
     },
     {
       "id": "n100000_m80000_standard_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "98916453a068a557ba04ae1a0a9c7c22a947343042f683d860064715a14af2bb",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 396918585,
+          "sha256": "400b5de36570c32957a6adf354b5c736089eae68b1117ca2efd25a44a0a480ca",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 8024808640,
+          "sha256": "8ec661b2bedffa3146a537942f549a73c03948ec81c2d1b4d684aaf6b8b032de",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "ed10526aa94714d93f8f1c52565218b46f92769be7936b5f30a08825f73dbd7d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 5615234,
+          "sha256": "fef2bf0a12d1c83b3a339b97fe427522c637c856441eadbf13dc962dd8394644",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 2355446461,
+          "sha256": "37f06800e89ad880e07befb2365d4a11053c043ecdc4ee34c4e7b074e24bb710",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 757440254,
+          "sha256": "907afcba37d185d2ab76af9338ab213aa6d6885e59c3159b5aa1df49fdca0fd8",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 3582886673,
+          "sha256": "d348147f3842c2be6d14fd66afff4b6f55496b13705c8a7078779ba690747637",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 16046408640,
+          "sha256": "1363583f0d07528d5ce20188024804d62f714f8596f1db549e44f9f7f59f9755",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3544,63 +4119,84 @@
     },
     {
       "id": "n250000_m20000_standard_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "91ba497c0b2fc63be70cd0e878b9b848b78d6aef540ecb0f97977c77e3024e36",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 380954702,
+          "sha256": "b93ddc41aa0df91aeeee7edd4018c74197943b5c1e44af1fd6c60ac4327abeb3",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 5024165824,
+          "sha256": "c2f27af087d99d01bbeade18daa784004025c2cb9e919897cad0932b91e2d180",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "3107748f7ec8897fb0df8b1afad0678553c1dc12ba6cb2a8514c6bddd6996587",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 14045306,
+          "sha256": "6baeb2077b6394cb8788d9cd06042f1cab53b969d9fc0dbf92f72e51dc0cd6c5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 1854717529,
+          "sha256": "2af8d6ee2a5e5e40110b0448b2e2a45f587d1aedc900ac57e4de73bf1e08822c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 691726380,
+          "sha256": "1c6c5a5e7f36e40ba146c3198516e7d76a9683f6f244145a47b38dcfcab99fb9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 4663618790,
+          "sha256": "23c3711925b44501641d904220bfd104d4d1a1c8aa85c2352ef02613bdb4efd1",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 10040305824,
+          "sha256": "1a207c0ded5f1d0e3d60af8911299339efc1c6db32039ece0d4ae9980052a6fe",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3608,64 +4204,85 @@
       ]
     },
     {
-      "id": "n250000_m20000_LM_r1",
+      "id": "n250000_m20000_lm_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "91ba497c0b2fc63be70cd0e878b9b848b78d6aef540ecb0f97977c77e3024e36",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 380954702,
+          "sha256": "b93ddc41aa0df91aeeee7edd4018c74197943b5c1e44af1fd6c60ac4327abeb3",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 5024165824,
+          "sha256": "c2f27af087d99d01bbeade18daa784004025c2cb9e919897cad0932b91e2d180",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "3107748f7ec8897fb0df8b1afad0678553c1dc12ba6cb2a8514c6bddd6996587",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 14045306,
+          "sha256": "6baeb2077b6394cb8788d9cd06042f1cab53b969d9fc0dbf92f72e51dc0cd6c5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 1854717529,
+          "sha256": "2af8d6ee2a5e5e40110b0448b2e2a45f587d1aedc900ac57e4de73bf1e08822c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 691726380,
+          "sha256": "1c6c5a5e7f36e40ba146c3198516e7d76a9683f6f244145a47b38dcfcab99fb9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 4663618790,
+          "sha256": "23c3711925b44501641d904220bfd104d4d1a1c8aa85c2352ef02613bdb4efd1",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 10040305824,
+          "sha256": "1a207c0ded5f1d0e3d60af8911299339efc1c6db32039ece0d4ae9980052a6fe",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3673,64 +4290,85 @@
       ]
     },
     {
-      "id": "n250000_m20000_LM_r2",
+      "id": "n250000_m20000_lm_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "91ba497c0b2fc63be70cd0e878b9b848b78d6aef540ecb0f97977c77e3024e36",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 380954702,
+          "sha256": "b93ddc41aa0df91aeeee7edd4018c74197943b5c1e44af1fd6c60ac4327abeb3",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 5024165824,
+          "sha256": "c2f27af087d99d01bbeade18daa784004025c2cb9e919897cad0932b91e2d180",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "3107748f7ec8897fb0df8b1afad0678553c1dc12ba6cb2a8514c6bddd6996587",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 14045306,
+          "sha256": "6baeb2077b6394cb8788d9cd06042f1cab53b969d9fc0dbf92f72e51dc0cd6c5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 1854717529,
+          "sha256": "2af8d6ee2a5e5e40110b0448b2e2a45f587d1aedc900ac57e4de73bf1e08822c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 691726380,
+          "sha256": "1c6c5a5e7f36e40ba146c3198516e7d76a9683f6f244145a47b38dcfcab99fb9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 4663618790,
+          "sha256": "23c3711925b44501641d904220bfd104d4d1a1c8aa85c2352ef02613bdb4efd1",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 10040305824,
+          "sha256": "1a207c0ded5f1d0e3d60af8911299339efc1c6db32039ece0d4ae9980052a6fe",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3739,63 +4377,84 @@
     },
     {
       "id": "n250000_m20000_standard_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 1460141,
+          "sha256": "91ba497c0b2fc63be70cd0e878b9b848b78d6aef540ecb0f97977c77e3024e36",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 380954702,
+          "sha256": "b93ddc41aa0df91aeeee7edd4018c74197943b5c1e44af1fd6c60ac4327abeb3",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 5024165824,
+          "sha256": "c2f27af087d99d01bbeade18daa784004025c2cb9e919897cad0932b91e2d180",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "3107748f7ec8897fb0df8b1afad0678553c1dc12ba6cb2a8514c6bddd6996587",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 14045306,
+          "sha256": "6baeb2077b6394cb8788d9cd06042f1cab53b969d9fc0dbf92f72e51dc0cd6c5",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 1854717529,
+          "sha256": "2af8d6ee2a5e5e40110b0448b2e2a45f587d1aedc900ac57e4de73bf1e08822c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 691726380,
+          "sha256": "1c6c5a5e7f36e40ba146c3198516e7d76a9683f6f244145a47b38dcfcab99fb9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 4663618790,
+          "sha256": "23c3711925b44501641d904220bfd104d4d1a1c8aa85c2352ef02613bdb4efd1",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 10040305824,
+          "sha256": "1a207c0ded5f1d0e3d60af8911299339efc1c6db32039ece0d4ae9980052a6fe",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3804,63 +4463,84 @@
     },
     {
       "id": "n250000_m80000_standard_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "f8dfedb74e45e240635d7cb7c0d9ee63e5f543d9b9def1f22b7679d4acede7eb",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 1001303657,
+          "sha256": "08b182bfac1062309a81aec667ba6f4e55a43df26640ae231152718a6dd41c35",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 20064982784,
+          "sha256": "11a4a698f4d2a23e3063dd5c1f3a2dacaeba5145919eb116f2637d901dace7a4",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "364b1972049de103d27c605e5174ccce4fd0b667cb543f451d55117c05035314",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 14039986,
+          "sha256": "b2f89a3829eb29b177e0a1aa7f953c99854bb35fa42f2f05b87e4c47004e0718",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 5936570919,
+          "sha256": "848b6523172627f68f013fca04129b44f99a152e2e0c6638ff5221fed7bbc70d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 1893879122,
+          "sha256": "f5d4563512fbd0e25885e481e12d9afc8be0b2ba244da39010cc60ba151a9eee",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 6920050948,
+          "sha256": "cc59592b23eace9044d764b4c2add242cd0cb6682b62caece500b100b414f89c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 40121942784,
+          "sha256": "054545ffea08faea54074efbd70aa59b677645485addbdef8e78fa1db8b3664d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3868,64 +4548,85 @@
       ]
     },
     {
-      "id": "n250000_m80000_LM_r1",
+      "id": "n250000_m80000_lm_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "f8dfedb74e45e240635d7cb7c0d9ee63e5f543d9b9def1f22b7679d4acede7eb",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 1001303657,
+          "sha256": "08b182bfac1062309a81aec667ba6f4e55a43df26640ae231152718a6dd41c35",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 20064982784,
+          "sha256": "11a4a698f4d2a23e3063dd5c1f3a2dacaeba5145919eb116f2637d901dace7a4",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "364b1972049de103d27c605e5174ccce4fd0b667cb543f451d55117c05035314",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 14039986,
+          "sha256": "b2f89a3829eb29b177e0a1aa7f953c99854bb35fa42f2f05b87e4c47004e0718",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 5936570919,
+          "sha256": "848b6523172627f68f013fca04129b44f99a152e2e0c6638ff5221fed7bbc70d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 1893879122,
+          "sha256": "f5d4563512fbd0e25885e481e12d9afc8be0b2ba244da39010cc60ba151a9eee",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 6920050948,
+          "sha256": "cc59592b23eace9044d764b4c2add242cd0cb6682b62caece500b100b414f89c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 40121942784,
+          "sha256": "054545ffea08faea54074efbd70aa59b677645485addbdef8e78fa1db8b3664d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3933,64 +4634,85 @@
       ]
     },
     {
-      "id": "n250000_m80000_LM_r2",
+      "id": "n250000_m80000_lm_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "f8dfedb74e45e240635d7cb7c0d9ee63e5f543d9b9def1f22b7679d4acede7eb",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 1001303657,
+          "sha256": "08b182bfac1062309a81aec667ba6f4e55a43df26640ae231152718a6dd41c35",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 20064982784,
+          "sha256": "11a4a698f4d2a23e3063dd5c1f3a2dacaeba5145919eb116f2637d901dace7a4",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "364b1972049de103d27c605e5174ccce4fd0b667cb543f451d55117c05035314",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 14039986,
+          "sha256": "b2f89a3829eb29b177e0a1aa7f953c99854bb35fa42f2f05b87e4c47004e0718",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 5936570919,
+          "sha256": "848b6523172627f68f013fca04129b44f99a152e2e0c6638ff5221fed7bbc70d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 1893879122,
+          "sha256": "f5d4563512fbd0e25885e481e12d9afc8be0b2ba244da39010cc60ba151a9eee",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 6920050948,
+          "sha256": "cc59592b23eace9044d764b4c2add242cd0cb6682b62caece500b100b414f89c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 40121942784,
+          "sha256": "054545ffea08faea54074efbd70aa59b677645485addbdef8e78fa1db8b3664d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -3999,63 +4721,84 @@
     },
     {
       "id": "n250000_m80000_standard_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "f8dfedb74e45e240635d7cb7c0d9ee63e5f543d9b9def1f22b7679d4acede7eb",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 1001303657,
+          "sha256": "08b182bfac1062309a81aec667ba6f4e55a43df26640ae231152718a6dd41c35",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 20064982784,
+          "sha256": "11a4a698f4d2a23e3063dd5c1f3a2dacaeba5145919eb116f2637d901dace7a4",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "364b1972049de103d27c605e5174ccce4fd0b667cb543f451d55117c05035314",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 14039986,
+          "sha256": "b2f89a3829eb29b177e0a1aa7f953c99854bb35fa42f2f05b87e4c47004e0718",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 5936570919,
+          "sha256": "848b6523172627f68f013fca04129b44f99a152e2e0c6638ff5221fed7bbc70d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 1893879122,
+          "sha256": "f5d4563512fbd0e25885e481e12d9afc8be0b2ba244da39010cc60ba151a9eee",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 6920050948,
+          "sha256": "cc59592b23eace9044d764b4c2add242cd0cb6682b62caece500b100b414f89c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 40121942784,
+          "sha256": "054545ffea08faea54074efbd70aa59b677645485addbdef8e78fa1db8b3664d",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -4064,63 +4807,84 @@
     },
     {
       "id": "n1000000_m80000_standard_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "e8148d5d0f37157ddaaa128ce61abd60aa36a5fe3b682a5b5dcd5169f284efe9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 4063067690,
+          "sha256": "d658cad24121ae379a0315bf0b81d1acb192ea10761af027e64e7ea274398d3a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 80275857504,
+          "sha256": "0d075c158d269e64f5474c441213ca70a6ca218f072554914dca815da6fa0f9c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "475483057774ab8ba604bd93ac8477b3758308c154c6095c43fb7412d47bed18",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 56170746,
+          "sha256": "6595197f991525348f539c3c21a2d3ae95f8800eb3fd6abc917776a49126a107",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 23921660958,
+          "sha256": "258d21c70b1daef6a679b556fe767dabbb833cb7938ab98dd15c817e15f88643",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 7577017712,
+          "sha256": "7f3df017a546b700da6cee3e36e246614ce603017ca9740ec4ac588de92f579b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 17783497025,
+          "sha256": "e491a0a8ff221084740c4b6aa0a9e3c4261ee6b6cff2816a5feb7bbab65144e9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 160519617504,
+          "sha256": "dc26f985b3586d69ad00515e4919b6b67c6c486496b93a93923208f0d67efc3b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -4128,64 +4892,85 @@
       ]
     },
     {
-      "id": "n1000000_m80000_LM_r1",
+      "id": "n1000000_m80000_lm_r1",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "e8148d5d0f37157ddaaa128ce61abd60aa36a5fe3b682a5b5dcd5169f284efe9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 4063067690,
+          "sha256": "d658cad24121ae379a0315bf0b81d1acb192ea10761af027e64e7ea274398d3a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 80275857504,
+          "sha256": "0d075c158d269e64f5474c441213ca70a6ca218f072554914dca815da6fa0f9c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "475483057774ab8ba604bd93ac8477b3758308c154c6095c43fb7412d47bed18",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 56170746,
+          "sha256": "6595197f991525348f539c3c21a2d3ae95f8800eb3fd6abc917776a49126a107",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 23921660958,
+          "sha256": "258d21c70b1daef6a679b556fe767dabbb833cb7938ab98dd15c817e15f88643",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 7577017712,
+          "sha256": "7f3df017a546b700da6cee3e36e246614ce603017ca9740ec4ac588de92f579b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 17783497025,
+          "sha256": "e491a0a8ff221084740c4b6aa0a9e3c4261ee6b6cff2816a5feb7bbab65144e9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 160519617504,
+          "sha256": "dc26f985b3586d69ad00515e4919b6b67c6c486496b93a93923208f0d67efc3b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -4193,64 +4978,85 @@
       ]
     },
     {
-      "id": "n1000000_m80000_LM_r2",
+      "id": "n1000000_m80000_lm_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "e8148d5d0f37157ddaaa128ce61abd60aa36a5fe3b682a5b5dcd5169f284efe9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 4063067690,
+          "sha256": "d658cad24121ae379a0315bf0b81d1acb192ea10761af027e64e7ea274398d3a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 80275857504,
+          "sha256": "0d075c158d269e64f5474c441213ca70a6ca218f072554914dca815da6fa0f9c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "475483057774ab8ba604bd93ac8477b3758308c154c6095c43fb7412d47bed18",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 56170746,
+          "sha256": "6595197f991525348f539c3c21a2d3ae95f8800eb3fd6abc917776a49126a107",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 23921660958,
+          "sha256": "258d21c70b1daef6a679b556fe767dabbb833cb7938ab98dd15c817e15f88643",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 7577017712,
+          "sha256": "7f3df017a546b700da6cee3e36e246614ce603017ca9740ec4ac588de92f579b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 17783497025,
+          "sha256": "e491a0a8ff221084740c4b6aa0a9e3c4261ee6b6cff2816a5feb7bbab65144e9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 160519617504,
+          "sha256": "dc26f985b3586d69ad00515e4919b6b67c6c486496b93a93923208f0d67efc3b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -4259,63 +5065,84 @@
     },
     {
       "id": "n1000000_m80000_standard_r2",
+      "method": "Raw byte size and SHA-256",
       "files": [
         {
           "file": "allele.frequency",
+          "size": 5840141,
+          "sha256": "e8148d5d0f37157ddaaa128ce61abd60aa36a5fe3b682a5b5dcd5169f284efe9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "cross.overs",
+          "size": 4063067690,
+          "sha256": "d658cad24121ae379a0315bf0b81d1acb192ea10761af027e64e7ea274398d3a",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "do_not_distrib",
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "genotypes.filled",
+          "size": 80275857504,
+          "sha256": "0d075c158d269e64f5474c441213ca70a6ca218f072554914dca815da6fa0f9c",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.Xseg",
+          "size": 100,
+          "sha256": "475483057774ab8ba604bd93ac8477b3758308c154c6095c43fb7412d47bed18",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.filled",
+          "size": 56170746,
+          "sha256": "6595197f991525348f539c3c21a2d3ae95f8800eb3fd6abc917776a49126a107",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.found",
+          "size": 23921660958,
+          "sha256": "258d21c70b1daef6a679b556fe767dabbb833cb7938ab98dd15c817e15f88643",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.inherit",
+          "size": 7577017712,
+          "sha256": "7f3df017a546b700da6cee3e36e246614ce603017ca9740ec4ac588de92f579b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "hap.list",
+          "size": 17783497025,
+          "sha256": "e491a0a8ff221084740c4b6aa0a9e3c4261ee6b6cff2816a5feb7bbab65144e9",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
         },
         {
           "file": "haplotypes.txt",
+          "size": 160519617504,
+          "sha256": "dc26f985b3586d69ad00515e4919b6b67c6c486496b93a93923208f0d67efc3b",
           "raw_identical": true,
           "record_order_exception": false,
           "passed": true
@@ -4324,9 +5151,9 @@
     }
   ],
   "published_baseline": {
-    "version": "1.5.0",
-    "url": "https://github.com/adrian-greenneuron/TurboHap/blob/v1.5.0/docs/turbohap_benchmarks_111126.json",
-    "json_sha256": "217fe8167bf11bb7097a9af8ba492a929fe4c3f6843d9157baf632a926b8d2a7",
+    "version": "1.6.0",
+    "url": "https://github.com/adrian-greenneuron/TurboHap/blob/v1.6.0/docs/turbohap_benchmarks_201126.csv",
+    "csv_sha256": "09dad26f4ceaf9633f4ebe802768480f149a9e05352f019854b59aea1ca079e9",
     "observations": [
       {
         "id": "n10000_m20000_standard_r1",
@@ -4337,14 +5164,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 3.16,
-        "user_seconds": 37.36,
-        "system_seconds": 0.76,
-        "peak_rss_kib": 381928,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 7204
+        "wall_seconds": 2.53,
+        "peak_rss_kib": 356872,
+        "host_swap_in_mib": 0.0,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n10000_m20000_LM_r1",
@@ -4355,14 +5178,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 4.05,
-        "user_seconds": 37.9,
-        "system_seconds": 1.37,
-        "peak_rss_kib": 302660,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 7204
+        "wall_seconds": 3.0,
+        "peak_rss_kib": 275184,
+        "host_swap_in_mib": 0.0,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n10000_m20000_LM_r2",
@@ -4373,14 +5192,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 4.09,
-        "user_seconds": 37.96,
-        "system_seconds": 1.4,
-        "peak_rss_kib": 303364,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 7204
+        "wall_seconds": 2.99,
+        "peak_rss_kib": 275388,
+        "host_swap_in_mib": 0.0,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n10000_m20000_standard_r2",
@@ -4391,14 +5206,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 3.18,
-        "user_seconds": 37.43,
-        "system_seconds": 0.8,
-        "peak_rss_kib": 382284,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 7204
+        "wall_seconds": 2.52,
+        "peak_rss_kib": 357184,
+        "host_swap_in_mib": 0.0,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n10000_m80000_standard_r1",
@@ -4409,14 +5220,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 9.07,
-        "user_seconds": 110.06,
-        "system_seconds": 1.99,
-        "peak_rss_kib": 1054740,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 4170
+        "wall_seconds": 7.26,
+        "peak_rss_kib": 917284,
+        "host_swap_in_mib": 0.0,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n10000_m80000_LM_r1",
@@ -4427,14 +5234,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 14.93,
-        "user_seconds": 111.43,
-        "system_seconds": 3.85,
-        "peak_rss_kib": 701864,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 4170
+        "wall_seconds": 10.83,
+        "peak_rss_kib": 604736,
+        "host_swap_in_mib": 0.0,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n10000_m80000_LM_r2",
@@ -4445,14 +5248,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 14.5,
-        "user_seconds": 111.1,
-        "system_seconds": 4.01,
-        "peak_rss_kib": 702908,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 4170
+        "wall_seconds": 10.68,
+        "peak_rss_kib": 604672,
+        "host_swap_in_mib": 0.0,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n10000_m80000_standard_r2",
@@ -4463,14 +5262,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 9.09,
-        "user_seconds": 109.8,
-        "system_seconds": 1.93,
-        "peak_rss_kib": 1054848,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 4170
+        "wall_seconds": 7.52,
+        "peak_rss_kib": 917140,
+        "host_swap_in_mib": 0.12109375,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n25000_m20000_standard_r1",
@@ -4481,14 +5276,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 8.68,
-        "user_seconds": 113.39,
-        "system_seconds": 1.58,
-        "peak_rss_kib": 812164,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 15458
+        "wall_seconds": 6.72,
+        "peak_rss_kib": 759640,
+        "host_swap_in_mib": 0.0546875,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n25000_m20000_LM_r1",
@@ -4499,14 +5290,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 10.35,
-        "user_seconds": 115.71,
-        "system_seconds": 2.88,
-        "peak_rss_kib": 595036,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 15458
+        "wall_seconds": 7.8,
+        "peak_rss_kib": 555712,
+        "host_swap_in_mib": 0.0234375,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n25000_m20000_LM_r2",
@@ -4517,14 +5304,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 10.35,
-        "user_seconds": 115.87,
-        "system_seconds": 2.7,
-        "peak_rss_kib": 595236,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 15458
+        "wall_seconds": 7.73,
+        "peak_rss_kib": 556188,
+        "host_swap_in_mib": 0.08984375,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n25000_m20000_standard_r2",
@@ -4535,14 +5318,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 8.6,
-        "user_seconds": 113.4,
-        "system_seconds": 1.62,
-        "peak_rss_kib": 812028,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 15458
+        "wall_seconds": 6.96,
+        "peak_rss_kib": 759680,
+        "host_swap_in_mib": 0.03125,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n25000_m80000_standard_r1",
@@ -4553,14 +5332,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 23.05,
-        "user_seconds": 295.45,
-        "system_seconds": 3.86,
-        "peak_rss_kib": 2313132,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 7899
+        "wall_seconds": 19.25,
+        "peak_rss_kib": 1968196,
+        "host_swap_in_mib": 0.015625,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n25000_m80000_LM_r1",
@@ -4571,14 +5346,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 36.2,
-        "user_seconds": 300.68,
-        "system_seconds": 8.46,
-        "peak_rss_kib": 1426276,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 7899
+        "wall_seconds": 25.25,
+        "peak_rss_kib": 1208992,
+        "host_swap_in_mib": 0.01953125,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n25000_m80000_LM_r2",
@@ -4589,14 +5360,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 36.37,
-        "user_seconds": 301.34,
-        "system_seconds": 7.59,
-        "peak_rss_kib": 1426216,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 7899
+        "wall_seconds": 25.24,
+        "peak_rss_kib": 1208792,
+        "host_swap_in_mib": 0.03515625,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n25000_m80000_standard_r2",
@@ -4607,14 +5374,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 23.28,
-        "user_seconds": 295.34,
-        "system_seconds": 4.1,
-        "peak_rss_kib": 2312596,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 7899
+        "wall_seconds": 18.87,
+        "peak_rss_kib": 1968500,
+        "host_swap_in_mib": 1.296875,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n100000_m20000_standard_r1",
@@ -4625,14 +5388,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 60000,
-        "wall_seconds": 55.58,
-        "user_seconds": 863.69,
-        "system_seconds": 5.69,
-        "peak_rss_kib": 2873140,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 55564
+        "wall_seconds": 38.68,
+        "peak_rss_kib": 2666892,
+        "host_swap_in_mib": 0.1328125,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n100000_m20000_LM_r1",
@@ -4643,14 +5402,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 60000,
-        "wall_seconds": 61.32,
-        "user_seconds": 867.72,
-        "system_seconds": 8.21,
-        "peak_rss_kib": 2038368,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 55564
+        "wall_seconds": 42.38,
+        "peak_rss_kib": 1878720,
+        "host_swap_in_mib": 0.1328125,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n100000_m20000_LM_r2",
@@ -4661,14 +5416,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 60000,
-        "wall_seconds": 62.03,
-        "user_seconds": 875.92,
-        "system_seconds": 9.08,
-        "peak_rss_kib": 2037948,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 55564
+        "wall_seconds": 42.38,
+        "peak_rss_kib": 1878016,
+        "host_swap_in_mib": 0.04296875,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n100000_m20000_standard_r2",
@@ -4679,14 +5430,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 60000,
-        "wall_seconds": 55.68,
-        "user_seconds": 858.0,
-        "system_seconds": 5.65,
-        "peak_rss_kib": 2872116,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 55564
+        "wall_seconds": 38.51,
+        "peak_rss_kib": 2672792,
+        "host_swap_in_mib": 0.0078125,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n100000_m80000_standard_r1",
@@ -4697,14 +5444,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 105.55,
-        "user_seconds": 1445.11,
-        "system_seconds": 15.42,
-        "peak_rss_kib": 8094556,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 26039
+        "wall_seconds": 82.33,
+        "peak_rss_kib": 6756928,
+        "host_swap_in_mib": 0.66796875,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n100000_m80000_LM_r1",
@@ -4715,14 +5458,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 158.52,
-        "user_seconds": 1476.06,
-        "system_seconds": 30.0,
-        "peak_rss_kib": 4536340,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 26039
+        "wall_seconds": 106.56,
+        "peak_rss_kib": 3680036,
+        "host_swap_in_mib": 0.11328125,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n100000_m80000_LM_r2",
@@ -4733,14 +5472,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 157.44,
-        "user_seconds": 1489.64,
-        "system_seconds": 28.6,
-        "peak_rss_kib": 4535492,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 26039
+        "wall_seconds": 105.78,
+        "peak_rss_kib": 3680100,
+        "host_swap_in_mib": 0.015625,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n100000_m80000_standard_r2",
@@ -4751,14 +5486,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 50000,
-        "wall_seconds": 104.55,
-        "user_seconds": 1444.87,
-        "system_seconds": 14.89,
-        "peak_rss_kib": 8094956,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 26039
+        "wall_seconds": 83.83,
+        "peak_rss_kib": 6756952,
+        "host_swap_in_mib": 0.01171875,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n250000_m20000_standard_r1",
@@ -4769,14 +5500,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 130000,
-        "wall_seconds": 244.79,
-        "user_seconds": 4119.73,
-        "system_seconds": 14.75,
-        "peak_rss_kib": 7646060,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 120124
+        "wall_seconds": 138.64,
+        "peak_rss_kib": 6508324,
+        "host_swap_in_mib": 0.03125,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n250000_m20000_LM_r1",
@@ -4787,14 +5514,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 130000,
-        "wall_seconds": 263.13,
-        "user_seconds": 4207.64,
-        "system_seconds": 21.65,
-        "peak_rss_kib": 5500792,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 120124
+        "wall_seconds": 144.35,
+        "peak_rss_kib": 4853124,
+        "host_swap_in_mib": 0.0,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n250000_m20000_LM_r2",
@@ -4805,14 +5528,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 130000,
-        "wall_seconds": 267.33,
-        "user_seconds": 4227.61,
-        "system_seconds": 22.26,
-        "peak_rss_kib": 5507456,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 120124
+        "wall_seconds": 146.61,
+        "peak_rss_kib": 4849844,
+        "host_swap_in_mib": 0.0,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n250000_m20000_standard_r2",
@@ -4823,14 +5542,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 130000,
-        "wall_seconds": 246.9,
-        "user_seconds": 4153.57,
-        "system_seconds": 15.37,
-        "peak_rss_kib": 7638272,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 120124
+        "wall_seconds": 135.66,
+        "peak_rss_kib": 6506816,
+        "host_swap_in_mib": 0.00390625,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n250000_m80000_standard_r1",
@@ -4841,14 +5556,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 60000,
-        "wall_seconds": 300.35,
-        "user_seconds": 4390.28,
-        "system_seconds": 36.05,
-        "peak_rss_kib": 18958940,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 52936
+        "wall_seconds": 226.48,
+        "peak_rss_kib": 15611700,
+        "host_swap_in_mib": 0.03125,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n250000_m80000_LM_r1",
@@ -4859,14 +5570,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 60000,
-        "wall_seconds": 434.93,
-        "user_seconds": 4546.68,
-        "system_seconds": 66.48,
-        "peak_rss_kib": 10116600,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 52936
+        "wall_seconds": 294.77,
+        "peak_rss_kib": 7845736,
+        "host_swap_in_mib": 1.75,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n250000_m80000_LM_r2",
@@ -4877,14 +5584,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 60000,
-        "wall_seconds": 429.26,
-        "user_seconds": 4546.39,
-        "system_seconds": 64.03,
-        "peak_rss_kib": 10113520,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 52936
+        "wall_seconds": 287.89,
+        "peak_rss_kib": 7845600,
+        "host_swap_in_mib": 0.0625,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n250000_m80000_standard_r2",
@@ -4895,14 +5598,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 60000,
-        "wall_seconds": 298.44,
-        "user_seconds": 4394.1,
-        "system_seconds": 35.58,
-        "peak_rss_kib": 18960100,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 52936
+        "wall_seconds": 226.3,
+        "peak_rss_kib": 15609604,
+        "host_swap_in_mib": 0.0078125,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n1000000_m80000_standard_r1",
@@ -4913,14 +5612,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 170000,
-        "wall_seconds": 1971.14,
-        "user_seconds": 32061.42,
-        "system_seconds": 156.06,
-        "peak_rss_kib": 89467828,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 167248
+        "wall_seconds": 1233.56,
+        "peak_rss_kib": 72744604,
+        "host_swap_in_mib": 12280.8984375,
+        "host_swap_out_mib": 13052.50390625
       },
       {
         "id": "n1000000_m80000_LM_r1",
@@ -4931,14 +5626,10 @@
         "repeat": 1,
         "threads": 20,
         "maxhap": 170000,
-        "wall_seconds": 2549.62,
-        "user_seconds": 33103.51,
-        "system_seconds": 267.35,
-        "peak_rss_kib": 53742960,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 167248
+        "wall_seconds": 1541.24,
+        "peak_rss_kib": 40770864,
+        "host_swap_in_mib": 6.7421875,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n1000000_m80000_LM_r2",
@@ -4949,14 +5640,10 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 170000,
-        "wall_seconds": 2542.83,
-        "user_seconds": 32973.24,
-        "system_seconds": 282.35,
-        "peak_rss_kib": 53754052,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 167248
+        "wall_seconds": 1545.18,
+        "peak_rss_kib": 40776272,
+        "host_swap_in_mib": 19.94921875,
+        "host_swap_out_mib": 0.0
       },
       {
         "id": "n1000000_m80000_standard_r2",
@@ -4967,15 +5654,23 @@
         "repeat": 2,
         "threads": 20,
         "maxhap": 170000,
-        "wall_seconds": 1962.03,
-        "user_seconds": 31930.51,
-        "system_seconds": 153.89,
-        "peak_rss_kib": 89476948,
-        "exit_status": 0,
-        "swaps": 0,
-        "date": "2026-11-10",
-        "peak_live_haplotypes": 167248
+        "wall_seconds": 1222.93,
+        "peak_rss_kib": 72760248,
+        "host_swap_in_mib": 5101.85546875,
+        "host_swap_out_mib": 7043.9296875
       }
     ]
-  }
+  },
+  "excluded_attempts": [
+    {
+      "dataset": "n250000_m80000",
+      "mode": "Standard",
+      "repeat": 2,
+      "wall_seconds": 201.71,
+      "peak_rss_kib": 15613344,
+      "host_swap_in_mib": 17.765625,
+      "host_swap_out_mib": 2190.86328125,
+      "reason": "Host swap reached the 256 MiB exclusion threshold. A replacement was measured."
+    }
+  ]
 }

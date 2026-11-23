@@ -14,11 +14,11 @@ For an example of which animals qualify for matching and which appear in the gen
 
 ## What the release benchmarks checked
 
-On the nine release datasets, the 36 v1.6.0 runs produced **360/360 raw file matches** to their retained references. Every comparison used the actual file bytes. The previously published GNU FindHap controls provide 14 runs on eight of those datasets. Of their 140 file comparisons, **126 matched byte for byte**. In 14 `cross.overs` files the header and complete records matched, including duplicate records, after allowing for record order. Multithreaded GNU FindHap can write its crossover records in a different order. The million-animal dataset has a TurboHap reference only. [Measurements and checks](turbohap_benchmarks_201126.md)
+On all nine release datasets, v1.7.0 produced **360/360 exact file matches** against the same references used to check v1.6.0. Standard and LM each ran twice. Every completed file was checked in raw bytes by size and SHA-256. The previously published GNU FindHap controls provide 14 runs on eight of those datasets. Of their 140 file comparisons, **126 matched byte for byte**. In 14 `cross.overs` files the header and complete records matched, including duplicate records, after allowing for record order. Multithreaded GNU FindHap can write its crossover records in a different order. The million-animal dataset has a TurboHap reference only. [Measurements and checks](turbohap_benchmarks_221126.md)
 
 All nine benchmark maps contain autosomes only. The chromosome and X choices have separate evidence. On a cohort with an X-specific map, the ten files for chromosome 1 and the ten files for X each matched the corresponding standalone corrected run in Standard and LM. These checks included the inferred calls, per-animal quality scores, and which animals passed or failed the output filters. Together these comparisons gave **40/40 exact file matches**.
 
-We also checked the new haplotype lookup for reconstructed ancestors against the preceding implementation. The checks covered an ordinary pedigree and a case where the algorithm accepted a match with a nonzero conflict. All ten files matched in each case in both Standard and LM (**40/40**).
+For v1.6.0 we also checked the haplotype lookup for reconstructed ancestors against the preceding implementation. The checks covered an ordinary pedigree and a case where the algorithm accepted a match with a nonzero conflict. All ten files matched in each case in both Standard and LM (**40/40**).
 
 ## Comparing your results
 
@@ -28,7 +28,7 @@ To verify exact matches, compare the raw byte length and SHA-256 of each enabled
 
 ## The executable used for the benchmarks
 
-A clean build from the release source on the DGX Spark with GCC 13.3.0 reproduced the executable used for all 36 TurboHap measurements. It was 2,195,592 bytes with SHA-256 `0175f748051e5868ef8e349019c8fc5d44250704f56dc3b733320eecfeb04004`. This identifies the benchmark executable. For a build on your own computer, use the example below to check the results.
+A clean build from the release source on the DGX Spark with GCC 13.3.0 reproduced the executable used for all 36 TurboHap measurements. It was 2,196,328 bytes with SHA-256 `938fb1cb5c76c8d8213f6f44ac9f90f3b24d490d6abb912bf6f9bf600bfaf8da`. This identifies the benchmark executable. For a build on your own computer, use the example below to check the results.
 
 ## Installation checks
 

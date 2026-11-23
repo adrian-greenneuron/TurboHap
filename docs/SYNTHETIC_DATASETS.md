@@ -1,6 +1,6 @@
 # Synthetic datasets for the TurboHap benchmarks
 
-TurboHap v1.5.0 and v1.6.0 use the same nine simulated dairy-cattle genotype datasets. The workloads
+TurboHap v1.5.0, v1.6.0 and v1.7.0 use the same nine simulated dairy-cattle genotype datasets. The workloads
 combine uneven marker spacing, two overlapping SNP panels, multigeneration
 pedigrees, incomplete parent records and genotyping errors. These features
 give phasing and imputation a mix of densely and sparsely observed segments,

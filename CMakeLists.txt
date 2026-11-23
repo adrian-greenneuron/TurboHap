@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 include(cmake/SparkCompiler.cmake)
-project(TurboHap VERSION 1.6.0 LANGUAGES CXX)
+project(TurboHap VERSION 1.7.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

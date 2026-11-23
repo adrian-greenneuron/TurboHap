@@ -1,6 +1,6 @@
 # Checking TurboHap input files
 
-Green Neuron AI · TurboHap v1.6.0
+Green Neuron AI · TurboHap v1.7.0
 
 `turbohap-validate-inputs` examines the complete supported input set before
 inference. It collects structural errors and cross-file inconsistencies into

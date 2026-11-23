@@ -1,6 +1,6 @@
 # When should an animal’s genotype be assessed chromosome by chromosome?
 
-A cow has chip calls on chromosomes 1 and 2, but none on X. Should she appear in the imputed results for X? FindHap v3 and TurboHap’s default analysis give her one quality score for the whole genome. TurboHap v1.6.0 offers a second choice. With `--processing-scope=chromosome`, she can qualify on chromosome 1 and fall below the reporting cutoff on X.
+A cow has chip calls on chromosomes 1 and 2, but none on X. Should she appear in the imputed results for X? FindHap v3 and TurboHap’s default analysis give her one quality score for the whole genome. TurboHap introduced a second choice in v1.6.0. With `--processing-scope=chromosome`, she can qualify on chromosome 1 and fall below the reporting cutoff on X.
 
 ## Which animals help establish the haplotypes?
 

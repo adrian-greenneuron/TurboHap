@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.0 — 23 November 2026
+
+- Standard and LM screen up to 512 candidate haplotypes per group. Native builds select the appropriate scanner for the processor. Matching, tie-breaking and output order are preserved.
+- Both modes use adjacent candidate data on AVX-512F and NEON systems. Added native Milan scanning improvements, faster genotype expansion and streamed result writing for Milan LM, and streamlined result writing on Apple silicon.
+- Added the scanner backend, batch size and memory layout to the per-mode build report.
+- Updated the [nine-dataset benchmarks](docs/turbohap_benchmarks_221126.md), [comparison with v1.6.0](docs/turbohap_release_comparison_221126.md) and [eight-release history](docs/turbohap_release_history_221126.md). [v1.7.0 release notes](docs/turbohap_release_notes_221126.md)
+
 ## 1.6.0 — 20 November 2026
 
 - Introduced optional segment-specific X-progeny scoring and chromosome-level imputation and reporting. Genome-wide FindHap v3 behaviour remains the default.
@@ -7,7 +14,7 @@
 - Size the haplotype library using the largest actual stage, check large workspace dimensions and use wide offsets for haplotype rows, frequencies and per-worker storage. Corrected matcher pointer assumptions for compiler portability.
 - Reject duplicate genotype rows for pedigree animals, malformed pedigree records, out-of-range or non-finite error rates and unknown long options. Improve reporting of worker and output failures. Modern logging now prints the actual length of each segment stage.
 - Added automatic native CPU detection, checked compiler targets, a portable build setting and per-engine build information. Added or expanded native Intel Xeon, AMD EPYC and Linux Arm profiles. The Apple Silicon installer selects the shared native engine and checks both modes.
-- Repeated the nine-dataset Spark comparison using GCC 13.3 and the published v1.5.0 GNU FindHap controls. [Release notes](docs/turbohap_release_notes_201126.md) · [Results and figures](docs/turbohap_benchmarks_201126.md)
+- Repeated the nine-dataset Spark comparison using GCC 13.3 and the published v1.5.0 GNU FindHap controls. [Release notes](https://github.com/adrian-greenneuron/TurboHap/blob/v1.6.0/docs/turbohap_release_notes_201126.md) · [Results and figures](https://github.com/adrian-greenneuron/TurboHap/blob/v1.6.0/docs/turbohap_benchmarks_201126.md)
 - Included the updated [v1.6.0 manuscript and supplementary methods](docs/paper/README.md).
 
 ## 1.5.0 — 12 November 2026

@@ -14,6 +14,7 @@
 // reject only known opposite alleles. A range-minimum tree retains the earliest
 // minimum-frequency position, including every candidate skipped by the planes.
 class OrderedCandidateLookup {
+    mutable findhap_ordered_scan::Cache scan_;
     int width_, count_ = 0, capacity_ = 0;
     bool track_frequencies_ = false;
     const int* order_ = nullptr;
@@ -26,11 +27,7 @@ class OrderedCandidateLookup {
     }
 
     size_t plane_index(int locus, size_t word) const {
-#if FINDHAP_ORDERED_LAYOUT
-        return word * size_t(width_) + size_t(locus);
-#else
-        return size_t(locus) * active_.size() + word;
-#endif
+        return findhap_ordered_scan::plane_index(size_t(locus), word, active_.size(), size_t(width_));
     }
 
     void update_minimum(int position) {
@@ -48,9 +45,9 @@ class OrderedCandidateLookup {
     }
 
     void set_signature(int position, uint64_t zero, uint64_t two) {
+        scan_.invalidate();
         const size_t word = size_t(position - 1) / 64;
         const uint64_t bit = uint64_t(1) << ((position - 1) % 64);
-        const size_t words = active_.size();
         uint64_t changes = zero ^ slot_zero_[position - 1];
         while (changes) {
             const int locus = __builtin_ctzll(changes);
@@ -74,7 +71,7 @@ public:
         while (capacity < size_t(count)) capacity *= 2;
         const size_t words = capacity / 64;
         // Two allele planes, active mask, two slot arrays, minima, reverse map.
-        return (2 * size_t(width) * words + words + 4 * capacity) * sizeof(uint64_t) +
+        return sizeof(scan_) + (2 * size_t(width) * words + words + 4 * capacity) * sizeof(uint64_t) +
                (capacity + 1) * sizeof(int);
     }
 
@@ -102,6 +99,7 @@ public:
                 minima_[node] = std::min(minima_[node * 2], minima_[node * 2 + 1]);
         }
         if (count == count_) return true;
+        scan_.invalidate();
         if (count > capacity_) {
             capacity_ = 64;
             while (capacity_ < count) capacity_ *= 2;
@@ -164,29 +162,8 @@ public:
         if (order_[first] &&
             !((query_zero & slot_two_[first - 1]) | (query_two & slot_zero_[first - 1])))
             return first;
-#if (FINDHAP_ORDERED_SCAN_ORDER || FINDHAP_ORDERED_SCAN_NEON) && !FINDHAP_ORDERED_LAYOUT
-        return findhap_ordered_scan::next(first,last,active_.size(),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
-#elif FINDHAP_ORDERED_LAYOUT && FINDHAP_ORDERED_SCAN_ORDER
-        return findhap_ordered_scan::next_word_major(first,last,size_t(width_),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
-#else
-        const size_t words = active_.size();
-        for (size_t word = size_t(first - 1) / 64; word <= size_t(last - 1) / 64; ++word) {
-            uint64_t candidates = active_[word];
-            if (word == size_t(first - 1) / 64) candidates &= UINT64_MAX << ((first - 1) % 64);
-            uint64_t sites = query_zero;
-            while (sites && candidates) {
-                candidates &= ~two_[plane_index(__builtin_ctzll(sites), word)];
-                sites &= sites - 1;
-            }
-            sites = query_two;
-            while (sites && candidates) {
-                candidates &= ~zero_[plane_index(__builtin_ctzll(sites), word)];
-                sites &= sites - 1;
-            }
-            if (candidates) return std::min(last + 1, int(word * 64 + __builtin_ctzll(candidates) + 1));
-        }
-        return last + 1;
-#endif
+        return scan_.next(first, last, active_.size(), size_t(width_), &active_[0],
+                          &zero_[0], &two_[0], query_zero, query_two);
     }
 
     void minimum(int first, int last, int& frequency, int& position) const {

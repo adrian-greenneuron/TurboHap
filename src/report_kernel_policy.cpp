@@ -1,9 +1,18 @@
 // Built only into turbohap-build-info, with the corresponding engine target's definitions.
-#include "platform_policy.hpp"
+#include "ordered_scan.hpp"
 #include <ostream>
 
 void TURBOHAP_REPORT_POLICY(std::ostream& out) {
+#if TURBOHAP_RUNTIME_SCAN_LAYOUT
+    const bool blocked = findhap_ordered_scan::runtime_blocked_layout();
+#else
+    constexpr bool blocked = TURBOHAP_TILED_SCAN;
+#endif
     out << "{\"policy\":\"" << TURBOHAP_PLATFORM_POLICY << "\""
+        << ",\"ordered_scan_candidates\":" << findhap_ordered_scan::batch_candidates
+        << ",\"ordered_scan_backend\":\"" << findhap_ordered_scan::backend() << "\""
+        << ",\"ordered_scan_layout\":\"" << (blocked ? "blocked" :
+            FINDHAP_ORDERED_LAYOUT ? "word-major" : "locus-major") << "\""
         << ",\"population_encoder\":" << FINDHAP_POP_ENCODE
         << ",\"population_conflict_backend\":" << FINDHAP_POP_CONFLICT_BACKEND
         << ",\"pedigree_conflict_backend\":" << FINDHAP_PEDIGREE_CONFLICT_BACKEND

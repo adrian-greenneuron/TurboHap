@@ -62,6 +62,9 @@ using ActiveGenotypeCache = ExternalGenotypeCache;
 using ActiveGenotypeCache = GenotypeCache;
 #endif
 #include "candidate_index.hpp"
+#if TURBOHAP_NATIVE_MILAN && defined(FINDHAP_LOW_MEMORY)
+#include "row_histogram_milan.hpp"
+#endif
 #ifndef FINDHAP_POP_SKIP_UNUSED
 #if !defined(FINDHAP_LOW_MEMORY) && (TURBOHAP_NATIVE_INTEL_WORKLOAD_PROFILE || TURBOHAP_NATIVE_CASCADE_LAKE || TURBOHAP_NATIVE_AMD_WORKLOAD_PROFILE || TURBOHAP_NATIVE_MILAN || \
     (defined(__ARM_NEON) && (defined(FINDHAP_NATIVE_GB10) || defined(FINDHAP_AXION_STD_SUGGESTIONS))))
@@ -2329,8 +2332,12 @@ static int run_findhap(int argc, char* argv[], const findhap::Options& options) 
                         else if (missing_calls < 0.95 * chromosome_loci) density = 2;
                     }
                 } else {
+#if TURBOHAP_NATIVE_MILAN && defined(FINDHAP_LOW_MEMORY)
+                    count_expanded_row(expanded, loci, genfreq);
+#else
                     for (locus = 1; locus <= loci; locus++)
                         genfreq[expanded[locus - 1]]++;
+#endif
                 }
                 if (!chromosome_processing) {
                     if (findhap::whole_genome_high_density || anmlmiss <= 0.6 * loci || exist15) {

@@ -11,6 +11,8 @@ The default is TurboHap. Add `--low-memory` to select TurboHap LM. Both modes
 are in the same executable and use the same input and output formats.
 The flag may precede or follow the thread count. `findhap --help` prints usage.
 
+Standard and LM automatically select a 512-candidate scanner for population matching. Continue to set the thread count and analysis options as usual. To see which scanner your installation uses, inspect the [per-mode build report](PROCESSORS.md#how-can-i-see-which-settings-my-build-uses).
+
 Use a positive one- or two-digit thread count, capped by the OpenMP maximum.
 Without it, Linux uses the OpenMP default, which can be set with
 `OMP_NUM_THREADS`. Native Apple Silicon automatic mode instead uses the
@@ -193,7 +195,7 @@ TurboHap prioritises speed with resident genotype storage and indexed haplotype
 search. TurboHap LM reduces resident storage using chromosome processing,
 packed data, bounded working buffers and temporary disk files. It retains the
 same output decisions and bytes, at the cost of more I/O and some additional
-computation. See the [measured trade-offs](turbohap_benchmarks_201126.md).
+computation. See the [measured trade-offs](turbohap_benchmarks_221126.md).
 
 Peak memory depends on pedigree size, marker counts, chromosome lengths,
 haplotype diversity, options and threads. TurboHap LM also uses temporary disk

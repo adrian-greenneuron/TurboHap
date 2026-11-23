@@ -17,7 +17,7 @@ For the scientific method, please cite:
   high-density Holstein genotypes.** Journal of Dairy Science 96:668–678.
   [doi:10.3168/jds.2012-5702](https://doi.org/10.3168/jds.2012-5702).
 
-The nine synthetic cattle datasets used for v1.5.0 and v1.6.0 are archived separately. The simulation used public cattle chip maps, historical ancestry generated with msprime, tskit for access to ancestral haplotypes and the AlphaSimR meiosis model. The [dataset methods](SYNTHETIC_DATASETS.md) cite the source maps and software and explain the role of each component. [Benchmark dataset DOI](https://doi.org/10.5281/zenodo.24144449)
+The nine synthetic cattle datasets used for v1.5.0, v1.6.0 and v1.7.0 are archived separately. The simulation used public cattle chip maps, historical ancestry generated with msprime, tskit for access to ancestral haplotypes and the AlphaSimR meiosis model. The [dataset methods](SYNTHETIC_DATASETS.md) cite the source maps and software and explain the role of each component. [Benchmark dataset DOI](https://doi.org/10.5281/zenodo.24144449)
 
 The [original manuscript and supplement](https://github.com/adrian-greenneuron/TurboHap/tree/v1.5.0/docs/paper) use an earlier simulation and benchmark collection. The much smaller installation example comes from the original FindHap v3 distribution and is credited in [its README](../examples/README.md).
 

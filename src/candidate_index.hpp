@@ -68,6 +68,10 @@ private:
 #if FINDHAP_POP_ENCODE == 3 || FINDHAP_POP_ENCODE == 5
     std::array<uint8_t, 64> byte_positions_{};
 #endif
+#if (TURBOHAP_NATIVE_MILAN && !defined(FINDHAP_LOW_MEMORY)) && defined(__BMI2__) && FINDHAP_POP_ENCODE == 2 && !FINDHAP_POP_FULL && !FINDHAP_POP_COMPLETE
+    uint64_t low_sample_mask_ = 0, high_sample_mask_ = 0;
+    unsigned low_sample_count_ = 0;
+#endif
     std::array<int, 64> positions_{};
 #if FINDHAP_POP_COMPRESS_SIGNATURE && FINDHAP_POP_FULL && !FINDHAP_POP_COMPLETE
     findhap_bit_extract::Selector selectors_[2];
@@ -122,6 +126,19 @@ public:
 #if FINDHAP_POP_X86_PEXT
             selected_masks_[0] = low; selected_masks_[1] = high;
 #endif
+        }
+#endif
+#if (TURBOHAP_NATIVE_MILAN && !defined(FINDHAP_LOW_MEMORY)) && defined(__BMI2__) && FINDHAP_POP_ENCODE == 2 && !FINDHAP_POP_FULL && !FINDHAP_POP_COMPLETE
+        if (length > 64 && length <= 128) {
+            for (int k = 0; k < width_; ++k) {
+                const int site = positions_[k];
+                if (site < 64) {
+                    low_sample_mask_ |= uint64_t(1) << site;
+                    ++low_sample_count_;
+                } else {
+                    high_sample_mask_ |= uint64_t(1) << (site - (length - 64));
+                }
+            }
         }
 #endif
 #if FINDHAP_POP_ENCODE == 2
@@ -288,6 +305,27 @@ public:
             result.invalid = uint64_t(_mm512_cmpgt_epi8_mask(values,_mm512_set1_epi8(2)) |
                                       _mm512_cmpgt_epi8_mask(_mm512_setzero_si512(),values)) & first_mask;
 #endif
+            return result;
+        }
+#endif
+#if (TURBOHAP_NATIVE_MILAN && !defined(FINDHAP_LOW_MEMORY)) && defined(__BMI2__) && FINDHAP_POP_ENCODE == 2 && !FINDHAP_POP_FULL && !FINDHAP_POP_COMPLETE
+        if (length_ > 64 && length_ <= 128) {
+            // Each 64-byte window is in range. Only the high window's sites
+            // at 64 and above are selected, including where the windows overlap.
+            const auto mask_pair = [&](const int8_t* window, uint64_t& zero, uint64_t& two) {
+                const auto a = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(window));
+                const auto b = _mm256_loadu_si256(reinterpret_cast<const __m256i*>(window + 32));
+                const auto zeros = _mm256_setzero_si256();
+                const auto twos = _mm256_set1_epi8(2);
+                const auto mask = [](__m256i v) { return uint64_t(uint32_t(_mm256_movemask_epi8(v))); };
+                zero = mask(_mm256_cmpeq_epi8(a, zeros)) | (mask(_mm256_cmpeq_epi8(b, zeros)) << 32);
+                two = mask(_mm256_cmpeq_epi8(a, twos)) | (mask(_mm256_cmpeq_epi8(b, twos)) << 32);
+            };
+            uint64_t z0,t0,z1,t1;
+            mask_pair(alleles,z0,t0);
+            mask_pair(alleles + length_ - 64,z1,t1);
+            result.zero = _pext_u64(z0,low_sample_mask_) | (_pext_u64(z1,high_sample_mask_) << low_sample_count_);
+            result.two = _pext_u64(t0,low_sample_mask_) | (_pext_u64(t1,high_sample_mask_) << low_sample_count_);
             return result;
         }
 #endif

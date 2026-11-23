@@ -415,11 +415,7 @@
 // The cap includes page rounding per concurrently active population worker;
 // it is independent of animals, loci and user haplotype capacity.
 #ifndef FINDHAP_LM_ORDERED_BYTES
-#if TURBOHAP_FAST_OUTPUT_LOOKUP_DEFAULT || (TURBOHAP_NATIVE_MILAN && defined(FINDHAP_LOW_MEMORY))
 #define FINDHAP_LM_ORDERED_BYTES 4194304
-#else
-#define FINDHAP_LM_ORDERED_BYTES 0
-#endif
 #endif
 
 // 29 October confirmation: output on Granite Rapids/native V2, and on the
@@ -438,6 +434,8 @@
 #ifndef FINDHAP_OUTPUT_STREAMS
 #if TURBOHAP_MODERN_OUTPUT_DEFAULT
 #define FINDHAP_OUTPUT_STREAMS 2
+#elif TURBOHAP_NATIVE_MILAN && defined(FINDHAP_LOW_MEMORY)
+#define FINDHAP_OUTPUT_STREAMS 1
 #else
 #define FINDHAP_OUTPUT_STREAMS 0
 #endif
@@ -491,14 +489,7 @@
 #endif
 
 #ifndef FINDHAP_ORDERED_SCAN_ORDER
-#if TURBOHAP_WORKLOAD_PROFILE
-#define FINDHAP_ORDERED_SCAN_ORDER (TURBOHAP_WORKLOAD_PROFILE ? 2 : 0)
-#else
-#define FINDHAP_ORDERED_SCAN_ORDER 0
-#endif
-#endif
-#ifndef FINDHAP_ORDERED_SCAN_NEON
-#define FINDHAP_ORDERED_SCAN_NEON 0
+#define FINDHAP_ORDERED_SCAN_ORDER 2
 #endif
 
 // Library allocation: 0 eagerly clears capacity; 1 initializes published rows;
@@ -514,11 +505,20 @@
 #ifndef FINDHAP_HAPLIST_ASAN
 #define FINDHAP_HAPLIST_ASAN 0
 #endif
-#ifndef FINDHAP_ORDERED_LAYOUT
-#if TURBOHAP_TESTED_MAC_BUNDLE_DEFAULT || TURBOHAP_NATIVE_CASCADE_LAKE
-#define FINDHAP_ORDERED_LAYOUT 1
+// A generic x86 build can run on hosts with different vector capabilities.
+// Storage and the scanner must follow the same feature probe on the run host.
+#if !defined(FINDHAP_ORDERED_LAYOUT) && (defined(__i386__) || defined(__x86_64__)) && \
+    (defined(__GNUC__) || defined(__clang__)) && !defined(__AVX512F__) && !TURBOHAP_NATIVE_MILAN
+#define TURBOHAP_RUNTIME_SCAN_LAYOUT 1
 #else
-#define FINDHAP_ORDERED_LAYOUT 0
+#define TURBOHAP_RUNTIME_SCAN_LAYOUT 0
+#endif
+
+#ifndef FINDHAP_ORDERED_LAYOUT
+#if defined(__ARM_NEON) || defined(__AVX512F__)
+#define FINDHAP_ORDERED_LAYOUT 2
+#else
+#define FINDHAP_ORDERED_LAYOUT 1
 #endif
 #endif
 
@@ -540,4 +540,24 @@
 
 #ifndef FINDHAP_ORDERED_RECHECK
 #define FINDHAP_ORDERED_RECHECK 1
+#endif
+
+// The measured Milan, GB10 and Cascade Lake kernels use a constant unit word stride.
+#if (TURBOHAP_NATIVE_MILAN && FINDHAP_ORDERED_LAYOUT) || \
+    ((TURBOHAP_NEON_WORKLOAD_PROFILE || TURBOHAP_NATIVE_CASCADE_LAKE) && FINDHAP_ORDERED_LAYOUT == 2)
+#define TURBOHAP_FIXED_TILE_STRIDE 1
+#else
+#define TURBOHAP_FIXED_TILE_STRIDE 0
+#endif
+
+#if FINDHAP_ORDERED_LAYOUT == 2 && !TURBOHAP_FIXED_TILE_STRIDE
+#define TURBOHAP_BLOCKED_LOADS 1
+#else
+#define TURBOHAP_BLOCKED_LOADS 0
+#endif
+
+#if TURBOHAP_FIXED_TILE_STRIDE || TURBOHAP_BLOCKED_LOADS
+#define TURBOHAP_TILED_SCAN 1
+#else
+#define TURBOHAP_TILED_SCAN 0
 #endif

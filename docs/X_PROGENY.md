@@ -1,6 +1,6 @@
 # Why X markers can change a bull’s inferred haplotypes on chromosome 1
 
-A bull inherits one copy of chromosome 1 from his sire and one from his dam. Yet when a marker map includes the X chromosome, FindHap v3 can give his dam’s haplotypes extra weight and overlook his sire’s haplotypes on chromosome 1. This happens in one step that reconstructs bulls that were never genotyped. TurboHap v1.6.0 offers `--x-progeny=corrected` for this step. The default genome-wide analysis retains the FindHap v3 rule.
+A bull inherits one copy of chromosome 1 from his sire and one from his dam. Yet when a marker map includes the X chromosome, FindHap v3 can give his dam’s haplotypes extra weight and overlook his sire’s haplotypes on chromosome 1. This happens in one step that reconstructs bulls that were never genotyped. TurboHap introduced `--x-progeny=corrected` in v1.6.0 for this step. The default genome-wide analysis retains the FindHap v3 rule.
 
 ## Reconstructing a bull from his calves
 

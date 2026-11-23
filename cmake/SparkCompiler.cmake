@@ -18,8 +18,7 @@ function(turbohap_select_spark_compiler)
         return()
     endif()
 
-    # The v1.6 release measurements on the Spark used GCC 13.
-    # An explicit compiler or cross-toolchain already returned above.
+    # The v1.6 and v1.7 Spark releases use GCC 13. Explicit toolchains take precedence.
     find_program(turbohap_spark_gcc13 NAMES g++-13)
     if(turbohap_spark_gcc13)
         set(CMAKE_CXX_COMPILER "${turbohap_spark_gcc13}" CACHE FILEPATH "Native DGX Spark compiler")

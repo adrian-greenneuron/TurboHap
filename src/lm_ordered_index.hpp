@@ -60,6 +60,7 @@ public:
 #endif
 #if FINDHAP_LM_ADAPTIVE_POSITIONS
 class LowMemoryCandidateLookup {
+    mutable findhap_ordered_scan::Cache scan_;
     int width_, count_ = 0, capacity_ = 0;
     bool track_frequencies_ = false;
     const int* order_ = nullptr;
@@ -84,11 +85,7 @@ class LowMemoryCandidateLookup {
         return af < bf || (af == bf && a < b) ? a : b;
     }
     size_t plane_index(int locus, size_t word) const {
-#if FINDHAP_ORDERED_LAYOUT
-        return word * size_t(width_) + size_t(locus);
-#else
-        return size_t(locus) * active_.size() + word;
-#endif
+        return findhap_ordered_scan::plane_index(size_t(locus), word, active_.size(), size_t(width_));
     }
 
     template<class Position>
@@ -100,9 +97,9 @@ class LowMemoryCandidateLookup {
             storage.minima[leaf] = winner(storage.minima[leaf * 2], storage.minima[leaf * 2 + 1]);
     }
     void change_signature(int position, Signature previous, Signature current) {
+        scan_.invalidate();
         const size_t word = size_t(position - 1) / 64;
         const uint64_t bit = uint64_t(1) << ((position - 1) % 64);
-        const size_t words = active_.size();
         uint64_t changes = previous[0] ^ current[0];
         while (changes) {
             zero_[plane_index(__builtin_ctzll(changes), word)] ^= bit;
@@ -125,12 +122,13 @@ public:
         while (capacity < size_t(count)) capacity *= 2;
         const size_t words = capacity / 64;
         const size_t position_bytes = count > UINT16_MAX ? sizeof(uint32_t) : sizeof(uint16_t);
-        return (2 * size_t(width) * words + words) * sizeof(uint64_t) +
+        return sizeof(scan_) + (2 * size_t(width) * words + words) * sizeof(uint64_t) +
                (3 * capacity + 1) * position_bytes + 5 * (lm_lookup_storage::page_size() - 1);
     }
     int position_bits() const { return std::holds_alternative<Wide>(positions_) ? 32 : 16; }
     size_t resident_bytes() const {
-        return std::visit([&](const auto& storage) {
+        if (!capacity_) return 0;
+        return sizeof(scan_) + std::visit([&](const auto& storage) {
             return storage.positions.allocated_bytes() + storage.minima.allocated_bytes();
         }, positions_) + zero_.allocated_bytes() + two_.allocated_bytes() + active_.allocated_bytes();
     }
@@ -168,6 +166,7 @@ private:
                 storage.minima[node] = winner(storage.minima[node * 2], storage.minima[node * 2 + 1]);
         }
         if (count == count_) return true;
+        scan_.invalidate();
         if (count > capacity_) {
             capacity_ = 64;
             while (capacity_ < count) capacity_ *= 2;
@@ -239,29 +238,8 @@ public:
             const Signature value = signature(order_[first]);
             if (!((query_zero & value[1]) | (query_two & value[0]))) return first;
         }
-#if (FINDHAP_ORDERED_SCAN_ORDER || FINDHAP_ORDERED_SCAN_NEON) && !FINDHAP_ORDERED_LAYOUT
-        return findhap_ordered_scan::next(first,last,active_.size(),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
-#elif FINDHAP_ORDERED_LAYOUT && FINDHAP_ORDERED_SCAN_ORDER
-        return findhap_ordered_scan::next_word_major(first,last,size_t(width_),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
-#else
-        const size_t words = active_.size();
-        for (size_t word = size_t(first - 1) / 64; word <= size_t(last - 1) / 64; ++word) {
-            uint64_t candidates = active_[word];
-            if (word == size_t(first - 1) / 64) candidates &= UINT64_MAX << ((first - 1) % 64);
-            uint64_t sites = query_zero;
-            while (sites && candidates) {
-                candidates &= ~two_[plane_index(__builtin_ctzll(sites), word)];
-                sites &= sites - 1;
-            }
-            sites = query_two;
-            while (sites && candidates) {
-                candidates &= ~zero_[plane_index(__builtin_ctzll(sites), word)];
-                sites &= sites - 1;
-            }
-            if (candidates) return std::min(last + 1, int(word * 64 + __builtin_ctzll(candidates) + 1));
-        }
-        return last + 1;
-#endif
+        return scan_.next(first, last, active_.size(), size_t(width_), &active_[0],
+                          &zero_[0], &two_[0], query_zero, query_two);
     }
     void minimum(int first, int last, int& frequency, int& position) const {
         std::visit([&](const auto& storage) { minimum_positions(storage, first, last, frequency, position); }, positions_);
@@ -285,6 +263,7 @@ private:
 #else
 class LowMemoryCandidateLookup {
     using Position = uint16_t;
+    mutable findhap_ordered_scan::Cache scan_;
     int width_, count_ = 0, capacity_ = 0;
     bool track_frequencies_ = false;
     const int* order_ = nullptr;
@@ -302,11 +281,7 @@ class LowMemoryCandidateLookup {
         return af < bf || (af == bf && a < b) ? a : b;
     }
     size_t plane_index(int locus, size_t word) const {
-#if FINDHAP_ORDERED_LAYOUT
-        return word * size_t(width_) + size_t(locus);
-#else
-        return size_t(locus) * active_.size() + word;
-#endif
+        return findhap_ordered_scan::plane_index(size_t(locus), word, active_.size(), size_t(width_));
     }
 
     void update_minimum(int position) {
@@ -317,9 +292,9 @@ class LowMemoryCandidateLookup {
             minima_[leaf] = winner(minima_[leaf * 2], minima_[leaf * 2 + 1]);
     }
     void change_signature(int position, Signature previous, Signature current) {
+        scan_.invalidate();
         const size_t word = size_t(position - 1) / 64;
         const uint64_t bit = uint64_t(1) << ((position - 1) % 64);
-        const size_t words = active_.size();
         uint64_t changes = previous[0] ^ current[0];
         while (changes) {
             zero_[plane_index(__builtin_ctzll(changes), word)] ^= bit;
@@ -341,11 +316,12 @@ public:
         size_t capacity = 64;
         while (capacity < size_t(count)) capacity *= 2;
         const size_t words = capacity / 64;
-        return (2 * size_t(width) * words + words) * sizeof(uint64_t) +
+        return sizeof(scan_) + (2 * size_t(width) * words + words) * sizeof(uint64_t) +
                (3 * capacity + 1) * sizeof(Position) + 5 * (lm_lookup_storage::page_size() - 1);
     }
     size_t resident_bytes() const {
-        return positions_.allocated_bytes() + minima_.allocated_bytes() +
+        if (!capacity_) return 0;
+        return sizeof(scan_) + positions_.allocated_bytes() + minima_.allocated_bytes() +
                zero_.allocated_bytes() + two_.allocated_bytes() + active_.allocated_bytes();
     }
     template<class Entries>
@@ -367,6 +343,7 @@ public:
                 minima_[node] = winner(minima_[node * 2], minima_[node * 2 + 1]);
         }
         if (count == count_) return true;
+        scan_.invalidate();
         if (count > capacity_) {
             capacity_ = 64;
             while (capacity_ < count) capacity_ *= 2;
@@ -427,29 +404,8 @@ public:
             const Signature value = signature(order_[first]);
             if (!((query_zero & value[1]) | (query_two & value[0]))) return first;
         }
-#if (FINDHAP_ORDERED_SCAN_ORDER || FINDHAP_ORDERED_SCAN_NEON) && !FINDHAP_ORDERED_LAYOUT
-        return findhap_ordered_scan::next(first,last,active_.size(),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
-#elif FINDHAP_ORDERED_LAYOUT && FINDHAP_ORDERED_SCAN_ORDER
-        return findhap_ordered_scan::next_word_major(first,last,size_t(width_),&active_[0],&zero_[0],&two_[0],query_zero,query_two);
-#else
-        const size_t words = active_.size();
-        for (size_t word = size_t(first - 1) / 64; word <= size_t(last - 1) / 64; ++word) {
-            uint64_t candidates = active_[word];
-            if (word == size_t(first - 1) / 64) candidates &= UINT64_MAX << ((first - 1) % 64);
-            uint64_t sites = query_zero;
-            while (sites && candidates) {
-                candidates &= ~two_[plane_index(__builtin_ctzll(sites), word)];
-                sites &= sites - 1;
-            }
-            sites = query_two;
-            while (sites && candidates) {
-                candidates &= ~zero_[plane_index(__builtin_ctzll(sites), word)];
-                sites &= sites - 1;
-            }
-            if (candidates) return std::min(last + 1, int(word * 64 + __builtin_ctzll(candidates) + 1));
-        }
-        return last + 1;
-#endif
+        return scan_.next(first, last, active_.size(), size_t(width_), &active_[0],
+                          &zero_[0], &two_[0], query_zero, query_two);
     }
     void minimum(int first, int last, int& frequency, int& position) const {
         Position best = 0;
